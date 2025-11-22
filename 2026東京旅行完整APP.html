@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2026 東京廣布之旅 (完整版)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        /* APP 基礎設定 */
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            -webkit-tap-highlight-color: transparent;
+            padding-bottom: 100px;
+        }
+        .map-font { font-family: 'Zen Maru Gothic', sans-serif; }
+        
+        /* 隱藏捲軸 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* 卡片樣式 */
+        .app-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        /* 底部導航列 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0 28px 0;
+            z-index: 50;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            text-decoration: none;
+            width: 20%; /* 調整寬度以容納5個按鈕 */
+            transition: color 0.2s;
+        }
+        .nav-item.active { color: #4f46e5; font-weight: bold; }
+        .nav-item i { font-size: 1.5rem; margin-bottom: 2px; }
+
+        /* 頁面切換 */
+        .page-content { display: none; animation: fadeIn 0.2s ease-out; }
+        .page-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* SOS 按鈕 */
+        .sos-btn {
+            position: fixed;
+            bottom: 110px;
+            right: 20px;
+            background-color: #ef4444;
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+            z-index: 40;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border: 3px solid white;
+        }
+
+        /* 詳細頁樣式 */
+        .detail-header {
+            position: sticky;
+            top: 0;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(5px);
+            z-index: 30;
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            margin: -1rem -1rem 1rem -1rem;
+            display: flex;
+            align-items: center;
+        }
+        .price-tag {
+            background-color: #dbeafe; color: #1e40af;
+            font-size: 0.85rem; padding: 2px 8px; border-radius: 6px;
+            margin-left: 6px; font-weight: 600; white-space: nowrap; display: inline-block;
+        }
+        
+        /* 導航按鈕樣式 */
+        .map-link {
+            display: inline-flex;
+            align-items: center;
+            color: #2563eb;
+            background-color: #eff6ff;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-decoration: none;
+            margin-left: 8px;
+            border: 1px solid #dbeafe;
+        }
+        .map-link i { margin-right: 4px; }
+
+        /* 地圖容器 */
+        .map-wrapper {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 10px 0;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        /* 日語卡片 */
+        .phrase-card {
+            background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+            padding: 16px; margin-bottom: 12px; cursor: pointer;
+        }
+        .jp-text {
+            font-size: 1.4rem; font-weight: 900; color: #4338ca;
+            font-family: 'Noto Sans JP', sans-serif; margin-top: 4px;
+        }
+        .category-header {
+            font-size: 1.2rem; font-weight: bold; color: #1e293b;
+            margin: 24px 0 12px 0; display: flex; align-items: center;
+        }
+        .category-header i { margin-right: 8px; color: #6366f1; }
+        
+        /* 美食推薦區塊 */
+        .food-recommendation {
+            background-color: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        .food-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed #fed7aa;
+        }
+        .food-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .food-badge {
+            background-color: #fb923c; color: white; font-weight: bold;
+            padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-right: 8px; flex-shrink: 0;
+        }
+        
+        /* 銀髮族專用樣式 */
+        .elderly-section {
+            background-color: #fff7ed; border: 2px solid #fdba74; border-radius: 16px; padding: 16px; margin-top: 30px;
+        }
+        .elderly-title {
+            color: #c2410c; font-size: 1.4rem; font-weight: 900; text-align: center; margin-bottom: 16px;
+            border-bottom: 2px dashed #fdba74; padding-bottom: 10px;
+        }
+        .elderly-phrase .phrase-jp { color: #c2410c; }
+
+        /* 記帳與清單專用樣式 */
+        .input-group { display: flex; gap: 8px; margin-bottom: 12px; }
+        .custom-input {
+            flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;
+            font-size: 16px; outline: none; transition: border-color 0.2s;
+        }
+        .custom-input:focus { border-color: #4f46e5; ring: 2px solid #e0e7ff; }
+        .btn-add {
+            background-color: #4f46e5; color: white; border-radius: 8px;
+            padding: 0 16px; font-weight: bold; display: flex; align-items: center;
+        }
+        .btn-add:active { transform: scale(0.95); }
+        
+        .list-item {
+            display: flex; align-items: center; justify-content: space-between;
+            background: white; padding: 12px; border-radius: 8px; border: 1px solid #f1f5f9;
+            margin-bottom: 8px; transition: all 0.2s;
+        }
+        .list-item.checked { background-color: #f8fafc; opacity: 0.7; }
+        .list-item.checked .item-text { text-decoration: line-through; color: #94a3b8; }
+        .delete-btn { color: #ef4444; padding: 4px; margin-left: 8px; }
+        
+        .total-banner {
+            background: #1e293b; color: white; padding: 16px; border-radius: 12px;
+            margin-bottom: 20px; text-align: center;
+        }
+        .total-amount { font-size: 2rem; font-weight: 900; color: #fbbf24; font-family: monospace; }
+    </style>
+</head>
+<body>
+
+    <!-- 頂部標題 -->
+    <header id="main-header" class="bg-indigo-900 text-white p-4 sticky top-0 z-40 shadow-md flex justify-between items-center">
+        <div>
+            <h1 class="text-lg font-bold">東京廣布之旅</h1>
+            <p class="text-xs text-indigo-200">銀髮族專屬手冊 (整合版)</p>
+        </div>
+        <div class="text-2xl">🇯🇵</div>
+    </header>
+
+    <!-- 頁面 1: 行程列表 -->
+    <div id="page-itinerary" class="page-content active container mx-auto p-4 max-w-md">
+        <div class="app-card bg-white border-indigo-100 flex justify-between items-center">
+            <div>
+                <h3 class="text-xs font-bold text-indigo-500 uppercase mb-1">住宿</h3>
+                <p class="font-bold text-slate-800">東陽屋 (Toyo House)</p>
+                <a href="https://www.google.com/maps/search/?api=1&query=Toyo+House+Nakano+Tokyo" target="_blank" class="text-xs text-blue-500 flex items-center mt-1">
+                    <i class="ri-map-pin-fill mr-1"></i> 開啟導航
+                </a>
+            </div>
+            <a href="tel:03-3388-5764" class="bg-indigo-50 text-indigo-600 p-3 rounded-full"><i class="ri-phone-fill text-xl"></i></a>
+        </div>
+        <h2 class="text-lg font-bold text-slate-800 mb-3 pl-2 border-l-4 border-indigo-600">每日行程 (點擊查看詳情)</h2>
+        <div class="space-y-3" id="itinerary-list"></div>
+    </div>
+
+    <!-- 頁面: 行程詳情 (動態內容) -->
+    <div id="page-detail" class="page-content container mx-auto p-4 max-w-md bg-white min-h-screen">
+        <div class="detail-header">
+            <button onclick="switchPage('page-itinerary')" class="mr-4 text-slate-500 p-2 -ml-2">
+                <i class="ri-arrow-left-line text-2xl"></i>
+            </button>
+            <div>
+                <h2 id="detail-title" class="text-lg font-bold text-slate-800">Day X</h2>
+                <p id="detail-date" class="text-xs text-slate-500">日期</p>
+            </div>
+        </div>
+        <div id="detail-content" class="space-y-6 pb-20">
+            <!-- 內容由 JS 填充 -->
+        </div>
+    </div>
+
+    <!-- 頁面 2: 離線地圖 -->
+    <div id="page-maps" class="page-content container mx-auto p-4 max-w-md">
+        <h2 class="text-lg font-bold text-slate-800 mb-4 pl-2 border-l-4 border-indigo-600">離線地圖 & 美食</h2>
+        
+        <!-- 鎌倉地圖卡片 -->
+        <div class="app-card border-emerald-200 bg-emerald-50/30">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="font-bold text-emerald-800 text-lg"><i class="ri-map-2-fill mr-2"></i>Day 3 鎌倉散策</h3>
+                <span class="text-xs text-emerald-600 bg-emerald-100 px-2 py-1 rounded">可縮放</span>
+            </div>
+            
+            <!-- 100% 原始鎌倉地圖 SVG -->
+            <div class="map-wrapper aspect-[4/3] bg-emerald-50 border-2 border-emerald-200 map-font">
+                <svg viewBox="0 0 800 600" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <g id="k-tree">
+                            <circle cx="0" cy="-10" r="12" fill="#4ade80" />
+                            <circle cx="-8" cy="-2" r="10" fill="#22c55e" />
+                            <circle cx="8" cy="-2" r="10" fill="#22c55e" />
+                            <rect x="-3" y="0" width="6" height="10" fill="#a16207" />
+                        </g>
+                        <marker id="k-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#f87171" />
+                        </marker>
+                        <g id="k-shopPin"><path d="M -15 -30 L 15 -30 L 15 0 L 5 0 L 0 10 L -5 0 L -15 0 Z" fill="#fff" stroke="#f59e0b" stroke-width="2" /></g>
+                        <g id="k-foodPin"><path d="M -15 -30 L 15 -30 L 15 0 L 5 0 L 0 10 L -5 0 L -15 0 Z" fill="#fff" stroke="#ef4444" stroke-width="2" /><text x="0" y="-4" font-size="9" fill="#ef4444" text-anchor="middle">午餐</text></g>
+                        <g id="k-spotPin"><path d="M -15 -30 L 15 -30 L 15 0 L 5 0 L 0 10 L -5 0 L -15 0 Z" fill="#fff" stroke="#7c3aed" stroke-width="2" /></g>
+                    </defs>
+
+                    <!-- 背景 -->
+                    <path d="M0 500 Q 400 480 800 500 L 800 600 L 0 600 Z" fill="#bae6fd" />
+                    <text x="400" y="560" font-size="18" fill="#0ea5e9" text-anchor="middle" font-weight="bold" letter-spacing="4">相模灣</text>
+                    <path d="M100 540 Q 120 530 140 540" stroke="white" stroke-width="2" fill="none" opacity="0.6"/>
+                    <path d="M600 530 Q 620 520 640 530" stroke="white" stroke-width="2" fill="none" opacity="0.6"/>
+                    <path d="M0 0 L 800 0 L 800 500 Q 400 480 0 500 Z" fill="#ecfccb" opacity="0.3" />
+
+                    <!-- 路線 -->
+                    <path d="M 800 250 L 600 350" stroke="#78716c" stroke-width="8" stroke-dasharray="10,10" fill="none" />
+                    <text x="720" y="280" font-size="14" fill="#57534e" font-weight="bold" transform="rotate(-25 720 280)">往 新宿</text>
+                    <path d="M 600 350 Q 400 450 200 400 L 50 420" stroke="#86efac" stroke-width="12" fill="none" stroke-linecap="round" />
+                    <path d="M 600 350 Q 400 450 200 400 L 50 420" stroke="white" stroke-width="2" stroke-dasharray="8,8" fill="none" />
+                    <g transform="translate(320, 480)">
+                         <text x="0" y="0" font-size="12" fill="#0ea5e9" font-weight="bold" text-anchor="middle">灌籃高手平交道</text>
+                         <path d="M 0 -5 L 0 -25" stroke="#0ea5e9" stroke-width="1" stroke-dasharray="3,3" />
+                    </g>
+                    <g transform="translate(400, 430) rotate(5)">
+                        <rect x="-15" y="-10" width="30" height="20" rx="4" fill="#15803d" />
+                        <rect x="-12" y="-7" width="8" height="8" fill="#a7f3d0" />
+                        <rect x="4" y="-7" width="8" height="8" fill="#a7f3d0" />
+                    </g>
+
+                    <!-- 右側：鎌倉 -->
+                    <g transform="translate(600, 350)">
+                        <rect x="-40" y="-30" width="80" height="60" rx="5" fill="#fff" stroke="#0f766e" stroke-width="3" />
+                        <text x="0" y="-5" font-size="16" font-weight="bold" text-anchor="middle" fill="#0f766e">鎌倉站</text>
+                        <text x="0" y="15" font-size="12" text-anchor="middle" fill="#0f766e">Kamakura</text>
+                    </g>
+                    <g transform="translate(600, 60)">
+                        <path d="M -30 40 L -30 -10 M 30 40 L 30 -10 M -40 -10 L 40 -10 M -35 0 L 35 0" stroke="#dc2626" stroke-width="6" stroke-linecap="round" />
+                        <text x="0" y="70" font-size="18" font-weight="bold" text-anchor="middle" fill="#991b1b">鶴岡八幡宮</text>
+                        <text x="0" y="90" font-size="12" text-anchor="middle" fill="#7f1d1d">下方參拜</text>
+                    </g>
+                    <path d="M 600 320 L 600 150" stroke="#fdba74" stroke-width="20" stroke-linecap="round" />
+                    <text x="600" y="240" font-size="14" font-weight="bold" fill="#c2410c" text-anchor="middle" writing-mode="vertical-rl" letter-spacing="2">小町通商店街</text>
+                    <g transform="translate(650, 180)">
+                        <use href="#k-shopPin" />
+                        <text x="0" y="-15" font-size="11" fill="#b45309" text-anchor="middle" font-weight="bold">鎌倉豆谷</text>
+                    </g>
+                     <g transform="translate(550, 230)">
+                        <use href="#k-shopPin" />
+                        <text x="0" y="-15" font-size="11" fill="#b45309" text-anchor="middle" font-weight="bold">鎌倉五郎</text>
+                    </g>
+                    <g transform="translate(680, 100)">
+                        <use href="#k-foodPin" />
+                        <text x="0" y="-15" font-size="11" fill="#b91c1c" text-anchor="middle" font-weight="bold">峰本</text>
+                    </g>
+                     <g transform="translate(520, 130)">
+                        <use href="#k-foodPin" />
+                        <text x="0" y="-15" font-size="11" fill="#b91c1c" text-anchor="middle" font-weight="bold">御代川</text>
+                    </g>
+
+                    <!-- 左側：長谷 -->
+                    <g transform="translate(200, 400)">
+                        <rect x="-35" y="-25" width="70" height="50" rx="5" fill="#fff" stroke="#15803d" stroke-width="3" />
+                        <text x="0" y="-2" font-size="16" font-weight="bold" text-anchor="middle" fill="#15803d">長谷站</text>
+                        <text x="0" y="16" font-size="12" text-anchor="middle" fill="#15803d">Hase</text>
+                    </g>
+                    <path d="M 200 375 L 200 260" stroke="#f87171" stroke-width="3" stroke-dasharray="5,5" marker-end="url(#k-arrow)" />
+                    <text x="210" y="320" font-size="12" fill="#ef4444" font-weight="bold">直走 7 分</text>
+                    <g transform="translate(230, 300)">
+                        <circle cx="0" cy="0" r="15" fill="#fff" stroke="#f59e0b" stroke-width="2"/>
+                        <text x="0" y="4" font-size="10" fill="#b45309" text-anchor="middle" font-weight="bold">銅鑼燒</text>
+                    </g>
+                    <g transform="translate(255, 420)">
+                        <use href="#k-spotPin" />
+                        <text x="0" y="-15" font-size="11" fill="#6d28d9" text-anchor="middle" font-weight="bold">四條金吾</text>
+                        <text x="0" y="-4" font-size="9" fill="#6d28d9" text-anchor="middle">(故居)</text>
+                    </g>
+                    <g transform="translate(200, 180)">
+                        <circle cx="0" cy="0" r="25" fill="#64748b" />
+                        <circle cx="0" cy="-25" r="4" fill="#64748b" />
+                        <path d="M -25 25 Q 0 40 25 25" fill="#64748b" />
+                        <text x="0" y="60" font-size="18" font-weight="bold" text-anchor="middle" fill="#334155">鎌倉大佛</text>
+                    </g>
+                    <g transform="translate(80, 380)">
+                        <path d="M 0 -20 L -20 10 L 20 10 Z" fill="#d97706" />
+                        <rect x="-15" y="10" width="30" height="20" fill="#b45309" />
+                        <circle cx="-15" cy="-10" r="5" fill="#f472b6" />
+                        <circle cx="15" cy="-5" r="5" fill="#f472b6" />
+                        <text x="0" y="50" font-size="16" font-weight="bold" text-anchor="middle" fill="#b45309">長谷寺</text>
+                        <text x="0" y="70" font-size="12" text-anchor="middle" fill="#92400e">庭園/海景</text>
+                    </g>
+                     <path d="M 165 400 L 110 400" stroke="#f87171" stroke-width="3" stroke-dasharray="5,5" fill="none" marker-end="url(#k-arrow)" />
+                     <g transform="translate(100, 450)">
+                        <use href="#k-shopPin" />
+                        <text x="0" y="-15" font-size="11" fill="#b45309" text-anchor="middle" font-weight="bold">KANNON</text>
+                        <text x="0" y="-4" font-size="9" fill="#b45309" text-anchor="middle">大佛可麗餅</text>
+                    </g>
+
+                    <!-- 樹木 -->
+                    <use href="#k-tree" x="500" y="200" transform="scale(1.5)" />
+                    <use href="#k-tree" x="450" y="250" />
+                    <use href="#k-tree" x="300" y="150" transform="scale(1.2)" />
+                    <use href="#k-tree" x="100" y="200" />
+                    <use href="#k-tree" x="700" y="300" />
+                    <use href="#k-tree" x="50" y="300" transform="scale(1.3)" />
+                    <g transform="translate(60, 60)">
+                        <circle cx="0" cy="0" r="25" fill="white" stroke="#cbd5e1" stroke-width="2" />
+                        <path d="M 0 -15 L 5 0 L 0 15 L -5 0 Z" fill="#94a3b8" />
+                        <text x="0" y="-28" font-size="14" font-weight="bold" text-anchor="middle" fill="#475569">N</text>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- 河口湖美食推薦 -->
+            <div class="food-recommendation">
+                <h4 class="text-orange-800 font-black text-lg mb-3 flex items-center">
+                    <i class="ri-cake-3-fill mr-2"></i> 河口湖必吃特產
+                </h4>
+                <div class="food-item">
+                    <span class="food-badge">甜點</span>
+                    <div>
+                        <strong class="text-slate-800 block">起司蛋糕花園</strong>
+                        <span class="text-slate-600 text-sm">遊覽船旁。濃郁起司，有免費咖啡。</span>
+                    </div>
+                </div>
+                <div class="food-item">
+                    <span class="food-badge">伴手禮</span>
+                    <div>
+                        <strong class="text-slate-800 block">富士山造型餅乾</strong>
+                        <span class="text-slate-600 text-sm">纜車站山腳。每日手工製作，送禮首選。</span>
+                    </div>
+                </div>
+                <div class="food-item">
+                    <span class="food-badge">甜點</span>
+                    <div>
+                        <strong class="text-slate-800 block">富士山布丁</strong>
+                        <span class="text-slate-600 text-sm">藍白相間的超可愛布丁。</span>
+                    </div>
+                </div>
+                <div class="food-item">
+                    <span class="food-badge">午餐</span>
+                    <div>
+                        <strong class="text-slate-800 block">池本茶屋</strong>
+                        <span class="text-slate-600 text-sm">忍野八海內。名水蕎麥麵、烤岩魚。</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 頁面 3: 日語 -->
+    <div id="page-japanese" class="page-content container mx-auto p-4 max-w-md">
+        <h2 class="text-lg font-bold text-slate-800 mb-2 pl-2 border-l-4 border-indigo-600">手指日語通</h2>
+        <p class="text-slate-500 text-sm mb-6">手指畫面給日本人看即可。</p>
+        <div id="japanese-content"></div>
+    </div>
+    
+    <!-- 頁面 5: 記帳與清單 (新功能) -->
+    <div id="page-accounting" class="page-content container mx-auto p-4 max-w-md">
+        <h2 class="text-lg font-bold text-slate-800 mb-4 pl-2 border-l-4 border-indigo-600">記帳與清單</h2>
+        
+        <!-- 購物清單 -->
+        <div class="app-card border-pink-200 bg-pink-50/20">
+            <h3 class="text-lg font-bold text-pink-800 mb-2 flex items-center"><i class="ri-list-check mr-2"></i>希望採購清單 (必買)</h3>
+            <div class="input-group">
+                <input type="text" id="wish-input" placeholder="輸入想買的東西..." class="custom-input">
+                <button onclick="addWishItem()" class="btn-add bg-pink-500"><i class="ri-add-line"></i></button>
+            </div>
+            <div id="wish-list" class="space-y-1"></div>
+        </div>
+
+        <!-- 支出紀錄 -->
+        <div class="app-card border-blue-200 bg-blue-50/20">
+            <div class="total-banner shadow-lg">
+                <p class="text-sm text-slate-300 uppercase tracking-wider mb-1">目前總支出 (日幣)</p>
+                <div class="flex items-baseline justify-center">
+                    <span class="text-xl mr-1">¥</span>
+                    <span id="total-expense" class="total-amount">0</span>
+                </div>
+            </div>
+            
+            <h3 class="text-lg font-bold text-blue-800 mb-2 flex items-center"><i class="ri-money-dollar-circle-fill mr-2"></i>新增支出紀錄</h3>
+            <div class="flex gap-2 mb-3">
+                <input type="text" id="expense-name" placeholder="品項 (如: 午餐)" class="custom-input" style="flex:2">
+                <input type="number" id="expense-price" placeholder="金額" class="custom-input" style="flex:1">
+            </div>
+            <button onclick="addExpenseItem()" class="w-full btn-add justify-center py-3 bg-blue-600 mb-4 shadow">新增一筆支出</button>
+            
+            <div class="border-t border-slate-200 pt-2">
+                <p class="text-xs text-slate-400 mb-2">最近 5 筆紀錄：</p>
+                <div id="expense-list" class="space-y-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 頁面 4: 求助 (SOS) -->
+    <div id="page-sos" class="page-content container mx-auto p-4 max-w-md">
+        <div class="bg-red-50 border-4 border-red-500 rounded-2xl p-6 text-center mb-6">
+            <h2 class="text-3xl font-black text-red-600 mb-4">🆘 緊急求助</h2>
+            <div class="space-y-4">
+                <div class="bg-white p-4 rounded-xl border-2 border-red-200">
+                    <p class="text-sm text-slate-500 mb-1">請幫我叫救護車</p>
+                    <p class="text-xl font-black text-slate-900">救急車を呼んでください。</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border-2 border-red-200">
+                    <p class="text-sm text-slate-500 mb-1">我是台灣人</p>
+                    <p class="text-xl font-black text-slate-900">私は台湾人です。</p>
+                </div>
+            </div>
+        </div>
+        <div class="app-card border-blue-200">
+            <h3 class="text-lg font-bold text-blue-800 mb-2">給司機看 (回民宿)</h3>
+            <div class="bg-slate-100 p-3 rounded-lg">
+                <p class="font-bold text-lg">東陽ハウス</p>
+                <p class="text-slate-600 text-sm">〒164-0001 東京都中野区中野5-46-5</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SOS 浮動按鈕 -->
+    <button onclick="switchPage('page-sos')" class="sos-btn">SOS</button>
+
+    <!-- 底部導航列 -->
+    <nav class="bottom-nav">
+        <a href="#" onclick="switchPage('page-itinerary')" class="nav-item active" id="nav-itinerary">
+            <i class="ri-calendar-todo-fill"></i> 行程
+        </a>
+        <a href="#" onclick="switchPage('page-maps')" class="nav-item" id="nav-maps">
+            <i class="ri-map-2-fill"></i> 地圖
+        </a>
+        <a href="#" onclick="switchPage('page-japanese')" class="nav-item" id="nav-japanese">
+            <i class="ri-translate-2"></i> 日語
+        </a>
+        <a href="#" onclick="switchPage('page-accounting')" class="nav-item" id="nav-accounting">
+            <i class="ri-wallet-3-fill"></i> 記帳
+        </a>
+        <a href="#" onclick="switchPage('page-sos')" class="nav-item text-red-600" id="nav-sos">
+            <i class="ri-alarm-warning-fill"></i> 求助
+        </a>
+    </nav>
+
+    <script>
+        // 日語資料庫
+        const jpData = [
+            {
+                title: "萬用溝通",
+                icon: "ri-chat-smile-2-fill",
+                items: [
+                    { zh: "謝謝", jp: "ありがとうございます" },
+                    { zh: "不好意思 / 請問一下", jp: "すみません" },
+                    { zh: "是 / 好的", jp: "はい" },
+                    { zh: "不是 / 不對", jp: "いいえ" },
+                    { zh: "我不懂日文", jp: "日本語がわかりません" },
+                    { zh: "請說慢一點", jp: "もっとゆっくり話してください" }
+                ]
+            },
+            {
+                title: "餐廳點餐",
+                icon: "ri-restaurant-fill",
+                items: [
+                    { zh: "請給我這個 (指圖片)", jp: "これをください" },
+                    { zh: "有推薦的嗎？", jp: "おすすめはありますか？" },
+                    { zh: "請問多少錢？", jp: "いくらですか？" },
+                    { zh: "請給我英文菜單", jp: "英語のメニューをください" },
+                    { zh: "我不吃肉", jp: "肉を食べられません" },
+                    { zh: "請去冰", jp: "氷なし（Kori-nashi）でお願いします" },
+                    { zh: "我要結帳", jp: "お会計をお願いします" },
+                    { zh: "洗手間在哪裡？", jp: "トイレはどこですか？" }
+                ]
+            },
+            {
+                title: "購物結帳",
+                icon: "ri-shopping-bag-3-fill",
+                items: [
+                    { zh: "可以免稅嗎？", jp: "免税（Tax Free）にできますか？" },
+                    { zh: "可以刷卡嗎？", jp: "クレジットカードは使えますか？" },
+                    { zh: "可以試穿嗎？", jp: "試着してもいいですか？" },
+                    { zh: "請給我袋子", jp: "袋をください" }
+                ]
+            },
+            {
+                title: "交通移動",
+                icon: "ri-train-fill",
+                items: [
+                    { zh: "我要去這裡 (指地圖)", jp: "ここに行きたいです" },
+                    { zh: "請問車站在哪裡？", jp: "駅はどこですか？" },
+                    { zh: "這班車會到 [目的地] 嗎？", jp: "この電車は [目的地] に行きますか？" }
+                ]
+            },
+            {
+                title: "住宿與突發",
+                icon: "ri-hotel-bed-fill",
+                items: [
+                    { zh: "我有預約", jp: "予約しています" },
+                    { zh: "可以寄放行李嗎？", jp: "荷物を預かってもらえますか？" },
+                    { zh: "我不舒服", jp: "具合が悪いです" }
+                ]
+            }
+        ];
+
+        const elderlyJpData = [
+            {
+                title: "體力與移動",
+                icon: "ri-wheelchair-fill",
+                items: [
+                    { zh: "請問電梯在哪裡？", jp: "エレベーターはどこですか？" },
+                    { zh: "請問手扶梯在哪裡？", jp: "エスカレーターはどこですか？" },
+                    { zh: "我有帶長輩，請開慢一點", jp: "高齢者がいます、ゆっくりお願いします" },
+                    { zh: "這附近有可以休息的地方嗎？", jp: "近くに座れるところはありますか？" },
+                    { zh: "我的腳不方便，無法走樓梯", jp: "足が悪いので、階段は使えません" }
+                ]
+            },
+            {
+                title: "用餐需求",
+                icon: "ri-cup-fill",
+                items: [
+                    { zh: "請給我溫開水 / 熱水", jp: "温かいお水（白湯）をください" },
+                    { zh: "我不吃太硬的東西", jp: "硬いものは食べられません" },
+                    { zh: "請幫我把味道做淡一點", jp: "味を薄めにしてください" },
+                    { zh: "我要吃藥，請給我水", jp: "薬を飲むので、お水をください" },
+                    { zh: "請給我叉子或湯匙", jp: "フォークかスプーンをください" }
+                ]
+            },
+            {
+                title: "住宿舒適度",
+                icon: "ri-hotel-fill",
+                items: [
+                    { zh: "請給我靠近電梯的房間", jp: "エレベーターに近い部屋がいいです" },
+                    { zh: "房間太冷了", jp: "部屋が寒いです" },
+                    { zh: "我想多要一條棉被", jp: "毛布をもう一枚ください" },
+                    { zh: "浴室有防滑墊嗎？", jp: "お風呂に滑り止めはありますか？" }
+                ]
+            },
+            {
+                title: "健康與緊急",
+                icon: "ri-medical-cross-fill",
+                items: [
+                    { zh: "請問有「坐式」馬桶嗎？", jp: "洋式トイレはありますか？" },
+                    { zh: "我覺得不舒服", jp: "気分が悪いです" },
+                    { zh: "我有高血壓 / 糖尿病", jp: "高血圧 / 糖尿病 です" },
+                    { zh: "請寫下來", jp: "紙に書いてください" }
+                ]
+            }
+        ];
+
+        const itineraryData = [
+            { 
+                day: "Day 1", date: "1/23 (五)", title: "抵達與入住", icon: "ri-flight-land-fill", color: "bg-blue-50", 
+                desc: "機場 ➝ 東京站 ➝ 中野",
+                content: `
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4">
+                        <h4 class="font-bold text-slate-700 mb-2">🚌 機場交通詳細指引</h4>
+                        <p class="mb-1 text-sm"><strong>1. LCB 巴士 (需購票/車上付)</strong></p>
+                        <p class="text-xs text-slate-600 mb-1">乘車處：T3(1號), T2(6號), T1(31號)</p>
+                        <p class="text-sm text-slate-500">成田 ➝ 東京站 (日本橋口)。費用：¥1,300。</p>
+                        <div class="grid grid-cols-4 gap-2 text-center text-sm font-mono my-2">
+                            <div class="bg-white p-1 rounded border">18:00</div><div class="bg-white p-1 rounded border">18:10</div>
+                            <div class="bg-white p-1 rounded border">18:20</div><div class="bg-white p-1 rounded border">18:30</div>
+                        </div>
+                        
+                        <p class="mb-1 text-sm mt-3"><strong>2. 轉乘：步行 5 分鐘</strong></p>
+                        <p class="text-xs text-slate-500">下車後步行至「JR東京站」。</p>
+
+                        <p class="mb-1 text-sm mt-3"><strong>3. JR 中央線快速 (刷西瓜卡)</strong></p>
+                        <p class="text-xs text-slate-500 mb-1">方向：往 <span class="font-bold text-orange-600">高尾 / 豐田</span></p>
+                        <p class="text-sm text-slate-500">東京 ➝ 中野 (約20分)。費用：¥230。</p>
+                        
+                        <a href="https://www.google.com/maps/search/?api=1&query=Nakano+Station" target="_blank" class="map-link mt-2"><i class="ri-map-pin-2-fill"></i> 導航至中野站</a>
+                    </div>
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-800">🍜 晚餐推薦 (中野 Sun Mall)</h4>
+                        <div class="flex items-center justify-between bg-white p-2 rounded border border-slate-100">
+                            <div><span class="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded mr-2">拉麵</span><strong>青葉</strong></div>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Chuka+Soba+Aoba+Nakano" target="_blank" class="text-blue-600"><i class="ri-map-pin-2-fill"></i></a>
+                        </div>
+                        <div class="flex items-center justify-between bg-white p-2 rounded border border-slate-100">
+                            <div><span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-2">超市</span><strong>Life</strong></div>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Life+Nakano" target="_blank" class="text-blue-600"><i class="ri-map-pin-2-fill"></i></a>
+                        </div>
+                    </div>
+                `
+            },
+            { 
+                day: "Day 2", date: "1/24 (六)", title: "信濃町廣布誓願堂", icon: "ri-building-4-fill", color: "bg-indigo-50", 
+                desc: "SGI 設施巡禮",
+                content: `
+                    <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 mb-4">
+                        <h4 class="font-bold text-indigo-800 mb-2">🚄 交通方式</h4>
+                        <p class="text-sm"><strong>路線：</strong>JR中野站 ➔ JR信濃町站 (約20分)</p>
+                        <p class="text-sm text-slate-600 mt-1">搭乘「<span class="font-bold text-yellow-600 bg-yellow-100 px-1 rounded">JR中央總武線 (各站停車，黃色車廂)</span>」。</p>
+                        <p class="text-sm font-bold text-slate-700 mt-2">費用：¥180</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded-xl border border-indigo-100 shadow-sm">
+                            <h4 class="font-bold text-indigo-800 mb-2">📍 參訪重點</h4>
+                            <ul class="space-y-3">
+                                <li>
+                                    <strong>1. 廣宣流布誓願堂</strong> <span class="price-tag">憑券</span>
+                                    <p class="text-xs text-slate-500 ml-4 mt-1">出站步行 3 分鐘。</p>
+                                    <a href="https://www.google.com/maps/search/?api=1&query=Kosen-rufu+Daiseido" target="_blank" class="map-link"><i class="ri-map-pin-2-fill"></i> 導航</a>
+                                </li>
+                                <li>
+                                    <strong>2. 民音音樂博物館</strong> <span class="price-tag">免費</span>
+                                    <p class="text-xs text-slate-500 ml-4 mt-1">展示古董鋼琴與音樂盒。</p>
+                                    <a href="https://www.google.com/maps/search/?api=1&query=Min-On+Music+Museum" target="_blank" class="map-link"><i class="ri-map-pin-2-fill"></i> 導航</a>
+                                </li>
+                                <li>
+                                    <strong>3. 世界聖教會館</strong>
+                                    <p class="text-xs text-slate-500 ml-4 mt-1">大廳非常莊嚴。</p>
+                                    <a href="https://www.google.com/maps/search/?api=1&query=Soka+Gakkai+World+Seikyo+Center" target="_blank" class="map-link"><i class="ri-map-pin-2-fill"></i> 導航</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 mb-2">🍽️ 休憩推薦</h4>
+                            <div class="space-y-2">
+                                <div class="bg-white p-2 rounded border">
+                                    <strong>Atre 信濃町 (車站大樓)</strong>
+                                    <p class="text-xs text-slate-500">有多家餐廳與咖啡廳。</p>
+                                    <a href="https://www.google.com/maps/search/?api=1&query=atre+Shinanomachi" target="_blank" class="map-link inline-flex"><i class="ri-map-pin-2-fill"></i> 導航</a>
+                                </div>
+                                <div class="bg-white p-2 rounded border">
+                                    <strong>博文堂書店</strong>
+                                    <p class="text-xs text-slate-500">可購買御書、佛具。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            { 
+                day: "Day 3", date: "1/25 (日)", title: "鎌倉慢活之旅", icon: "ri-ancient-gate-fill", color: "bg-emerald-50", 
+                desc: "大佛、四條金吾故居",
+                content: `
+                    <!-- 貼心提醒 -->
+                    <div class="grid grid-cols-3 gap-2 text-xs mb-4">
+                        <div class="bg-emerald-100 p-2 rounded text-center text-emerald-900 font-bold">🔥 保暖第一<br><span class="font-normal text-[10px]">海邊風大</span></div>
+                        <div class="bg-emerald-100 p-2 rounded text-center text-emerald-900 font-bold">💳 西瓜卡<br><span class="font-normal text-[10px]">建議儲值¥3000</span></div>
+                        <div class="bg-emerald-100 p-2 rounded text-center text-emerald-900 font-bold">🍵 隨時休息<br><span class="font-normal text-[10px]">不要勉強</span></div>
+                    </div>
+
+                    <!-- 交通資訊 -->
+                    <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200 mb-4">
+                        <h4 class="font-bold text-emerald-900 mb-2">🚄 交通：中野 ➝ 鎌倉</h4>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex gap-2">
+                                <span class="bg-emerald-200 px-2 rounded text-emerald-800 font-bold h-fit">去程</span>
+                                <div>
+                                    <p class="font-bold">08:58 新宿發 (JR湘南新宿線)</p>
+                                    <p class="text-xs text-slate-600">往 <span class="font-bold">逗子 (Zushi)</span> ★直達不轉車</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <span class="bg-emerald-200 px-2 rounded text-emerald-800 font-bold h-fit">回程</span>
+                                <div>
+                                    <p class="font-bold">17:19 鎌倉發</p>
+                                    <p class="text-xs text-slate-600">往 <span class="font-bold">宇都宮</span> (直達新宿)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 景點清單 -->
+                    <div class="space-y-4">
+                        <h4 class="font-bold text-slate-800 border-l-4 border-emerald-500 pl-2">📍 參訪景點</h4>
+                        <div class="space-y-4">
+                            <!-- 鎌倉站區 -->
+                            <div>
+                                <h5 class="font-bold text-emerald-700 mb-1">1. 鎌倉站周邊</h5>
+                                <div class="pl-2 border-l-2 border-slate-200 space-y-2">
+                                    <div class="flex justify-between items-center">
+                                        <span><strong>小町通商店街</strong> (逛街/伴手禮)</span>
+                                        <a href="https://www.google.com/maps/search/?api=1&query=Komachi+Dori" target="_blank" class="map-link"><i class="ri-map-pin-2-fill"></i> 導航</a>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span><strong>鶴岡八幡宮</strong> (下方參拜即可)</span>
+                                        <a href="https://www.google.com/maps/search/?api=1&query=Tsurugaoka+Hachimangu" target="_blank" class="map-link"><i class="ri-map-pin-2-fill"></i> 導航</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 長谷站區 -->
+                            <div>
+                                <h5 class="font-bold text-emerald-700 mb-1">2. 長谷站 (江之電)</h5>
+                                <div class="pl-2 border-l-2 border-slate-200 space-y-2">
+                                    <div class="bg-white p-2 rounded border border-slate-100">
+                                        <div class="flex justify-between">
+                                            <strong>四條金吾故居 (收玄寺)</strong>
+                                            <a href="https://www.google.com/maps/search/?api=1&query=Shugenji+Kamakura" target="_blank" class="text-blue-600"><i class="ri-map-pin-2-fill"></i></a>
+                                        </div>
+                                        <p class="text-xs text-slate-500">出站步行 1 分鐘。</p>
+                                    </div>
+                                    <div class="bg-white p-2 rounded border border-slate-100">
+                                        <div class="flex justify-between">
+                                            <strong>鎌倉大佛 (高德院)</strong>
+                                            <a href="https://www.google.com/maps/search/?api=1&query=Kotoku-in" target="_blank" class="text-blue-600"><i class="ri-map-pin-2-fill"></i></a>
+                                        </div>
+                                        <p class="text-xs text-slate-500">出站步行 7 分鐘 (平路)。門票 ¥300。</p>
+                                    </div>
+                                    <div class="bg-white p-2 rounded border border-slate-100">
+                                        <div class="flex justify-between">
+                                            <strong>長谷寺</strong>
+                                            <a href="https://www.google.com/maps/search/?api=1&query=Hasedera+Kamakura" target="_blank" class="text-blue-600"><i class="ri-map-pin-2-fill"></i></a>
+                                        </div>
+                                        <p class="text-xs text-slate-500">觀音與庭園。門票 ¥400。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 美食 -->
+                    <div class="mt-6">
+                        <h4 class="font-bold text-slate-800 mb-2">🍛 美食推薦</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center bg-orange-50 p-2 rounded">
+                                <div>
+                                    <strong>秋本 (Akimoto)</strong>
+                                    <span class="text-xs text-slate-500 ml-2">吻仔魚丼 (鎌倉站旁)</span>
+                                </div>
+                                <a href="https://www.google.com/maps/search/?api=1&query=Akimoto+Kamakura" target="_blank" class="map-link"><i class="ri-map-pin-2-fill"></i></a>
+                            </div>
+                            <div class="flex justify-between items-center bg-orange-50 p-2 rounded">
+                                <div>
+                                    <strong>御代川</strong>
+                                    <span class="text-xs text-slate-500 ml-2">日式料理</span>
+                                </div>
+                                <a href="https://www.google.com/maps/search/?api=1&query=Miyokawa+Kamakura" target="_blank" class="map-link"><i class="ri-map-pin-2-fill"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            { 
+                day: "Day 4", date: "1/26 (一)", title: "八王子文化之旅", icon: "ri-book-open-fill", color: "bg-orange-50", 
+                desc: "創價大學、富士美術館",
+                content: `
+                    <!-- 交通資訊 -->
+                    <div class="bg-orange-50 p-4 rounded-xl border border-orange-100 mb-4">
+                        <h4 class="font-bold text-orange-800 mb-2">🚌 交通方式</h4>
+                        <div class="mb-3">
+                            <p class="text-sm font-bold mb-1">1. JR 電車 (中野 ➝ 八王子)</p>
+                            <p class="text-xs text-slate-600">搭乘中央線快速。約 40 分鐘。</p>
+                            <p class="text-xs font-bold text-slate-700">費用：¥490</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold mb-1">2. 巴士 (八王子站北口)</p>
+                            <p class="text-xs text-slate-600">前往 <strong>11、12、14 號</strong> 站牌。</p>
+                            <p class="text-xs text-slate-600">搭乘往「創價大學」或「富士美術館」方向。</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                            <h4 class="font-bold text-slate-800 mb-2">📍 參觀資訊</h4>
+                            <ul class="space-y-3">
+                                <li>
+                                    <div class="flex justify-between">
+                                        <strong>東京富士美術館</strong>
+                                        <a href="https://www.google.com/maps/search/?api=1&query=Tokyo+Fuji+Art+Museum" target="_blank" class="map-link"><i class="ri-map-pin-2-fill"></i> 導航</a>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-1">門票：¥800-1300</p>
+                                    <p class="text-xs text-red-500 font-bold">⚠️ 請務必確認週一是否有開館！</p>
+                                </li>
+                                <li>
+                                    <div class="flex justify-between">
+                                        <strong>創價大學</strong>
+                                        <a href="https://www.google.com/maps/search/?api=1&query=Soka+University" target="_blank" class="map-link"><i class="ri-map-pin-2-fill"></i> 導航</a>
+                                    </div>
+                                    <span class="price-tag mt-1">免費參觀</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 mb-2">🍽️ 午餐：創大食堂</h4>
+                            <div class="flex justify-between items-center bg-white p-2 rounded border">
+                                <div>
+                                    <span class="font-bold">New Prince Hall</span>
+                                    <p class="text-xs text-slate-500">推薦「創大午餐」或「創大咖哩」</p>
+                                </div>
+                                <a href="https://www.google.com/maps/search/?api=1&query=New+Prince+Hall+Soka" target="_blank" class="text-blue-600"><i class="ri-map-pin-2-fill"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            { 
+                day: "Day 5", date: "1/27 (二)", title: "富士山河口湖", icon: "ri-mountain-fill", color: "bg-sky-50", 
+                desc: "纜車、遊覽船、忍野八海",
+                content: `
+                    <!-- 交通 -->
+                    <div class="bg-sky-50 p-4 rounded-xl border border-sky-200 mb-4">
+                        <h4 class="font-bold text-sky-900 mb-2">🚌 高速巴士 (需預約)</h4>
+                        <div class="bg-white p-3 rounded-lg border border-sky-100 text-sm space-y-2 mb-3">
+                            <p><strong>網站：</strong>Highwaybus.com (選 Web 車票)</p>
+                            <p><strong>費用：</strong>單程約 ¥2,200</p>
+                            <p><strong>車程：</strong>約 2 小時</p>
+                            <p class="text-red-600 font-bold">⚠️ 請提早 15 分鐘抵達新宿南口 4F 巴士總站。</p>
+                        </div>
+                        
+                        <div class="flex justify-between items-center mb-2">
+                            <div>
+                                <span class="font-bold block">去程 (新宿 Busta)</span>
+                                <span class="text-xs text-slate-500">建議 07:45 / 08:15 發車</span>
+                            </div>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Busta+Shinjuku" target="_blank" class="map-link"><i class="ri-map-pin-2-fill"></i> 導航</a>
+                        </div>
+                        <div class="flex justify-between items-center">
+                             <div>
+                                <span class="font-bold block">回程 (河口湖站)</span>
+                                <span class="text-xs text-slate-500">建議 16:00 / 16:30 發車</span>
+                            </div>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Kawaguchiko+Station" target="_blank" class="map-link"><i class="ri-map-pin-2-fill"></i> 導航</a>
+                        </div>
+                    </div>
+
+                    <!-- 景點 -->
+                    <div class="space-y-4">
+                        <h4 class="font-bold text-slate-800 border-l-4 border-sky-500 pl-2">📍 必遊景點</h4>
+                        
+                        <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                            <div class="flex justify-between mb-1">
+                                <strong class="text-lg">🚡 天上山公園纜車</strong>
+                                <a href="https://www.google.com/maps/search/?api=1&query=Mt.+Fuji+Panoramic+Ropeway" target="_blank" class="map-link"><i class="ri-map-pin-2-fill"></i></a>
+                            </div>
+                            <p class="text-sm text-slate-500">俯瞰河口湖全景。來回 ¥1,000。</p>
+                            <p class="text-xs text-pink-500 mt-1 font-bold"><i class="ri-store-2-fill"></i> 必買：Fujiyama Cookie (山腳下)</p>
+                        </div>
+
+                        <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                            <div class="flex justify-between mb-1">
+                                <strong class="text-lg">🚢 遊覽船天晴號</strong>
+                                <a href="https://www.google.com/maps/search/?api=1&query=Lake+Kawaguchi+Pleasure+Boat" target="_blank" class="map-link"><i class="ri-map-pin-2-fill"></i></a>
+                            </div>
+                            <p class="text-sm text-slate-500">湖上賞逆富士。¥1,000。</p>
+                            <p class="text-xs text-pink-500 mt-1 font-bold"><i class="ri-cake-3-fill"></i> 必吃：起司蛋糕花園 (附近)</p>
+                        </div>
+
+                        <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                            <div class="flex justify-between mb-1">
+                                <strong class="text-lg">🗻 忍野八海</strong>
+                                <a href="https://www.google.com/maps/search/?api=1&query=Oshino+Hakkai" target="_blank" class="map-link"><i class="ri-map-pin-2-fill"></i></a>
+                            </div>
+                            <p class="text-sm text-slate-500">清澈湧泉群。需從河口湖轉乘巴士約 20 分。</p>
+                            <div class="mt-2 bg-orange-50 p-2 rounded">
+                                <span class="text-xs font-bold text-orange-800">🍜 午餐推薦：</span>
+                                <div class="flex justify-between items-center mt-1">
+                                    <span>池本茶屋 (蕎麥麵)</span>
+                                    <a href="https://www.google.com/maps/search/?api=1&query=Ikemoto+Chaya" target="_blank" class="text-blue-600"><i class="ri-map-pin-2-fill"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            { 
+                day: "Day 6", date: "1/28 (三)", title: "築地與自由行", icon: "ri-store-3-fill", color: "bg-yellow-50", 
+                desc: "築地美食、新宿御苑",
+                content: `
+                    <!-- 交通資訊 -->
+                    <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-200 mb-4">
+                        <h4 class="font-bold text-yellow-800 mb-2">🚇 交通方式</h4>
+                        <p class="text-sm font-bold">中野(東西線) ➔ 茅場町 ➔ 築地(日比谷線)</p>
+                        <p class="text-sm text-slate-600 mt-1">單程費用：約 ¥250</p>
+                        <p class="text-xs text-slate-500">車程約 40 分鐘。</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-white p-3 rounded border border-slate-200">
+                            <h4 class="font-bold text-slate-800 mb-2">🍣 築地場外市場</h4>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Tsukiji+Outer+Market" target="_blank" class="map-link w-full justify-center mb-2"><i class="ri-map-pin-2-fill"></i> 導航到市場</a>
+                            <p class="text-sm text-slate-600">推薦：丸武玉子燒、狐狸屋牛丼。</p>
+                        </div>
+                        <div class="bg-white p-3 rounded border border-slate-200">
+                            <h4 class="font-bold text-slate-800 mb-2">🌳 新宿御苑</h4>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Shinjuku+Gyoen" target="_blank" class="map-link w-full justify-center mb-2"><i class="ri-map-pin-2-fill"></i> 導航到御苑</a>
+                            <p class="text-sm text-slate-600">長輩優惠價 ¥250。下午悠閒散步。</p>
+                        </div>
+                        <div class="bg-white p-3 rounded border border-slate-200">
+                            <h4 class="font-bold text-slate-800 mb-2">🛍️ 多慶屋 (御徒町)</h4>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Takeya+Okachimachi" target="_blank" class="map-link w-full justify-center mb-2"><i class="ri-map-pin-2-fill"></i> 導航到多慶屋</a>
+                            <p class="text-sm text-slate-600">紫色建築免稅店，買藥妝零食最便宜。</p>
+                        </div>
+                    </div>
+                `
+            },
+            { 
+                day: "Day 7", date: "1/29 (四)", title: "返家", icon: "ri-flight-takeoff-fill", color: "bg-slate-50", 
+                desc: "中野補給 ➝ 機場",
+                content: `
+                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 mb-4">
+                        <strong class="text-red-700 block mb-1">⚠️ 時間提醒</strong>
+                        <ul class="list-disc pl-4 text-sm text-slate-700 space-y-1">
+                            <li>建議 <strong>13:30</strong> 離開中野。</li>
+                            <li>務必於 <strong>15:30</strong> 前抵達機場。</li>
+                            <li>飛機 <strong>18:30</strong> 起飛。</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4 class="font-bold text-slate-800 mb-2">🛍️ 最後補給：中野百老匯</h4>
+                        <p class="text-sm text-slate-600 mb-2">地下街有超市與藥妝，價格實惠。</p>
+                        <a href="https://www.google.com/maps/search/?api=1&query=Nakano+Broadway" target="_blank" class="map-link inline-flex"><i class="ri-map-pin-2-fill"></i> 導航</a>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-slate-800">✈️ 回程交通方案</h4>
+                        <div class="bg-white p-3 rounded border border-slate-200">
+                            <div class="flex justify-between">
+                                <strong>方案 A：新宿搭 N'EX</strong>
+                                <a href="https://www.google.com/maps/search/?api=1&query=Shinjuku+Station" target="_blank" class="text-blue-600"><i class="ri-map-pin-2-fill"></i></a>
+                            </div>
+                            <span class="text-sm text-slate-500">直達機場，有劃位，舒適輕鬆。</span>
+                            <p class="text-xs font-bold text-slate-700 mt-1">費用：約 ¥3,200</p>
+                        </div>
+                        <div class="bg-white p-3 rounded border border-slate-200">
+                            <div class="flex justify-between">
+                                <strong>方案 B：東京站搭巴士</strong>
+                                <a href="https://www.google.com/maps/search/?api=1&query=Tokyo+Station+Yaesu+South+Exit" target="_blank" class="text-blue-600"><i class="ri-map-pin-2-fill"></i></a>
+                            </div>
+                            <span class="text-sm text-slate-500">LCB 巴士 (八重洲南口)，經濟實惠。</span>
+                            <p class="text-xs font-bold text-slate-700 mt-1">費用：約 ¥1,530</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4 bg-blue-50 p-3 rounded-lg">
+                            <span class="font-bold text-lg text-blue-900">終點：成田機場</span>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Narita+Airport" target="_blank" class="map-link"><i class="ri-map-pin-2-fill"></i> 導航</a>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        // 初始化行程列表
+        const listContainer = document.getElementById('itinerary-list');
+        itineraryData.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = `app-card ${item.color} flex items-center p-4 cursor-pointer active:scale-95 transition-transform`;
+            card.onclick = () => openDetail(index);
+            card.innerHTML = `
+                <div class="bg-white w-12 h-12 rounded-full flex items-center justify-center text-2xl text-slate-700 mr-4 shadow-sm">
+                    <i class="${item.icon}"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-baseline">
+                        <span class="text-xs font-bold text-slate-500 uppercase">${item.day}</span>
+                        <span class="text-xs text-slate-400">${item.date}</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 leading-tight">${item.title}</h3>
+                    <p class="text-sm text-slate-600 mt-1">${item.desc}</p>
+                </div>
+                <i class="ri-arrow-right-s-line text-slate-400 text-xl"></i>
+            `;
+            listContainer.appendChild(card);
+        });
+
+        // 開啟詳情頁 (包含行程與每日紀錄)
+        function openDetail(index) {
+            const data = itineraryData[index];
+            document.getElementById('detail-title').innerText = `${data.day} ${data.title}`;
+            document.getElementById('detail-date').innerText = data.date;
+            
+            // 1. 渲染靜態內容
+            const container = document.getElementById('detail-content');
+            container.innerHTML = data.content;
+
+            // 2. 渲染每日筆記區 (功能 1: 每日旅遊紀錄)
+            const recordKey = `trip_record_${index}`; // 每個行程獨立的 Key
+            const savedText = localStorage.getItem(recordKey) || "";
+
+            const recordDiv = document.createElement('div');
+            recordDiv.className = "mt-8 pt-6 border-t-2 border-dashed border-slate-200";
+            recordDiv.innerHTML = `
+                <h3 class="font-bold text-slate-800 text-lg mb-3 flex items-center">
+                    <i class="ri-edit-circle-fill text-indigo-500 mr-2 text-xl"></i> 我的旅遊紀錄
+                </h3>
+                <div class="relative">
+                    <textarea id="record-area" 
+                        class="w-full p-4 rounded-xl border border-slate-300 bg-yellow-50/50 focus:bg-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all text-slate-700 leading-relaxed shadow-inner" 
+                        rows="5" 
+                        placeholder="點擊這裡寫下今天的心情、開銷或備忘錄...\n(內容會自動儲存於此裝置)">${savedText}</textarea>
+                    <div id="save-indicator" class="absolute bottom-3 right-3 text-xs text-green-600 font-bold opacity-0 transition-opacity bg-white/80 px-2 py-1 rounded-full shadow-sm pointer-events-none">
+                        <i class="ri-check-double-line"></i> 已儲存
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(recordDiv);
+
+            // 綁定自動儲存
+            const textarea = document.getElementById('record-area');
+            const indicator = document.getElementById('save-indicator');
+            let timeoutId;
+
+            textarea.addEventListener('input', (e) => {
+                localStorage.setItem(recordKey, e.target.value);
+                indicator.classList.remove('opacity-0');
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => {
+                    indicator.classList.add('opacity-0');
+                }, 2000);
+            });
+            
+            // 隱藏主標題，顯示詳情頁
+            document.getElementById('main-header').style.display = 'none';
+            switchPage('page-detail');
+        }
+
+        // 渲染日語內容
+        function renderJapanese() {
+            const container = document.getElementById('japanese-content');
+            if (!container) return;
+
+            // 一般旅遊日語
+            jpData.forEach(category => {
+                container.innerHTML += `<div class="category-header"><i class="${category.icon}"></i>${category.title}</div>`;
+                category.items.forEach(item => {
+                    container.innerHTML += `
+                        <div class="phrase-card">
+                            <p class="phrase-zh">${item.zh}</p>
+                            <p class="phrase-jp">${item.jp}</p>
+                        </div>
+                    `;
+                });
+            });
+
+            // 銀髮族專用區
+            container.innerHTML += `
+                <div class="elderly-section">
+                    <div class="elderly-title">👴👵 銀髮族專用補充</div>
+                    <div id="elderly-content"></div>
+                </div>
+            `;
+            
+            const elderlyContainer = document.getElementById('elderly-content');
+            elderlyJpData.forEach(category => {
+                elderlyContainer.innerHTML += `<div class="font-bold text-orange-800 mt-4 mb-2 text-lg"><i class="${category.icon} mr-2"></i>${category.title}</div>`;
+                category.items.forEach(item => {
+                    elderlyContainer.innerHTML += `
+                        <div class="phrase-card elderly-phrase border-orange-200 bg-white">
+                            <p class="phrase-zh text-slate-700">${item.zh}</p>
+                            <p class="phrase-jp">${item.jp}</p>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        // --- 功能 2: 記帳與清單邏輯 ---
+        
+        // 讀取資料
+        function getStorageData(key, defaultVal = []) {
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : defaultVal;
+        }
+        
+        function setStorageData(key, data) {
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        // 渲染願望清單
+        function renderWishlist() {
+            const list = getStorageData('wishlist');
+            const container = document.getElementById('wish-list');
+            container.innerHTML = '';
+            
+            list.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = `list-item ${item.checked ? 'checked' : ''}`;
+                div.innerHTML = `
+                    <div class="flex items-center flex-1 cursor-pointer" onclick="toggleWish(${index})">
+                        <i class="ri-${item.checked ? 'checkbox-circle-fill text-pink-400' : 'checkbox-blank-circle-line text-slate-300'} text-xl mr-2"></i>
+                        <span class="item-text font-medium text-slate-700">${item.text}</span>
+                    </div>
+                    <button onclick="deleteWish(${index})" class="delete-btn"><i class="ri-delete-bin-line"></i></button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addWishItem() {
+            const input = document.getElementById('wish-input');
+            const text = input.value.trim();
+            if (!text) return;
+            
+            const list = getStorageData('wishlist');
+            list.push({ text: text, checked: false });
+            setStorageData('wishlist', list);
+            input.value = '';
+            renderWishlist();
+        }
+
+        function toggleWish(index) {
+            const list = getStorageData('wishlist');
+            list[index].checked = !list[index].checked;
+            setStorageData('wishlist', list);
+            renderWishlist();
+        }
+
+        function deleteWish(index) {
+            const list = getStorageData('wishlist');
+            list.splice(index, 1);
+            setStorageData('wishlist', list);
+            renderWishlist();
+        }
+
+        // 渲染支出紀錄
+        function renderExpenses() {
+            const list = getStorageData('expenses');
+            const container = document.getElementById('expense-list');
+            const totalEl = document.getElementById('total-expense');
+            
+            container.innerHTML = '';
+            let total = 0;
+            
+            // 只顯示最近 5 筆，但計算全部總和
+            const reversedList = [...list].reverse();
+            
+            list.forEach(item => total += parseInt(item.price));
+            totalEl.innerText = total.toLocaleString();
+
+            reversedList.slice(0, 5).forEach((item) => {
+                const originalIndex = list.indexOf(item); // 找到原始索引以便刪除
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                div.innerHTML = `
+                    <div class="flex flex-col">
+                        <span class="font-bold text-slate-700">${item.name}</span>
+                        <span class="text-xs text-slate-400">${item.date}</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="font-bold text-blue-600 mr-2">¥${parseInt(item.price).toLocaleString()}</span>
+                        <button onclick="deleteExpense(${originalIndex})" class="delete-btn"><i class="ri-delete-bin-line"></i></button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addExpenseItem() {
+            const nameInput = document.getElementById('expense-name');
+            const priceInput = document.getElementById('expense-price');
+            const name = nameInput.value.trim();
+            const price = priceInput.value.trim();
+            
+            if (!name || !price) return;
+            
+            const list = getStorageData('expenses');
+            const date = new Date();
+            const dateStr = `${date.getMonth()+1}/${date.getDate()} ${date.getHours()}:${date.getMinutes().toString().padStart(2,'0')}`;
+            
+            list.push({ name, price, date: dateStr });
+            setStorageData('expenses', list);
+            
+            nameInput.value = '';
+            priceInput.value = '';
+            renderExpenses();
+        }
+
+        function deleteExpense(index) {
+            if(!confirm("確定刪除這筆支出紀錄？")) return;
+            const list = getStorageData('expenses');
+            list.splice(index, 1);
+            setStorageData('expenses', list);
+            renderExpenses();
+        }
+
+        // 頁面切換邏輯
+        function switchPage(pageId) {
+            // 隱藏所有頁面
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            // 顯示目標頁面
+            document.getElementById(pageId).classList.add('active');
+            
+            // 如果是切回首頁，顯示主標題
+            if (pageId !== 'page-detail') {
+                document.getElementById('main-header').style.display = 'flex';
+            }
+
+            // 更新底部導航狀態
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            const navId = 'nav-' + pageId.replace('page-', '');
+            // 特殊處理詳情頁的導航高亮
+            const activeNavId = (pageId === 'page-detail') ? 'nav-itinerary' : navId;
+            const activeNav = document.getElementById(activeNavId);
+            if(activeNav) activeNav.classList.add('active');
+
+            // 捲動到頂部
+            window.scrollTo(0, 0);
+
+            // 如果切換到記帳頁面，刷新列表
+            if (pageId === 'page-accounting') {
+                renderWishlist();
+                renderExpenses();
+            }
+        }
+
+        // 啟動初始化
+        renderJapanese();
+        // 預先加載一次記帳數據 (避免空值)
+        renderWishlist();
+        renderExpenses();
+
+    </script>
+</body>
+</html>
