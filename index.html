@@ -183,17 +183,21 @@
         }
         .elderly-phrase .phrase-jp { color: #c2410c; font-size: 1.8rem; }
 
-        /* 記帳與清單專用樣式 - 輸入框加大 */
-        .input-group { display: flex; gap: 10px; margin-bottom: 16px; }
+        /* 記帳與清單專用樣式 - 輸入框加大與修正版面 */
+        .input-group { display: flex; gap: 10px; margin-bottom: 16px; align-items: stretch; }
         .custom-input {
-            flex: 1; padding: 14px; border-radius: 12px; border: 2px solid #cbd5e1;
+            flex: 1; 
+            min-width: 0; /* 關鍵修正：防止輸入框撐開容器 */
+            width: 100%;
+            padding: 14px; border-radius: 12px; border: 2px solid #cbd5e1;
             font-size: 1.2rem; outline: none; transition: border-color 0.2s;
             background-color: #f8fafc;
         }
         .custom-input:focus { border-color: #4f46e5; background-color: #fff; }
         .btn-add {
             background-color: #4f46e5; color: white; border-radius: 12px;
-            padding: 0 20px; font-weight: bold; display: flex; align-items: center; font-size: 1.2rem;
+            padding: 0 20px; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+            flex-shrink: 0; /* 防止按鈕被壓縮 */
         }
         
         .list-item {
@@ -204,7 +208,7 @@
         .list-item.checked { background-color: #f1f5f9; opacity: 0.8; }
         .list-item.checked .item-text { text-decoration: line-through; color: #94a3b8; }
         .delete-btn { color: #ef4444; padding: 8px; margin-left: 12px; font-size: 1.4rem; }
-        .item-text { font-size: 1.2rem; color: #334155; }
+        .item-text { font-size: 1.2rem; color: #334155; word-break: break-all; }
         
         .total-banner {
             background: #1e293b; color: white; padding: 20px; border-radius: 16px;
@@ -587,9 +591,11 @@
             </div>
             
             <h3 class="text-xl font-black text-blue-800 mb-3 flex items-center"><i class="ri-money-dollar-circle-fill mr-2 text-2xl"></i>新增支出紀錄</h3>
-            <div class="flex gap-3 mb-4">
-                <input type="text" id="expense-name" placeholder="品項 (如: 午餐)" class="custom-input" style="flex:2">
-                <input type="number" id="expense-price" placeholder="金額" class="custom-input" style="flex:1">
+            
+            <!-- 修改為上下排列，更適合銀髮族大字體操作 -->
+            <div class="flex flex-col gap-4 mb-4">
+                <input type="text" id="expense-name" placeholder="品項名稱 (例如: 午餐)" class="custom-input w-full">
+                <input type="number" id="expense-price" placeholder="金額 (日幣)" class="custom-input w-full">
             </div>
             <button onclick="addExpenseItem()" class="w-full btn-add justify-center py-4 bg-blue-600 mb-5 shadow-lg text-xl">新增一筆支出</button>
             
