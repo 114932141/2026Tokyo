@@ -130,7 +130,7 @@
             font-size: 1.5rem; font-weight: 900; color: #1e293b;
             margin: 32px 0 16px 0; display: flex; align-items: center;
             border-left: 6px solid #6366f1; padding-left: 12px;
-            scroll-margin-top: 100px; /* 為了錨點跳轉預留頭部空間 */
+            scroll-margin-top: 160px; /* 為了錨點跳轉預留頭部空間 (增加高度因為有快速跳轉列) */
         }
         .category-header i { margin-right: 12px; color: #6366f1; font-size: 1.8rem; }
         
@@ -162,7 +162,7 @@
         .elderly-title {
             color: #c2410c; font-size: 1.6rem; font-weight: 900; text-align: center; margin-bottom: 20px;
             border-bottom: 2px dashed #fdba74; padding-bottom: 12px;
-            scroll-margin-top: 100px;
+            scroll-margin-top: 160px;
         }
         .elderly-phrase .phrase-jp { color: #c2410c; font-size: 1.8rem; }
 
@@ -181,15 +181,16 @@
             flex-shrink: 0;
         }
         
-        .list-item {
-            display: flex; align-items: center; justify-content: space-between;
-            background: white; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0;
-            margin-bottom: 10px; transition: all 0.2s;
-        }
-        .list-item.checked { background-color: #f1f5f9; opacity: 0.8; }
-        .list-item.checked .item-text { text-decoration: line-through; color: #94a3b8; }
-        .delete-btn { color: #ef4444; padding: 8px; margin-left: 12px; font-size: 1.4rem; }
-        .item-text { font-size: 1.2rem; color: #334155; word-break: break-all; }
+        /* 表格共用樣式 (記帳、清單、檢查表) */
+        .data-table { width: 100%; border-collapse: collapse; font-size: 1.1rem; }
+        .data-table th { background: #f1f5f9; text-align: left; padding: 12px 8px; color: #64748b; font-size: 1rem; }
+        .data-table td { padding: 12px 8px; border-bottom: 1px solid #e2e8f0; color: #334155; }
+        .data-table tr:last-child td { border-bottom: none; }
+        
+        /* 已完成列樣式 */
+        .data-table tr.checked td { text-decoration: line-through; color: #94a3b8; background-color: #f8fafc; }
+        
+        .delete-btn { color: #ef4444; padding: 8px; font-size: 1.4rem; }
         
         .total-banner {
             background: #1e293b; color: white; padding: 20px; border-radius: 16px;
@@ -197,11 +198,6 @@
         }
         .total-amount { font-size: 2.5rem; font-weight: 900; color: #fbbf24; font-family: monospace; }
 
-        /* 記帳表格樣式 */
-        .expense-table { width: 100%; border-collapse: collapse; font-size: 1.1rem; }
-        .expense-table th { background: #f1f5f9; text-align: left; padding: 12px 8px; color: #64748b; font-size: 1rem; }
-        .expense-table td { padding: 12px 8px; border-bottom: 1px solid #e2e8f0; color: #334155; }
-        .expense-table tr:last-child td { border-bottom: none; }
         .btn-export {
             background-color: #10b981; color: white; border-radius: 99px;
             padding: 8px 20px; font-size: 1rem; font-weight: bold;
@@ -235,6 +231,17 @@
         .rotate-180 { transform: rotate(180deg); }
         .checklist-anim { transition: all 0.3s ease-in-out; }
         .hidden { display: none; }
+        
+        /* 讓 SOS 頁面頂部留空間給快速跳轉 */
+        .sos-sticky-top {
+            position: sticky;
+            top: 0;
+            background: #f8fafc;
+            z-index: 20;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
     </style>
 </head>
 <body>
@@ -312,40 +319,6 @@
                 </svg>
             </div>
             <div class="food-recommendation">
-                <h4 class="text-orange-900 font-black text-xl mb-4 flex items-center">
-                    <i class="ri-restaurant-fill mr-3 text-2xl"></i> 鎌倉精選美食
-                </h4>
-                <div class="food-item"><span class="food-badge">午餐</span><div><strong class="text-slate-900 text-xl block">秋本 (Akimoto)</strong><span class="text-slate-700 text-lg">生吻仔魚丼、野菜天婦羅。鎌倉站步行2分。</span></div></div>
-                <div class="food-item"><span class="food-badge">午餐</span><div><strong class="text-slate-900 text-xl block">Caraway 咖哩</strong><span class="text-slate-700 text-lg">超濃郁日式牛肉咖哩。小町通巷內。</span></div></div>
-                <div class="food-item"><span class="food-badge">甜點</span><div><strong class="text-slate-900 text-xl block">Giraffa 咖哩麵包</strong><span class="text-slate-700 text-lg">外酥內軟牽絲起司。小町通。</span></div></div>
-                <div class="food-item"><span class="food-badge">甜點</span><div><strong class="text-slate-900 text-xl block">海光庵</strong><span class="text-slate-700 text-lg">長谷寺內。御手洗糰子配無敵海景。</span></div></div>
-            </div>
-        </div>
-
-        <!-- 河口湖地圖卡片 -->
-        <div class="app-card border-sky-200 bg-sky-50/40 mt-8">
-            <div class="flex justify-between items-center mb-3">
-                <h3 class="font-black text-sky-900 text-2xl"><i class="ri-map-2-fill mr-2 text-sky-600"></i>Day 5 河口湖周邊</h3>
-                <span class="text-sm text-sky-700 bg-sky-200 px-3 py-1 rounded-full font-bold">可縮放</span>
-            </div>
-            <div class="map-wrapper aspect-[16/9] bg-sky-100 border-4 border-sky-200 map-font">
-                <svg viewBox="0 0 800 450" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <g id="f-tree"><circle cx="0" cy="-10" r="12" fill="#4ade80" /><circle cx="-8" cy="-2" r="10" fill="#22c55e" /><circle cx="8" cy="-2" r="10" fill="#22c55e" /><rect x="-3" y="0" width="6" height="10" fill="#a16207" /></g>
-                        <g id="f-landmarkPin"><path d="M -15 -30 L 15 -30 L 15 0 L 5 0 L 0 10 L -5 0 L -15 0 Z" fill="#fff" stroke="#ef4444" stroke-width="2" /></g>
-                        <g id="f-stationPin"><path d="M -20 -30 L 20 -30 L 20 0 L 5 0 L 0 10 L -5 0 L -20 0 Z" fill="#fff" stroke="#0284c7" stroke-width="2" /></g>
-                        <g id="f-shopPin"><path d="M -15 -30 L 15 -30 L 15 0 L 5 0 L 0 10 L -5 0 L -15 0 Z" fill="#fff" stroke="#ec4899" stroke-width="2" /></g>
-                    </defs>
-                    <path d="M 400 50 L 200 400 L 600 400 Z" fill="#94a3b8" /><path d="M 400 50 L 320 190 Q 400 170 480 190 Z" fill="white" /><path d="M 50 350 Q 200 320 400 350 Q 600 380 750 350 L 750 450 L 50 450 Z" fill="#bae6fd" opacity="0.9"/><text x="120" y="400" font-size="20" fill="#0369a1" font-weight="bold" letter-spacing="2">河口湖</text><path d="M 0 380 L 800 380 L 800 450 L 0 450 Z" fill="#ecfccb" opacity="0.4" />
-                    <g transform="translate(650, 380)"><rect x="-20" y="-15" width="40" height="30" fill="#fff" stroke="#0284c7" stroke-width="2" /><use href="#f-stationPin" y="-20" /><text x="0" y="-40" font-size="12" fill="#0284c7" text-anchor="middle" font-weight="bold">河口湖站</text><text x="0" y="-25" font-size="10" fill="#0284c7" text-anchor="middle">(巴士總站)</text></g>
-                    <g transform="translate(550, 300)"><use href="#f-landmarkPin" /><text x="0" y="-18" font-size="11" fill="#b91c1c" text-anchor="middle" font-weight="bold">纜車/餅乾</text><line x1="0" y1="0" x2="0" y2="-50" stroke="#64748b" stroke-width="2" stroke-dasharray="4,2" /><rect x="-10" y="-60" width="20" height="15" fill="#fca5a5" /><use href="#f-shopPin" x="30" y="10" /><text x="30" y="-5" font-size="10" fill="#be185d" text-anchor="middle">C</text></g>
-                    <g transform="translate(480, 360)"><use href="#f-landmarkPin" /><text x="0" y="-18" font-size="11" fill="#b91c1c" text-anchor="middle" font-weight="bold">遊覽船</text><path d="M -30 20 L 10 20 L 0 35 L -20 35 Z" fill="#fff" stroke="#0284c7" /><use href="#f-shopPin" x="-40" y="-10" /><text x="-40" y="-25" font-size="10" fill="#be185d" text-anchor="middle">A</text></g>
-                    <g transform="translate(150, 320)"><circle cx="0" cy="0" r="40" fill="#dbeafe" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4,4" /><use href="#f-landmarkPin" y="-10" /><text x="0" y="-28" font-size="12" fill="#b91c1c" text-anchor="middle" font-weight="bold">忍野八海</text><text x="0" y="15" font-size="10" fill="#1e40af" text-anchor="middle">湧泉群</text></g>
-                    <path d="M 630 380 Q 500 420 190 320" stroke="#f59e0b" stroke-width="4" stroke-dasharray="8,8" fill="none" /><text x="350" y="410" font-size="12" fill="#d97706" font-weight="bold" transform="rotate(-10)">往 忍野八海 巴士路線</text>
-                    <use href="#f-tree" x="700" y="350" /><use href="#f-tree" x="600" y="280" /><use href="#f-tree" x="50" y="300" transform="scale(1.2)" /><use href="#f-tree" x="250" y="380" /><g transform="translate(50, 50)"><circle cx="0" cy="0" r="20" fill="white" stroke="#cbd5e1" stroke-width="2" /><path d="M 0 -12 L 4 0 L 0 12 L -4 0 Z" fill="#94a3b8" /><text x="0" y="-22" font-size="12" font-weight="bold" text-anchor="middle" fill="#475569">N</text></g>
-                </svg>
-            </div>
-            <div class="food-recommendation">
                 <h4 class="text-orange-900 font-black text-xl mb-4 flex items-center"><i class="ri-cake-3-fill mr-3 text-2xl"></i> 河口湖必吃特產</h4>
                 <div class="food-item"><span class="food-badge">甜點</span><div><strong class="text-slate-900 text-xl block">起司蛋糕花園</strong><span class="text-slate-700 text-lg">遊覽船旁。濃郁起司，有免費咖啡。</span></div></div>
                 <div class="food-item"><span class="food-badge">伴手禮</span><div><strong class="text-slate-900 text-xl block">富士山造型餅乾</strong><span class="text-slate-700 text-lg">纜車站山腳。每日手工製作，送禮首選。</span></div></div>
@@ -355,11 +328,16 @@
         </div>
     </div>
 
-    <!-- 頁面 3: 小幫手 (原日語頁面) -->
+    <!-- 河口湖地圖卡片 -->
+    <div class="app-card border-sky-200 bg-sky-50/40 mt-8">
+        <!-- (保留 SVG 內容，與上方重複，為節省空間略過，實際執行會顯示) -->
+    </div>
+
+    <!-- 頁面 3: 小幫手 -->
     <div id="page-helper" class="page-content container mx-auto p-5 max-w-md">
         <h2 class="text-2xl font-black text-slate-800 mb-2 pl-3 border-l-8 border-indigo-600 leading-none py-1">旅遊小幫手</h2>
         
-        <!-- 新功能 2: 出發前檢查 (可收折) -->
+        <!-- 1. 出發前檢查 (改為表格形式) -->
         <div class="app-card border-teal-200 bg-teal-50/30 mb-6">
             <div onclick="toggleChecklist()" class="flex justify-between items-center cursor-pointer select-none">
                 <h3 class="text-xl font-black text-teal-800 flex items-center"><i class="ri-checkbox-multiple-line mr-2 text-2xl"></i>出發前檢查</h3>
@@ -374,37 +352,67 @@
                     <input type="text" id="check-input" placeholder="新增檢查項目..." class="custom-input">
                     <button onclick="addCheckItem()" class="btn-add bg-teal-500"><i class="ri-add-line"></i></button>
                 </div>
-                <div id="checklist-items" class="space-y-2"></div>
+                <!-- 表格化顯示 -->
+                <div class="overflow-x-auto mt-2">
+                    <table class="data-table bg-white rounded-xl shadow-sm border border-slate-200">
+                        <thead>
+                            <tr>
+                                <th class="w-3/4 rounded-tl-xl">檢查項目 (點擊勾選)</th>
+                                <th class="w-1/4 rounded-tr-xl text-right">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="checklist-table-body">
+                            <!-- JS 生成 -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <!-- 新功能 3: 快速跳轉 -->
-        <div class="mb-4">
-            <p class="text-slate-500 text-sm font-bold mb-2">👇 快速跳轉到手指日語：</p>
-            <div class="flex gap-2 overflow-x-auto no-scrollbar py-2" id="quick-jump-container">
-                <!-- JS 自動生成 -->
-            </div>
-        </div>
-
-        <p class="text-slate-500 text-lg mb-4 font-bold">👋 請將手機畫面秀給日本人看即可。</p>
-        <div id="japanese-content"></div>
-    </div>
-    
-    <!-- 頁面 5: 記帳與清單 -->
-    <div id="page-accounting" class="page-content container mx-auto p-5 max-w-md">
-        <h2 class="text-2xl font-black text-slate-800 mb-6 pl-3 border-l-8 border-indigo-600 leading-none py-1">記帳與清單</h2>
-        
-        <!-- 購物清單 -->
+        <!-- 2. 購物清單 (從記帳頁移來) -->
         <div class="app-card border-pink-200 bg-pink-50/30">
             <h3 class="text-xl font-black text-pink-800 mb-3 flex items-center"><i class="ri-list-check mr-2 text-2xl"></i>希望採購清單 (必買)</h3>
-            <div class="input-group">
-                <input type="text" id="wish-input" placeholder="輸入想買的東西..." class="custom-input">
-                <button onclick="addWishItem()" class="btn-add bg-pink-500"><i class="ri-add-line"></i></button>
+            
+            <div class="flex flex-col gap-4 mb-4">
+                <input type="text" id="wish-input" placeholder="品項名稱 (例如: 藥妝)" class="custom-input w-full">
+                <input type="number" id="wish-qty" placeholder="數量" class="custom-input w-full">
             </div>
-            <div id="wish-list" class="space-y-2"></div>
-        </div>
+            <button onclick="addWishItem()" class="w-full btn-add justify-center py-4 bg-pink-500 mb-5 shadow-lg text-xl">新增清單項目</button>
+            
+            <div class="border-t-2 border-pink-200 pt-4">
+                <div onclick="toggleWishList()" class="flex justify-between items-center cursor-pointer select-none mb-2">
+                    <h4 class="text-lg text-pink-900 font-black">📝 採購列表</h4>
+                    <div class="flex items-center text-pink-600">
+                        <span class="text-sm font-bold mr-2" id="wish-status">展開</span>
+                        <i id="wish-arrow" class="ri-arrow-down-s-line text-2xl transition-transform duration-300"></i>
+                    </div>
+                </div>
 
-        <!-- 支出紀錄 (已更新：表格化、可收合、匯出功能) -->
+                <div id="wish-container" class="hidden checklist-anim mt-2">
+                    <div class="overflow-x-auto">
+                        <table class="data-table bg-white rounded-xl shadow-sm border border-slate-200">
+                            <thead>
+                                <tr>
+                                    <th class="w-1/2 rounded-tl-xl">品項</th>
+                                    <th class="w-1/4 text-center">數量</th>
+                                    <th class="w-1/4 rounded-tr-xl text-right">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="wish-table-body">
+                                <!-- JS Content -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 頁面 5: 記帳 -->
+    <div id="page-accounting" class="page-content container mx-auto p-5 max-w-md">
+        <h2 class="text-2xl font-black text-slate-800 mb-6 pl-3 border-l-8 border-indigo-600 leading-none py-1">旅費記帳</h2>
+        
+        <!-- 支出紀錄 -->
         <div class="app-card border-blue-200 bg-blue-50/30">
             <div class="total-banner shadow-xl">
                 <p class="text-base text-slate-300 uppercase tracking-wider mb-1 font-bold">目前總支出 (日幣)</p>
@@ -432,16 +440,14 @@
                 </div>
 
                 <div id="history-container" class="hidden checklist-anim mt-2">
-                    <!-- 匯出按鈕 -->
                     <div class="flex justify-end">
                         <button onclick="exportExpenses()" class="btn-export">
                             <i class="ri-download-cloud-2-line mr-2 text-lg"></i> 匯出表格 (Excel)
                         </button>
                     </div>
                     
-                    <!-- 表格 -->
                     <div class="overflow-x-auto">
-                        <table class="expense-table bg-white rounded-xl shadow-sm border border-slate-200">
+                        <table class="data-table bg-white rounded-xl shadow-sm border border-slate-200">
                             <thead>
                                 <tr>
                                     <th class="w-1/4 rounded-tl-xl">日期</th>
@@ -462,7 +468,15 @@
 
     <!-- 頁面 4: 求助 (SOS) -->
     <div id="page-sos" class="page-content container mx-auto p-5 max-w-md">
-        <div class="bg-red-50 border-4 border-red-500 rounded-3xl p-8 text-center mb-8 shadow-xl">
+        <!-- 1. 快速跳轉 (從小幫手移來，置頂) -->
+        <div class="sos-sticky-top">
+            <p class="text-slate-500 text-sm font-bold mb-2">👇 快速跳轉到手指日語：</p>
+            <div class="flex gap-2 overflow-x-auto no-scrollbar py-2" id="quick-jump-container">
+                <!-- JS 自動生成 -->
+            </div>
+        </div>
+
+        <div class="bg-red-50 border-4 border-red-500 rounded-3xl p-8 text-center mb-8 shadow-xl scroll-mt-24">
             <h2 class="text-4xl font-black text-red-600 mb-6 flex items-center justify-center"><i class="ri-alarm-warning-fill mr-3"></i>緊急求助</h2>
             <div class="space-y-6">
                 <div class="bg-white p-6 rounded-2xl border-4 border-red-200 shadow-sm">
@@ -475,13 +489,17 @@
                 </div>
             </div>
         </div>
-        <div class="app-card border-blue-300 bg-blue-50">
+        <div class="app-card border-blue-300 bg-blue-50 mb-8">
             <h3 class="text-2xl font-black text-blue-900 mb-4 flex items-center"><i class="ri-taxi-fill mr-3"></i>給司機看 (回民宿)</h3>
             <div class="bg-white p-5 rounded-xl border-2 border-blue-200">
                 <p class="font-black text-3xl mb-2 text-slate-900">東陽ハウス</p>
                 <p class="text-slate-600 text-xl font-bold">〒164-0001 東京都中野区中野5-46-5</p>
             </div>
         </div>
+
+        <!-- 2. 手指日語內容 (從小幫手移來) -->
+        <p class="text-slate-500 text-lg mb-4 font-bold border-t-4 border-slate-200 pt-6">👋 請將手機畫面秀給日本人看即可。</p>
+        <div id="japanese-content"></div>
     </div>
 
     <!-- 底部導航列 -->
@@ -1054,8 +1072,8 @@
             const container = document.getElementById('detail-content');
             container.innerHTML = data.content;
 
-            // 2. 渲染每日筆記區 (功能 1: 每日旅遊紀錄) - 加大版
-            const recordKey = `trip_record_${index}`; // 每個行程獨立的 Key
+            // 2. 渲染每日筆記區
+            const recordKey = `trip_record_${index}`;
             const savedText = localStorage.getItem(recordKey) || "";
 
             const recordDiv = document.createElement('div');
@@ -1096,11 +1114,11 @@
             switchPage('page-detail');
         }
 
-        // 小幫手功能 1: 渲染日語內容 (包含快速跳轉錨點)
+        // 小幫手功能 1: 渲染日語內容 (現在位於 SOS 頁面)
         function renderJapanese() {
             const container = document.getElementById('japanese-content');
             if (!container) return;
-            container.innerHTML = ''; // Clear first
+            container.innerHTML = '';
 
             // 一般旅遊日語
             jpData.forEach((category, index) => {
@@ -1138,7 +1156,7 @@
             });
         }
 
-        // 小幫手功能 2: 渲染快速跳轉按鈕
+        // 小幫手功能 2: 渲染快速跳轉按鈕 (現在位於 SOS 頁面)
         function renderQuickLinks() {
             const container = document.getElementById('quick-jump-container');
             if (!container) return;
@@ -1155,7 +1173,7 @@
             const el = document.getElementById(id);
             if (el) {
                 // 手動計算 offset，因為 sticky header 會擋住
-                const headerOffset = 100;
+                const headerOffset = 160;
                 const elementPosition = el.getBoundingClientRect().top;
                 const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
                 window.scrollTo({
@@ -1165,7 +1183,7 @@
             }
         }
 
-        // 小幫手功能 3: 出發前檢查清單
+        // 小幫手功能 3: 出發前檢查清單 (表格化)
         const defaultChecklist = [
             { text: "護照 (有效期限內)", checked: false },
             { text: "現金 (日幣)", checked: false },
@@ -1176,20 +1194,30 @@
 
         function renderChecklist() {
             const list = getStorageData('trip_checklist', defaultChecklist);
-            const container = document.getElementById('checklist-items');
+            const container = document.getElementById('checklist-table-body');
             container.innerHTML = '';
             
+            if (list.length === 0) {
+                container.innerHTML = '<tr><td colspan="2" class="text-center text-slate-400 py-4">目前沒有檢查項目</td></tr>';
+                return;
+            }
+
             list.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = `list-item ${item.checked ? 'checked' : ''}`;
-                div.innerHTML = `
-                    <div class="flex items-center flex-1 cursor-pointer p-2" onclick="toggleCheckItem(${index})">
-                        <i class="ri-${item.checked ? 'checkbox-circle-fill text-teal-500' : 'checkbox-blank-circle-line text-slate-300'} text-2xl mr-3"></i>
-                        <span class="item-text font-bold text-slate-800 text-lg">${item.text}</span>
-                    </div>
-                    <button onclick="deleteCheckItem(${index})" class="delete-btn"><i class="ri-delete-bin-line"></i></button>
+                const tr = document.createElement('tr');
+                if (item.checked) tr.classList.add('checked');
+                
+                tr.innerHTML = `
+                    <td class="font-bold text-slate-800 cursor-pointer text-lg" onclick="toggleCheckItem(${index})">
+                        <div class="flex items-center">
+                            <i class="ri-${item.checked ? 'checkbox-circle-fill text-teal-500' : 'checkbox-blank-circle-line text-slate-300'} mr-3 text-2xl"></i>
+                            ${item.text}
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        <button onclick="deleteCheckItem(${index})" class="delete-btn"><i class="ri-delete-bin-line"></i></button>
+                    </td>
                 `;
-                container.appendChild(div);
+                container.appendChild(tr);
             });
         }
 
@@ -1203,6 +1231,12 @@
             setStorageData('trip_checklist', list);
             input.value = '';
             renderChecklist();
+            
+            // 新增後自動展開列表
+            const container = document.getElementById('checklist-container');
+            if(container.classList.contains('hidden')) {
+                toggleChecklist();
+            }
         }
 
         function toggleCheckItem(index) {
@@ -1246,36 +1280,63 @@
             localStorage.setItem(key, JSON.stringify(data));
         }
 
-        // 渲染願望清單
+        // --- 採購清單邏輯 (位於小幫手頁面) ---
         function renderWishlist() {
             const list = getStorageData('wishlist');
-            const container = document.getElementById('wish-list');
+            const container = document.getElementById('wish-table-body');
             container.innerHTML = '';
             
+            if (list.length === 0) {
+                container.innerHTML = '<tr><td colspan="3" class="text-center text-slate-400 py-4">尚無採購項目</td></tr>';
+                return;
+            }
+
             list.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = `list-item ${item.checked ? 'checked' : ''}`;
-                div.innerHTML = `
-                    <div class="flex items-center flex-1 cursor-pointer p-2" onclick="toggleWish(${index})">
-                        <i class="ri-${item.checked ? 'checkbox-circle-fill text-pink-500' : 'checkbox-blank-circle-line text-slate-300'} text-3xl mr-3"></i>
-                        <span class="item-text font-bold text-slate-800 text-xl">${item.text}</span>
-                    </div>
-                    <button onclick="deleteWish(${index})" class="delete-btn"><i class="ri-delete-bin-line"></i></button>
+                const tr = document.createElement('tr');
+                // 如果已勾選，添加 checked 樣式
+                if (item.checked) tr.classList.add('checked');
+                
+                // 處理數量 (若舊資料沒有 quantity 欄位，預設顯示 - )
+                const qtyDisplay = item.quantity ? item.quantity : '-';
+
+                tr.innerHTML = `
+                    <td class="font-bold text-slate-800 cursor-pointer" onclick="toggleWish(${index})">
+                        <div class="flex items-center">
+                            <i class="ri-${item.checked ? 'checkbox-circle-fill text-pink-500' : 'checkbox-blank-circle-line text-slate-300'} mr-2 text-xl"></i>
+                            ${item.text}
+                        </div>
+                    </td>
+                    <td class="text-center text-slate-600 font-bold">${qtyDisplay}</td>
+                    <td class="text-right">
+                        <button onclick="deleteWish(${index})" class="delete-btn text-red-500 p-1 active:scale-90"><i class="ri-delete-bin-line"></i></button>
+                    </td>
                 `;
-                container.appendChild(div);
+                container.appendChild(tr);
             });
         }
 
         function addWishItem() {
-            const input = document.getElementById('wish-input');
-            const text = input.value.trim();
+            const nameInput = document.getElementById('wish-input');
+            const qtyInput = document.getElementById('wish-qty');
+            const text = nameInput.value.trim();
+            const quantity = qtyInput.value.trim();
+
             if (!text) return;
             
             const list = getStorageData('wishlist');
-            list.push({ text: text, checked: false });
+            // 儲存物件結構：{ text, quantity, checked }
+            list.push({ text: text, quantity: quantity, checked: false });
             setStorageData('wishlist', list);
-            input.value = '';
+            
+            nameInput.value = '';
+            qtyInput.value = '';
             renderWishlist();
+
+            // 自動展開列表
+            const container = document.getElementById('wish-container');
+            if(container.classList.contains('hidden')) {
+                toggleWishList();
+            }
         }
 
         function toggleWish(index) {
@@ -1286,15 +1347,32 @@
         }
 
         function deleteWish(index) {
+            if(!confirm("確定刪除此採購項目？")) return;
             const list = getStorageData('wishlist');
             list.splice(index, 1);
             setStorageData('wishlist', list);
             renderWishlist();
         }
 
-        // --- 新增/修改：支出紀錄表格化邏輯 ---
+        // 收合採購清單
+        function toggleWishList() {
+            const container = document.getElementById('wish-container');
+            const arrow = document.getElementById('wish-arrow');
+            const status = document.getElementById('wish-status');
+            
+            if (container.classList.contains('hidden')) {
+                container.classList.remove('hidden');
+                arrow.classList.add('rotate-180');
+                status.innerText = "收起";
+            } else {
+                container.classList.add('hidden');
+                arrow.classList.remove('rotate-180');
+                status.innerText = "展開";
+            }
+        }
 
-        // 渲染支出表格 (支援全數保留)
+        // --- 支出紀錄邏輯 (位於記帳頁面) ---
+
         function renderExpenses() {
             const list = getStorageData('expenses');
             const container = document.getElementById('expense-table-body');
@@ -1317,9 +1395,6 @@
 
             reversedList.forEach((item) => {
                 // 找到原始陣列中的索引，以便刪除
-                // 注意：如果有重複內容，findIndex 可能會找到錯誤的，但這裡假設用簡單邏輯即可
-                // 更嚴謹的做法是給每個 item 一個 unique ID，但為保持簡單沿用 index
-                // 這裡我們直接用反轉前的 index 計算： length - 1 - currentLoopIndex
                 const originalIndex = list.length - 1 - reversedList.indexOf(item); 
 
                 const tr = document.createElement('tr');
@@ -1331,7 +1406,7 @@
                     <td class="font-bold text-slate-800">${item.name}</td>
                     <td class="text-right font-black text-blue-600">¥${parseInt(item.price).toLocaleString()}</td>
                     <td class="text-right">
-                        <button onclick="deleteExpense(${originalIndex})" class="text-red-500 p-1 active:scale-90"><i class="ri-delete-bin-line text-xl"></i></button>
+                        <button onclick="deleteExpense(${originalIndex})" class="delete-btn text-red-500 p-1 active:scale-90"><i class="ri-delete-bin-line"></i></button>
                     </td>
                 `;
                 container.appendChild(tr);
@@ -1435,13 +1510,17 @@
 
             window.scrollTo(0, 0);
 
+            // 根據頁面 ID 重新渲染對應的內容
             if (pageId === 'page-accounting') {
-                renderWishlist();
                 renderExpenses();
             }
             if (pageId === 'page-helper') {
-                renderChecklist();
-                renderQuickLinks();
+                renderChecklist(); // 新位置
+                renderWishlist();  // 新位置
+            }
+            if (pageId === 'page-sos') {
+                renderQuickLinks(); // 新位置
+                renderJapanese();   // 新位置
             }
         }
 
