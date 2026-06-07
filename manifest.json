@@ -1,0 +1,42 @@
+{
+  "name": "長輩東京伊豆慢活手冊",
+  "short_name": "東京手冊",
+  "description": "東京+伊豆溫泉 7天6夜長輩友善旅遊導航手冊，100% 離線可用",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f7faf8",
+  "theme_color": "#1e4620",
+  "orientation": "portrait-primary",
+  "lang": "zh-TW",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["travel", "lifestyle"],
+  "shortcuts": [
+    {
+      "name": "每天行程",
+      "short_name": "行程",
+      "description": "查看每天詳細行程",
+      "url": "./index.html#itinerary",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "手指日語",
+      "short_name": "日語卡",
+      "description": "快速查找日語求助卡片",
+      "url": "./index.html#japanese",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
