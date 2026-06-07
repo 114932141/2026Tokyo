@@ -54,6 +54,21 @@
         html.size-small { font-size: 16px; }    /* 標準字體-小 */
         html.size-medium { font-size: 20px; }   /* 預設放大字體-中 (125%) */
         html.size-large { font-size: 24px; }    /* 特大字體-大 (150%) */
+        /* ── size-large mobile: content area adjustments ── */
+        @media (max-width: 640px) {
+            html.size-large main {
+                padding-left: 0.65rem !important;
+                padding-right: 0.65rem !important;
+            }
+            html.size-large .day-scroll-container button {
+                flex-shrink: 0 !important;
+                padding-left: 0.7rem !important;
+                padding-right: 0.7rem !important;
+                min-height: 40px !important;
+                min-width: 0 !important;
+                font-size: 0.8rem !important;
+            }
+        }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans CJK TC", "Microsoft JhengHei", sans-serif;
@@ -95,15 +110,66 @@
             -webkit-tap-highlight-color: transparent;
         }
         
+        /* ── Mobile Header: compact across all font sizes ── */
         @media (max-width: 640px) {
+            /* Header row compact */
+            header .max-w-4xl {
+                padding-top: 0.4rem !important;
+                padding-bottom: 0.4rem !important;
+                gap: 0.35rem !important;
+            }
+            /* Title: clamp so never wraps */
             .pwa-header-title {
-                font-size: 1.25rem !important;
-                line-height: 1.3;
+                font-size: clamp(0.78rem, 3.5vw, 1.05rem) !important;
+                line-height: 1.2 !important;
+                white-space: nowrap;
             }
-            .pwa-badge {
-                font-size: 0.8rem !important;
-                padding: 3px 10px !important;
+            /* Font-size switcher: compact */
+            header .flex.items-center.bg-brand-770,
+            header .flex.items-center.gap-2.bg-brand-700 {
+                padding: 0.25rem 0.5rem !important;
+                gap: 0.3rem !important;
             }
+            header .font-black.text-brand-50 {
+                font-size: 0.68rem !important;
+            }
+            header [id^="btn-size-"] {
+                padding: 0.2rem 0.55rem !important;
+                font-size: 0.7rem !important;
+                min-height: 30px !important;
+                min-width: 26px !important;
+            }
+            /* Map/badge button */
+            .pwa-badge,
+            header a.inline-flex {
+                font-size: 0.7rem !important;
+                padding: 2px 7px !important;
+                min-height: 30px !important;
+                min-width: 30px !important;
+                gap: 0.25rem !important;
+            }
+            header a.inline-flex span:first-child { font-size: 1rem !important; }
+
+            /* Nav tabs: compact, never wrap */
+            nav .grid button {
+                padding-top: 0.4rem !important;
+                padding-bottom: 0.4rem !important;
+                gap: 0.1rem !important;
+            }
+            nav .grid button span:first-child {
+                font-size: 1.3rem !important;
+                line-height: 1;
+            }
+            nav .grid button span.font-black {
+                font-size: 0.65rem !important;
+                line-height: 1.1 !important;
+                white-space: nowrap;
+            }
+
+            /* size-large: tighten further */
+            html.size-large header .max-w-4xl { padding-top: 0.3rem !important; padding-bottom: 0.3rem !important; }
+            html.size-large .pwa-header-title { font-size: clamp(0.72rem, 3vw, 0.9rem) !important; }
+            html.size-large nav .grid button { padding-top: 0.35rem !important; padding-bottom: 0.35rem !important; }
         }
         
         @media (max-width: 640px) {
@@ -217,10 +283,10 @@
 
     <!-- Top Sticky Title & Tab Bar & Elder Size Adjuster -->
     <header class="sticky top-0 z-40 bg-brand-600 text-white shadow-md">
-        <div class="max-w-4xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-3">
+        <div class="max-w-4xl mx-auto px-4 py-2 flex flex-row items-center justify-between gap-2">
             <div class="flex items-center gap-2 flex-wrap">
                 <span class="text-3xl shrink-0">♨️</span>
-                <h1 class="text-xl sm:text-2xl font-black tracking-wide pwa-header-title shrink-0">2026 東京伊豆自由行</h1>
+                <h1 class="font-black tracking-wide pwa-header-title" style="white-space:nowrap;flex-shrink:1;min-width:0;overflow:hidden;text-overflow:ellipsis">2026 東京伊豆自由行</h1>
                 
                 <!-- Fixed Inline Earth Globe Map Button next to Title -->
                 <a href="https://www.google.com/maps" target="_blank" 
@@ -244,22 +310,26 @@
 
         <!-- 4 Main Navigation Tabs -->
         <nav class="bg-brand-700 border-t border-brand-600 max-w-4xl mx-auto">
-            <div class="grid grid-cols-4 text-center">
+            <div class="grid grid-cols-5 text-center">
                 <button onclick="switchTab('overview')" id="tab-overview" class="py-3 px-1 text-base sm:text-lg font-bold border-b-4 border-white text-white focus:outline-none transition-all flex flex-col items-center justify-center gap-1">
                     <span class="text-2xl">📋</span>
-                    <span class="font-black">行程總覽</span>
+                    <span class="font-black" style="white-space:nowrap">行程總覽</span>
                 </button>
                 <button onclick="switchTab('itinerary')" id="tab-itinerary" class="py-3 px-1 text-base sm:text-lg font-bold border-b-4 border-transparent text-brand-100/70 hover:text-white focus:outline-none transition-all flex flex-col items-center justify-center gap-1">
                     <span class="text-2xl">🚶</span>
-                    <span class="font-black">每天行程</span>
+                    <span class="font-black" style="white-space:nowrap">每天行程</span>
                 </button>
                 <button onclick="switchTab('japanese')" id="tab-japanese" class="py-3 px-1 text-base sm:text-lg font-bold border-b-4 border-transparent text-brand-100/70 hover:text-white focus:outline-none transition-all flex flex-col items-center justify-center gap-1">
                     <span class="text-2xl">🎴</span>
-                    <span class="font-black">手指日語</span>
+                    <span class="font-black" style="white-space:nowrap">手指日語</span>
                 </button>
                 <button onclick="switchTab('checklist')" id="tab-checklist" class="py-3 px-1 text-base sm:text-lg font-bold border-b-4 border-transparent text-brand-100/70 hover:text-white focus:outline-none transition-all flex flex-col items-center justify-center gap-1">
                     <span class="text-2xl">✅</span>
-                    <span class="font-black">準備清單</span>
+                    <span class="font-black" style="white-space:nowrap">準備清單</span>
+                </button>
+                <button onclick="switchTab('tips')" id="tab-tips" class="py-3 px-1 text-base sm:text-lg font-bold border-b-4 border-transparent text-brand-100/70 hover:text-white focus:outline-none transition-all flex flex-col items-center justify-center gap-1">
+                    <span class="text-2xl">💡</span>
+                    <span class="font-black" style="white-space:nowrap">小知識</span>
                 </button>
             </div>
         </nav>
@@ -416,33 +486,6 @@
         <!-- ================= PAGE 2: 每天行程 ================= -->
         <div id="page-itinerary" class="tab-page hidden space-y-6">
             
-            <!-- Visual subway line helper -->
-            <div class="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
-                <span class="text-base font-black text-brand-600 block mb-2">💡 車站認路口訣：請對準站內指示牌上的這些底色與英文字母</span>
-                <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                    <div class="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
-                        <span class="w-9 h-9 rounded-full bg-subway-yamanote text-white font-black flex items-center justify-center text-sm shadow-sm">JY</span>
-                        <span class="text-base font-black text-black">JR 山手線</span>
-                    </div>
-                    <div class="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
-                        <span class="w-9 h-9 rounded-full bg-subway-ginza text-white font-black flex items-center justify-center text-sm shadow-sm">G</span>
-                        <span class="text-base font-black text-black">地鐵銀座線</span>
-                    </div>
-                    <div class="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
-                        <span class="w-9 h-9 rounded-full bg-subway-marunouchi text-white font-black flex items-center justify-center text-sm shadow-sm">M</span>
-                        <span class="text-base font-black text-black">地鐵丸之內</span>
-                    </div>
-                    <div class="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
-                        <span class="w-9 h-9 rounded-full bg-subway-keisei text-white font-black flex items-center justify-center text-sm shadow-sm">KS</span>
-                        <span class="text-base font-black text-black">京成電鐵</span>
-                    </div>
-                    <div class="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
-                        <span class="w-9 h-9 rounded-full bg-subway-hibiya text-white font-black flex items-center justify-center text-sm shadow-sm">H</span>
-                        <span class="text-base font-black text-black">地鐵日比谷</span>
-                    </div>
-                </div>
-            </div>
-
             <!-- Day Selector (Horizontal Large Scrollable Buttons) -->
             <div class="flex gap-2 overflow-x-auto pb-2 snap-x day-scroll-container">
                 <button onclick="switchDay(1)" id="btn-day-1" class="day-btn snap-start shrink-0 bg-brand-600 text-white font-bold px-5 py-3.5 rounded-xl text-lg transition-all border-2 border-brand-600 shadow-md">9/17 (四)</button>
@@ -531,7 +574,233 @@
 
         </div>
 
-    </main>
+    
+            <div id="page-tips" class="tab-page hidden space-y-5">
+
+                <div class="bg-white rounded-2xl p-5 border-2 border-brand-600 shadow-sm">
+                    <div class="flex items-center gap-3 border-b-2 border-brand-100 pb-3 mb-4">
+                        <span class="text-3xl">🚇</span>
+                        <div>
+                            <span class="text-sm font-black text-brand-600 uppercase tracking-wider">搭車必備</span>
+                            <h3 class="text-xl font-black text-black">車站認路口訣</h3>
+                        </div>
+                    </div>
+                    <p class="text-base font-bold text-gray-700 mb-3">看到站內指示牌，對準底色圓圈＋英文字母，就能找到正確月台！</p>
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                        <div class="flex items-center gap-2 bg-gray-50 p-3 rounded-xl border border-gray-200">
+                            <span class="w-10 h-10 rounded-full bg-subway-yamanote text-white font-black flex items-center justify-center text-sm shadow-sm flex-shrink-0">JY</span>
+                            <span class="text-base font-black text-black">JR 山手線</span>
+                        </div>
+                        <div class="flex items-center gap-2 bg-gray-50 p-3 rounded-xl border border-gray-200">
+                            <span class="w-10 h-10 rounded-full bg-subway-ginza text-white font-black flex items-center justify-center text-sm shadow-sm flex-shrink-0">G</span>
+                            <span class="text-base font-black text-black">地鐵銀座線</span>
+                        </div>
+                        <div class="flex items-center gap-2 bg-gray-50 p-3 rounded-xl border border-gray-200">
+                            <span class="w-10 h-10 rounded-full bg-subway-marunouchi text-white font-black flex items-center justify-center text-sm shadow-sm flex-shrink-0">M</span>
+                            <span class="text-base font-black text-black">地鐵丸之內</span>
+                        </div>
+                        <div class="flex items-center gap-2 bg-gray-50 p-3 rounded-xl border border-gray-200">
+                            <span class="w-10 h-10 rounded-full bg-subway-keisei text-white font-black flex items-center justify-center text-sm shadow-sm flex-shrink-0">KS</span>
+                            <span class="text-base font-black text-black">京成電鐵</span>
+                        </div>
+                        <div class="flex items-center gap-2 bg-gray-50 p-3 rounded-xl border border-gray-200">
+                            <span class="w-10 h-10 rounded-full bg-subway-hibiya text-white font-black flex items-center justify-center text-sm shadow-sm flex-shrink-0">H</span>
+                            <span class="text-base font-black text-black">地鐵日比谷</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-amber-50 border border-amber-300 rounded-xl p-4">
+                        <p class="text-base font-bold text-amber-900">💡 口訣：找到彩色圓圈，對上英文字母，走向箭頭方向，不怕搭錯車！</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                    <div class="flex items-center gap-3 border-b-2 border-brand-100 pb-3 mb-4">
+                        <span class="text-3xl">🚃</span>
+                        <div>
+                            <span class="text-sm font-black text-brand-600 uppercase tracking-wider">避免冒犯・搭車篇</span>
+                            <h3 class="text-xl font-black text-black">電車禮儀 5 守則</h3>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex gap-3 items-start bg-red-50 border border-red-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">📵</span>
+                            <div><p class="font-black text-red-800 text-base">車廂內禁止講電話，請靜音</p><p class="text-sm text-red-700 mt-1">即使輕聲也讓乘客不適。有急事請在月台通話完再上車。</p></div>
+                        </div>
+                        <div class="flex gap-3 items-start bg-red-50 border border-red-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">🎒</span>
+                            <div><p class="font-black text-red-800 text-base">大背包請移到前方或放行李架</p><p class="text-sm text-red-700 mt-1">車廂擁擠時背在背後的包會碰到他人，請取下放前方或座位上方行李架。</p></div>
+                        </div>
+                        <div class="flex gap-3 items-start bg-amber-50 border border-amber-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">🪑</span>
+                            <div><p class="font-black text-amber-900 text-base">主動讓出博愛座（優先座）</p><p class="text-sm text-amber-800 mt-1">車廂兩端的優先座，有老人、孕婦、傷者上車請主動讓座。</p></div>
+                        </div>
+                        <div class="flex gap-3 items-start bg-amber-50 border border-amber-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">🚪</span>
+                            <div><p class="font-black text-amber-900 text-base">下車優先，候車靠邊站</p><p class="text-sm text-amber-800 mt-1">站台候車請站門兩側，等車廂內乘客全部下完再上車，切勿搶先擠入。</p></div>
+                        </div>
+                        <div class="flex gap-3 items-start bg-green-50 border border-green-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">🍱</span>
+                            <div><p class="font-black text-green-900 text-base">地鐵通勤電車內避免飲食</p><p class="text-sm text-green-800 mt-1">新幹線可吃便當，但山手線等通勤電車不宜飲食，飲料也最好下車後再喝。</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                    <div class="flex items-center gap-3 border-b-2 border-brand-100 pb-3 mb-4">
+                        <span class="text-3xl">🍜</span>
+                        <div>
+                            <span class="text-sm font-black text-brand-600 uppercase tracking-wider">避免冒犯・用餐篇</span>
+                            <h3 class="text-xl font-black text-black">餐廳文化與禁忌</h3>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex gap-3 items-start bg-green-50 border border-green-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">🫗</span>
+                            <div><p class="font-black text-green-900 text-base">冷水與熱茶免費，大方要求補充</p><p class="text-sm text-green-800 mt-1">喝完舉手說「お水ください（おみず ください）」即可補充，完全不失禮。</p></div>
+                        </div>
+                        <div class="flex gap-3 items-start bg-red-50 border border-red-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">🥢</span>
+                            <div><p class="font-black text-red-800 text-base">禁忌：筷子不可垂直插入飯中</p><p class="text-sm text-red-700 mt-1">這是日本喪禮儀式，在餐廳極度失禮。用完請橫放在筷架上。</p></div>
+                        </div>
+                        <div class="flex gap-3 items-start bg-amber-50 border border-amber-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">🔔</span>
+                            <div><p class="font-black text-amber-900 text-base">按桌上呼叫鈴，不要大聲喊</p><p class="text-sm text-amber-800 mt-1">無鈴則輕舉手示意，保持音量，不要大喊「老闆！」。</p></div>
+                        </div>
+                        <div class="flex gap-3 items-start bg-red-50 border border-red-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">🍶</span>
+                            <div><p class="font-black text-red-800 text-base">互相斟酒，不要自斟自飲</p><p class="text-sm text-red-700 mt-1">酒桌文化中自己的杯子由他人倒，自己也主動幫旁人倒。</p></div>
+                        </div>
+                        <div class="flex gap-3 items-start bg-green-50 border border-green-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">🙏</span>
+                            <div><p class="font-black text-green-900 text-base">飯前「いただきます」・飯後「ごちそうさまでした」</p><p class="text-sm text-green-800 mt-1">這兩句是日本用餐文化靈魂，說了讓店家非常開心！</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                    <div class="flex items-center gap-3 border-b-2 border-brand-100 pb-3 mb-4">
+                        <span class="text-3xl">⛩️</span>
+                        <div>
+                            <span class="text-sm font-black text-brand-600 uppercase tracking-wider">避免冒犯・神社寺廟篇</span>
+                            <h3 class="text-xl font-black text-black">參拜禮儀與禁忌</h3>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex gap-3 items-start bg-amber-50 border border-amber-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">🚿</span>
+                            <div><p class="font-black text-amber-900 text-base">入鳥居前先在手水舍洗手</p><p class="text-sm text-amber-800 mt-1">用勺子依序洗左手、右手、漱口，象徵淨化身心再參拜。</p></div>
+                        </div>
+                        <div class="flex gap-3 items-start bg-amber-50 border border-amber-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">🚶</span>
+                            <div><p class="font-black text-amber-900 text-base">走參道兩側，不走正中央</p><p class="text-sm text-amber-800 mt-1">參道中央是神明行走之路，一般參拜者靠兩側行走以示敬意。</p></div>
+                        </div>
+                        <div class="flex gap-3 items-start bg-red-50 border border-red-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">📸</span>
+                            <div><p class="font-black text-red-800 text-base">正殿內拍照前確認是否允許</p><p class="text-sm text-red-700 mt-1">看到「撮影禁止」告示請務必遵守，外部庭園通常可自由拍照。</p></div>
+                        </div>
+                        <div class="flex gap-3 items-start bg-green-50 border border-green-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">🔔</span>
+                            <div><p class="font-black text-green-900 text-base">標準參拜：二禮・二拍手・一禮</p><p class="text-sm text-green-800 mt-1">投錢 → 搖鈴 → 深鞠躬兩次 → 拍手兩次默禱 → 最後深鞠躬一次。</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                    <div class="flex items-center gap-3 border-b-2 border-brand-100 pb-3 mb-4">
+                        <span class="text-3xl">🗾</span>
+                        <div>
+                            <span class="text-sm font-black text-brand-600 uppercase tracking-wider">避免冒犯・日常篇</span>
+                            <h3 class="text-xl font-black text-black">日本日常文化禁忌</h3>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex gap-3 items-start bg-red-50 border border-red-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">🚭</span>
+                            <div><p class="font-black text-red-800 text-base">街道上不可隨意吸菸</p><p class="text-sm text-red-700 mt-1">東京規定路上禁止吸菸，請找「喫煙所」標示的指定吸菸區。</p></div>
+                        </div>
+                        <div class="flex gap-3 items-start bg-red-50 border border-red-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">🗑️</span>
+                            <div><p class="font-black text-red-800 text-base">街上幾乎沒有垃圾桶，請自行帶走</p><p class="text-sm text-red-700 mt-1">包裝請放回袋子帶走，或找便利商店旁的垃圾桶丟棄。</p></div>
+                        </div>
+                        <div class="flex gap-3 items-start bg-amber-50 border border-amber-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">💴</span>
+                            <div><p class="font-black text-amber-900 text-base">付錢放托盤，不要直接塞給店員</p><p class="text-sm text-amber-800 mt-1">收銀台旁有小托盤，把現金放上去，找零也會放回托盤，這才符合禮儀。</p></div>
+                        </div>
+                        <div class="flex gap-3 items-start bg-amber-50 border border-amber-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">🏠</span>
+                            <div><p class="font-black text-amber-900 text-base">進入榻榻米和室必須脫鞋</p><p class="text-sm text-amber-800 mt-1">溫泉旅館、日式包廂進入前一定脫鞋，鞋頭朝外整齊擺好。</p></div>
+                        </div>
+                        <div class="flex gap-3 items-start bg-green-50 border border-green-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">🙇</span>
+                            <div><p class="font-black text-green-900 text-base">「すみません」是萬能禮貌用語</p><p class="text-sm text-green-800 mt-1">呼叫服務生、問路、碰到人都可以用。輕聲說出，日本人馬上熱情回應！</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                    <div class="flex items-center gap-3 border-b-2 border-brand-100 pb-3 mb-4">
+                        <span class="text-3xl">♨️</span>
+                        <div>
+                            <span class="text-sm font-black text-brand-600 uppercase tracking-wider">避免冒犯・溫泉篇</span>
+                            <h3 class="text-xl font-black text-black">溫泉大浴場禮儀</h3>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex gap-3 items-start bg-red-50 border border-red-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">👙</span>
+                            <div><p class="font-black text-red-800 text-base">大浴場禁止穿泳衣，為全裸文化</p><p class="text-sm text-red-700 mt-1">穿任何衣物（含泳衣）進入大浴池是嚴格禁止的。毛巾可帶入但不放入池中。</p></div>
+                        </div>
+                        <div class="flex gap-3 items-start bg-amber-50 border border-amber-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">🚿</span>
+                            <div><p class="font-black text-amber-900 text-base">入池前必須先坐浴沖洗全身</p><p class="text-sm text-amber-800 mt-1">坐在個人坐浴區用蓮蓬頭把全身沖乾淨，是最重要的溫泉禮儀。</p></div>
+                        </div>
+                        <div class="flex gap-3 items-start bg-red-50 border border-red-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">📱</span>
+                            <div><p class="font-black text-red-800 text-base">浴場與更衣室絕對禁止使用手機</p><p class="text-sm text-red-700 mt-1">為保護其他浴客隱私，請將手機留在房間或置物櫃。</p></div>
+                        </div>
+                        <div class="flex gap-3 items-start bg-green-50 border border-green-200 rounded-xl p-4">
+                            <span class="text-2xl shrink-0">🧖</span>
+                            <div><p class="font-black text-green-900 text-base">浸泡時保持安靜，避免大聲談話</p><p class="text-sm text-green-800 mt-1">溫泉是靜謐冥想空間，輕聲細語、以眼神示意即可。</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-5 border-2 border-red-300 shadow-sm">
+                    <div class="flex items-center gap-3 border-b-2 border-red-100 pb-3 mb-4">
+                        <span class="text-3xl">🆘</span>
+                        <div>
+                            <span class="text-sm font-black text-red-600 uppercase tracking-wider">緊急備用</span>
+                            <h3 class="text-xl font-black text-black">緊急狀況應對指南</h3>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+                                <p class="font-black text-red-800 text-base mb-2">🚑 救護車・警察</p>
+                                <p class="text-2xl font-black text-red-700">110 警察</p>
+                                <p class="text-2xl font-black text-red-700">119 救護・火警</p>
+                                <p class="text-sm text-red-600 mt-1">任何手機（含無SIM）均可撥打</p>
+                            </div>
+                            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                                <p class="font-black text-blue-800 text-base mb-2">🏥 外國人醫療諮詢</p>
+                                <p class="text-lg font-black text-blue-700">JNTO 旅遊熱線</p>
+                                <p class="text-xl font-black text-blue-600">050-3816-2787</p>
+                                <p class="text-sm text-blue-600 mt-1">24小時，提供中文服務</p>
+                            </div>
+                        </div>
+                        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                            <p class="font-black text-amber-900 text-base mb-2">🏪 便利商店是最好的避難所</p>
+                            <p class="text-sm text-amber-800">迷路、不適、遇麻煩，走進最近的 7-Eleven、FamilyMart 或 Lawson。店員受訓可協助外國旅客，店內有冷氣、廁所、飲水、急救品，24小時開放。</p>
+                        </div>
+                        <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+                            <p class="font-black text-green-900 text-base mb-2">💊 找藥：マツモトキヨシ（Matsukiyo）</p>
+                            <p class="text-sm text-green-800">日本最大連鎖藥妝店，上野附近有多家。感冒藥→パブロン、胃藥→正露丸、止痛藥→バファリン。</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+</main>
 
     <!-- Japanese Phrase Fullscreen Modal Popup -->
     <div id="phrase-modal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 hidden">
@@ -1059,7 +1328,30 @@
             }, 2000);
         }
 
-        // Initialize App
+        // ── Japanese Phrase Modal ──
+        function openModal(phrase) {
+            document.getElementById('modal-intent').textContent    = phrase.intent;
+            document.getElementById('modal-japanese').textContent  = phrase.jp;
+            document.getElementById('modal-hiragana').textContent  = phrase.hiragana;
+            const modal = document.getElementById('phrase-modal');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('phrase-modal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on backdrop click
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('phrase-modal').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+        });
+
+                // Initialize App
         window.onload = function() {
             // Restore Font Size scale preference or default to "medium" (the standard enlarged size)
             const savedScale = localStorage.getItem("ueno_font_scale_preference_v3") || "medium";
@@ -1499,12 +1791,3 @@ self.addEventListener('fetch', e => {
 
 </body>
 </html>
-```
-eof
-
-### 📋 此次修補與重整摘要：
-1. **地圖地球圖示固定化**：移除了浮動的右側地圖按鈕，並在頂部標題列「2026 東京伊豆自由行」的正右側，安置了一個極具直覺性、點擊率高的 **「🌍 地圖導航」大按鈕**，點擊能直連 Google Maps。
-2. **文字控制器更新**：將頂端FontSize調節器的名稱完美替換為「文字：」，按鈕標示全部改為 **「小」、「中」、「大」**。預設在「中」的大小，滿足高齡旅伴護眼與一按放大的閱讀效果。
-3. **無 Markdown 污染與完備結尾**：整份 `index.html` 的程式碼內部全部乾淨、無任何外洩的 Markdown 符號，全站功能和預覽功能均已 100% 回歸完美流暢運行！
-
-兩位慢活旅伴隨時可以透過這個網頁，在出發前及日本現地體驗無憂、安全且自信滿滿的旅程。祝旅伴們慢活首航圓滿成功！
