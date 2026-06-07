@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" class="size-large">
 <head>
     <meta charset="UTF-8">
     <!-- PWA Manifest -->
@@ -8,7 +8,7 @@
     <!-- iOS PWA Support -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="東京手冊">
+    <meta name="apple-mobile-web-app-title" content="慢活東京">
     <link rel="apple-touch-icon" href="icon-192.png">
     
     <!-- Android / Chrome PWA -->
@@ -16,7 +16,7 @@
     <meta name="theme-color" content="#1e4620">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>東京＋伊豆溫泉：長輩慢活導航手冊</title>
+    <title>九月東京＋伊豆溫泉慢活自助行</title>
     <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -25,99 +25,87 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#f4f7f5',
-                            100: '#e5ebe6',
-                            600: '#1e4620', // Forest green for high-contrast accessibility
+                            50: '#fcfbf9',   // Warm cream background
+                            100: '#f5efe6',  // Warm beige divider
+                            600: '#1e4620',  // Forest green for high-contrast accessibility
                             700: '#143015',
                             900: '#0b1b0c',
                         },
                         subway: {
-                            ginza: '#ff9500', // G Line Orange
-                            yamanote: '#4cd964', // JY Line Green
-                            marunouchi: '#ff3b30', // M Line Red
-                            keisei: '#0055a5', // KS Line Blue
-                            hibiya: '#8e8e93', // H Line Gray
+                            ginza: '#ff9500', 
+                            yamanote: '#4cd964', 
+                            marunouchi: '#ff3b30', 
+                            keisei: '#0055a5', 
+                            hibiya: '#8e8e93', 
                         }
                     }
                 }
             }
         }
     </script>
-    <!-- Custom CSS for accessibility and transitions -->
+    <!-- Custom CSS for elder-focused accessibility, transitions, and dynamic font scaling -->
     <style>
+        /* Base typography scale (proportional resizing for everything when root HTML changes size) */
+        html {
+            transition: font-size 0.2s ease;
+        }
+        
+        /* Three modes of high-contrast, large scale reading */
+        html.size-standard { font-size: 16px; }  /* For general layout reference */
+        html.size-large { font-size: 20px; }     /* Elder-Friendly Preferred Default (125%) */
+        html.size-huge { font-size: 24px; }      /* Super Large Reading Mode (150%) */
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans CJK TC", sans-serif;
-            background-color: #f7faf8;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans CJK TC", "Microsoft JhengHei", sans-serif;
+            background-color: #f7f5f0; /* Soft warm ivory background to reduce eye strain/glare */
+            font-weight: 500; /* Slightly thicker normal weight for better legibility */
         }
-        /* Extra thick tap targets and high contrast scrollbar */
-        button, a {
-            min-height: 48px;
-            min-width: 48px;
+        
+        /* Ultra-generous tap targets for fingers with trembling or low precision */
+        button, a, input[type="checkbox"], label {
+            min-height: 52px;
+            min-width: 52px;
         }
-        /* Custom scrollbar to make it easier to see */
+        
         ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
         }
         ::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: #f5efe6;
         }
         ::-webkit-scrollbar-thumb {
             background: #1e4620;
-            border-radius: 4px;
+            border-radius: 6px;
         }
 
-        /* ===== PWA / MOBILE OPTIMIZATIONS ===== */
-        
-        /* Safe area insets for notch phones */
         body {
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
         }
         
-        /* Prevent iOS overscroll bounce */
         html {
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
         }
         
-        /* Prevent text selection on UI elements */
         button, nav, header {
             -webkit-user-select: none;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* Larger tap targets on mobile */
-        @media (max-width: 640px) {
-            button, a {
-                min-height: 52px;
-            }
-        }
-        
-        /* Header compact on mobile */
         @media (max-width: 640px) {
             .pwa-header-title {
-                font-size: 1.1rem !important;
+                font-size: 1.25rem !important;
                 line-height: 1.3;
             }
             .pwa-badge {
-                font-size: 0.7rem !important;
-                padding: 2px 8px !important;
+                font-size: 0.8rem !important;
+                padding: 3px 10px !important;
             }
         }
         
-        /* Tab icons: bigger on mobile */
-        @media (max-width: 640px) {
-            .tab-icon {
-                font-size: 1.5rem !important;
-            }
-            .tab-label {
-                font-size: 0.7rem !important;
-            }
-        }
-        
-        /* Day selector: full-width scrollable on mobile */
         @media (max-width: 640px) {
             .day-scroll-container {
                 -webkit-overflow-scrolling: touch;
@@ -128,7 +116,6 @@
             }
         }
         
-        /* Modal: full screen on mobile */
         @media (max-width: 640px) {
             #phrase-modal > div {
                 max-width: 100% !important;
@@ -144,22 +131,20 @@
             }
         }
         
-        /* Bottom sticky bar: iOS safe area */
         .bottom-sticky-bar {
-            padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+            padding-bottom: calc(0.85rem + env(safe-area-inset-bottom));
         }
         
-        /* PWA install banner */
         #pwa-install-banner {
             position: fixed;
-            bottom: 80px;
+            bottom: 95px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 100;
             background: #1e4620;
             color: white;
             border-radius: 16px;
-            padding: 12px 20px;
+            padding: 14px 22px;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -167,7 +152,7 @@
             max-width: calc(100% - 32px);
             width: max-content;
             animation: slideUp 0.4s ease;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
         }
         
         @keyframes slideUp {
@@ -175,7 +160,6 @@
             to   { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
         
-        /* Offline indicator */
         #offline-indicator {
             position: fixed;
             top: 0;
@@ -184,9 +168,9 @@
             background: #d97706;
             color: white;
             text-align: center;
-            padding: 6px;
-            font-size: 0.85rem;
-            font-weight: 700;
+            padding: 8px;
+            font-size: 0.95rem;
+            font-weight: 900;
             z-index: 200;
             transform: translateY(-100%);
             transition: transform 0.3s ease;
@@ -196,173 +180,229 @@
             transform: translateY(0);
         }
         
-        /* Smooth page transitions */
         .tab-page {
-            animation: fadeIn 0.2s ease;
+            animation: fadeIn 0.25s ease;
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
+            from { opacity: 0; transform: translateY(8px); }
             to   { opacity: 1; transform: translateY(0); }
         }
         
-        /* Fix main bottom padding for sticky bars */
         main {
-            padding-bottom: calc(6rem + env(safe-area-inset-bottom)) !important;
+            padding-bottom: calc(8rem + env(safe-area-inset-bottom)) !important;
         }
 
+        /* Highlight state for active size control buttons */
+        .size-btn-active {
+            background-color: #1e4620 !important;
+            color: #ffffff !important;
+            border-color: #ffffff !important;
+        }
     </style>
 </head>
 <body class="text-brand-900 antialiased selection:bg-brand-100 selection:text-brand-700">
 
     <!-- Offline indicator -->
-    <div id="offline-indicator">⚠️ 目前離線模式 — 所有資料已快取，可正常瀏覽</div>
+    <div id="offline-indicator">⚠️ 目前離線模式 — 所有資料已安全快取，可正常瀏覽</div>
     
-    <!-- PWA Install Banner (Android) -->
+    <!-- PWA Install Banner -->
     <div id="pwa-install-banner" style="display:none">
-        <span style="font-size:1.5rem">📲</span>
+        <span style="font-size:1.8rem">📲</span>
         <div>
-            <div style="font-weight:800;font-size:0.95rem">加入主畫面，隨時使用！</div>
-            <div style="font-size:0.8rem;opacity:0.85">離線也能完整瀏覽所有行程</div>
+            <div style="font-weight:900;font-size:1.05rem">加到主畫面，隨時開啟！</div>
+            <div style="font-size:0.85rem;opacity:0.9">免網路也能完整查閱所有行程與手指日語</div>
         </div>
-        <button onclick="triggerInstall()" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:white;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer;white-space:nowrap;min-height:40px">
+        <button onclick="triggerInstall()" style="background:rgba(255,255,255,0.2);border:2px solid rgba(255,255,255,0.5);color:white;border-radius:12px;padding:8px 16px;font-weight:900;cursor:pointer;white-space:nowrap;min-height:44px">
             安裝 App
         </button>
-        <button onclick="hideBanner()" style="background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;padding:4px;min-height:36px;min-width:36px">✕</button>
+        <button onclick="hideBanner()" style="background:none;border:none;color:white;font-size:1.4rem;cursor:pointer;padding:6px;min-height:40px;min-width:40px">✕</button>
     </div>
 
-
-    <!-- Top Sticky Accessibility Notice & Navigation -->
+    <!-- Top Sticky Title & Tab Bar & Elder Size Adjuster -->
     <header class="sticky top-0 z-40 bg-brand-600 text-white shadow-md">
-        <div class="max-w-4xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-3">
             <div class="flex items-center gap-2">
-                <span class="text-3xl">👵👴</span>
-                <h1 class="text-xl sm:text-2xl font-black tracking-wide pwa-header-title">長輩東京＋伊豆溫泉慢活手冊</h1>
+                <span class="text-3xl">♨️</span>
+                <h1 class="text-xl sm:text-2xl font-black tracking-wide pwa-header-title">九月東京＋伊豆溫泉慢活自助行</h1>
             </div>
-            <div class="bg-brand-700 px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1.5 border border-brand-100 pwa-badge">
-                <span class="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse"></span>
-                高齡友善大字版 • 100% 離線可用
+            
+            <!-- Elder-friendly Font Size Adjuster widget -->
+            <div class="flex items-center gap-2 bg-brand-700 px-3 py-1.5 rounded-xl border border-brand-100/30 text-base">
+                <span class="font-black text-brand-50 shrink-0 text-sm sm:text-base">🔍 文字大小：</span>
+                <div class="flex bg-brand-900 rounded-lg p-0.5 border border-brand-100/10">
+                    <button onclick="setFontScale('standard')" id="btn-size-standard" class="px-3.5 py-1.5 font-bold rounded-md text-sm transition-all text-brand-100/60 hover:text-white" title="標準文字大小">標準</button>
+                    <button onclick="setFontScale('large')" id="btn-size-large" class="px-3.5 py-1.5 font-bold rounded-md text-sm transition-all text-brand-100/60 hover:text-white" title="適合閱讀的放大文字">放大</button>
+                    <button onclick="setFontScale('huge')" id="btn-size-huge" class="px-3.5 py-1.5 font-bold rounded-md text-sm transition-all text-brand-100/60 hover:text-white" title="極致清晰特大文字">特大</button>
+                </div>
             </div>
         </div>
 
-        <!-- 4 Main High-contrast Tabs -->
+        <!-- 4 Main Navigation Tabs -->
         <nav class="bg-brand-700 border-t border-brand-600 max-w-4xl mx-auto">
             <div class="grid grid-cols-4 text-center">
                 <button onclick="switchTab('overview')" id="tab-overview" class="py-3 px-1 text-base sm:text-lg font-bold border-b-4 border-white text-white focus:outline-none transition-all flex flex-col items-center justify-center gap-1">
                     <span class="text-2xl">📋</span>
-                    <span>行程總覽</span>
+                    <span class="font-black">行程總覽</span>
                 </button>
                 <button onclick="switchTab('itinerary')" id="tab-itinerary" class="py-3 px-1 text-base sm:text-lg font-bold border-b-4 border-transparent text-brand-100/70 hover:text-white focus:outline-none transition-all flex flex-col items-center justify-center gap-1">
                     <span class="text-2xl">🚶</span>
-                    <span>每天行程</span>
+                    <span class="font-black">每天行程</span>
                 </button>
                 <button onclick="switchTab('japanese')" id="tab-japanese" class="py-3 px-1 text-base sm:text-lg font-bold border-b-4 border-transparent text-brand-100/70 hover:text-white focus:outline-none transition-all flex flex-col items-center justify-center gap-1">
                     <span class="text-2xl">🎴</span>
-                    <span>手指日語</span>
+                    <span class="font-black">手指日語</span>
                 </button>
                 <button onclick="switchTab('checklist')" id="tab-checklist" class="py-3 px-1 text-base sm:text-lg font-bold border-b-4 border-transparent text-brand-100/70 hover:text-white focus:outline-none transition-all flex flex-col items-center justify-center gap-1">
                     <span class="text-2xl">✅</span>
-                    <span>準備清單</span>
+                    <span class="font-black">準備清單</span>
                 </button>
             </div>
         </nav>
     </header>
 
-    <main class="max-w-4xl mx-auto px-4 py-6 pb-24">
+    <main class="max-w-4xl mx-auto px-4 py-6 pb-28">
 
         <!-- ================= PAGE 1: 行程總覽 ================= -->
         <div id="page-overview" class="tab-page space-y-6">
+            
+            <!-- Flight Information Board (Elder-Friendly, High-contrast AAA) -->
+            <div class="bg-white rounded-2xl p-6 border-2 border-brand-600 shadow-sm space-y-4">
+                <div class="flex items-center gap-3 border-b-2 border-brand-100 pb-3">
+                    <span class="text-4xl">✈️</span>
+                    <div>
+                        <span class="text-sm font-black uppercase tracking-wider text-brand-600">優雅首航安全第一</span>
+                        <h2 class="text-2xl font-black text-black">來回航班與航廈指南</h2>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Departure Flight Card -->
+                    <div class="bg-brand-50 p-5 rounded-xl border border-brand-100 space-y-2">
+                        <span class="bg-brand-600 text-white text-sm font-black px-2.5 py-1.5 rounded-md inline-block">🛫 去程航班</span>
+                        <div class="text-xl font-black text-black pt-1">
+                            2026-09-17 (四) 10:40 起飛
+                        </div>
+                        <div class="text-lg font-black text-gray-800">
+                            桃園國際機場 (TPE) <span class="text-brand-600 font-black">第一航廈</span>
+                        </div>
+                        <div class="text-gray-800 font-bold text-base">
+                            ➔ 於 15:05 降落至成田機場 (NRT) <span class="text-brand-700 font-black">第二航廈</span>
+                        </div>
+                        <p class="text-base font-black text-amber-900 bg-amber-50 p-3 rounded-lg border border-amber-300">
+                            💡 乘機技巧：請於早上 08:10 前抵達桃園第一航廈辦理行李託運與出境。
+                        </p>
+                    </div>
+
+                    <!-- Return Flight Card -->
+                    <div class="bg-brand-50 p-5 rounded-xl border border-brand-100 space-y-2">
+                        <span class="bg-blue-600 text-white text-sm font-black px-2.5 py-1.5 rounded-md inline-block">🛬 回程航班</span>
+                        <div class="text-xl font-black text-black pt-1">
+                            2026-09-23 (三) 16:20 起飛
+                        </div>
+                        <div class="text-lg font-black text-gray-800">
+                            成田國際機場 (NRT) <span class="text-blue-700 font-black">第二航廈</span>
+                        </div>
+                        <div class="text-gray-800 font-bold text-base">
+                            ➔ 於 19:00 降落至桃園機場 (TPE) <span class="text-brand-700 font-black">第一航廈</span>
+                        </div>
+                        <p class="text-base font-black text-amber-900 bg-amber-50 p-3 rounded-lg border border-amber-300">
+                            💡 乘機技巧：請於下午 13:00 前自上野出發，約 13:50 前輕鬆抵達第二航廈。
+                        </p>
+                    </div>
+                </div>
+            </div>
             
             <!-- Accommodation Section: Hotel Crown Hills Ueno Premier -->
             <div class="bg-white rounded-2xl p-6 border-2 border-brand-600 shadow-sm">
                 <div class="flex items-center gap-3 border-b-2 border-brand-100 pb-3 mb-4">
                     <span class="text-4xl">🏨</span>
                     <div>
-                        <span class="text-sm font-bold uppercase tracking-wider text-brand-600">全程固定住宿點</span>
-                        <h2 class="text-2xl font-black">Hotel Crown Hills Ueno Premier</h2>
-                        <p class="text-base text-gray-500 font-medium">上野皇冠山丘高級酒店</p>
+                        <span class="text-sm font-black uppercase tracking-wider text-brand-600">全程固定舒適住宿點</span>
+                        <h2 class="text-2xl font-black text-black">Hotel Crown Hills Ueno Premier</h2>
+                        <p class="text-base text-gray-800 font-black">上野皇冠山丘高級酒店</p>
                     </div>
                 </div>
                 
                 <div class="space-y-4 text-lg">
-                    <p class="font-bold text-brand-700 bg-brand-50 p-3 rounded-xl border-l-4 border-brand-600">
-                        💡 <span class="underline">長輩居住亮點</span>：客房全在 20-24 樓極佳景觀，窗外能俯瞰上野美景。一樓右手邊就是 7-Eleven 超商，配有「高樓大堂直達電梯」，出入極度安靜且安全。
+                    <p class="font-black text-brand-700 bg-brand-50 p-4 rounded-xl border-l-4 border-brand-600 leading-relaxed">
+                        ♨️ <span class="underline">居住亮點</span>：客房全在 20-24 樓極佳景觀，窗外能俯瞰上野美景。大樓一樓右手邊就是一家 7-Eleven 超商，配有「高樓大堂直達專用電梯」，出入安靜、明亮且安全。
                     </p>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
                         <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
-                            <span class="font-bold text-gray-700 block mb-1">🗺️ 飯店地址</span>
-                            <span class="font-medium text-black">東京都台東区東上野2-16-1</span>
+                            <span class="font-black text-gray-800 block mb-1">🗺️ 飯店地址</span>
+                            <span class="font-bold text-black">東京都台東区東上野2-16-1</span>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
-                            <span class="font-bold text-gray-700 block mb-1">📞 飯店電話</span>
-                            <span class="font-medium text-black">03-5846-7100</span>
+                            <span class="font-black text-gray-800 block mb-1">📞 飯店電話</span>
+                            <span class="font-bold text-black">03-5846-7100</span>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
-                            <span class="font-bold text-gray-700 block mb-1">♿ 無障礙步行距離</span>
-                            <span class="font-medium text-black">從 JR 上野站「廣小路口」步行 4-5 分鐘或地鐵 3 號出口電梯 3 分鐘，全程平坦無階梯。</span>
+                            <span class="font-black text-gray-800 block mb-1">♿ 步行路線</span>
+                            <span class="font-bold text-black">從 JR 上野站「廣小路口」步行 4-5 分鐘或地鐵 3 號出口電梯 3 分鐘，全程平面無階梯。</span>
                         </div>
                     </div>
                     
-                    <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Crown+Hills+Ueno+Premier" target="_blank" class="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl shadow-md transition-all text-xl mt-4">
-                        📍 👉【點我導航至飯店位置】
+                    <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Crown+Hills+Ueno+Premier" target="_blank" class="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-black py-4 px-6 rounded-xl shadow-md transition-all text-xl mt-4">
+                        🧭 👉【點我開啟 Google Maps 定位飯店】
                     </a>
                 </div>
             </div>
 
             <!-- 7-Day Overview Table -->
             <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
-                <h3 class="text-2xl font-black border-b pb-2 mb-4 flex items-center gap-2">
-                    <span>📅</span> 7天6夜慢活大綱
+                <h3 class="text-2xl font-black border-b pb-2 mb-4 flex items-center gap-2 text-black">
+                    <span>📅</span> 7天6夜慢活行程精華要點
                 </h3>
-                <div class="space-y-3">
+                <div class="space-y-4">
                     <!-- Day Items -->
                     <div class="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-xl transition-all">
-                        <span class="bg-brand-600 text-white font-black px-3 py-1 rounded-lg text-lg shrink-0">D1</span>
+                        <span class="bg-brand-600 text-white font-black px-3.5 py-1.5 rounded-lg text-lg shrink-0">D1</span>
                         <div>
-                            <h4 class="text-xl font-bold">抵達東京 ➔ Skyliner 無障礙直達 ➔ 飯店 Check-in ➔ 阿美橫丁</h4>
-                            <p class="text-base text-gray-600 mt-1">首日下飛機，直達飯店，傍晚沿平路漫步吃甜品，品嚐入口即化鰻魚飯。</p>
+                            <h4 class="text-xl font-black text-black">9/17 (四) 抵達東京 ➔ Skyliner 直達 ➔ 5步平地指南到飯店 ➔ 吉池食堂/阿美橫丁</h4>
+                            <p class="text-base text-gray-800 mt-1 font-bold">首日抵達上野辦理 check-in。傍晚散步，在 9 樓備有無障礙大電梯的吉池食堂享用豐盛晚餐，徹底避開人潮擁擠排隊。</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-xl transition-all border-t border-gray-100">
-                        <span class="bg-brand-600 text-white font-black px-3 py-1 rounded-lg text-lg shrink-0">D2</span>
+                        <span class="bg-brand-600 text-white font-black px-3.5 py-1.5 rounded-lg text-lg shrink-0">D2</span>
                         <div>
-                            <h4 class="text-xl font-bold">淺草雷門寺參拜 ➔ 隅田川景觀遊船 ➔ 晴空塔看日落</h4>
-                            <p class="text-base text-gray-600 mt-1">淺草雷門平坦步道參拜，下午搭乘無障礙觀光船吹冷氣，傍晚直上晴空塔。</p>
+                            <h4 class="text-xl font-black text-black">9/18 (五) 【KKday 兩日遊 D1】沼津港駿河灣遊船 ➔ 修善寺溫泉平路足湯 ➔ 溫泉旅館</h4>
+                            <p class="text-base text-gray-800 mt-1 font-bold">寄存大行李於上野，輕裝出發。搭乘中文巴士專車從新宿 LOVE 雕塑前出發，直達駿河灣，搭船欣賞富士山海景，在修善寺泡舒活足湯，夜宿頂級溫泉旅館享用會席晚餐。</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-xl transition-all border-t border-gray-100">
-                        <span class="bg-red-600 text-white font-black px-3 py-1 rounded-lg text-lg shrink-0">D3</span>
+                        <span class="bg-brand-600 text-white font-black px-3.5 py-1.5 rounded-lg text-lg shrink-0">D3</span>
                         <div>
-                            <h4 class="text-xl font-bold">【KKday 兩日遊 D1】沼津港駿河灣遊船 ➔ 米其林修善寺足湯 ➔ 住溫泉旅館</h4>
-                            <p class="text-base text-gray-600 mt-1">行李寄放上野！輕裝登車，大巴直達。欣賞富士山海景、溫泉鎮泡足湯。</p>
+                            <h4 class="text-xl font-black text-black">9/19 (六) 【KKday 兩日遊 D2】大室山雙人纜車 ➔ 來宮神社神木 ➔ 返回上野</h4>
+                            <p class="text-base text-gray-800 mt-1 font-bold">搭乘可減速雙人吊椅登抹茶火山頂，參拜兩千年神木。傍晚大巴返回新宿，轉山手線回上野。晚餐推薦極度軟嫩好咬的上野壽喜燒鉢之木。</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-xl transition-all border-t border-gray-100">
-                        <span class="bg-red-600 text-white font-black px-3 py-1 rounded-lg text-lg shrink-0">D4</span>
+                        <span class="bg-brand-600 text-white font-black px-3.5 py-1.5 rounded-lg text-lg shrink-0">D4</span>
                         <div>
-                            <h4 class="text-xl font-bold">【KKday 兩日遊 D2】大室山纜車 ➔ 門脇吊橋 ➔ 來宮神社神木 ➔ 返回上野</h4>
-                            <p class="text-base text-gray-600 mt-1">免爬山雙人吊椅登大室山，看太平洋海景，參拜兩千年神木，傍晚大巴送回上野。</p>
+                            <h4 class="text-xl font-black text-black">9/20 (日) 明治神宮都市森林浴 ➔ 表參道欅木綠蔭 ➔ 新宿御苑大溫室 ➔ 新宿西口購物與晚餐</h4>
+                            <p class="text-base text-gray-800 mt-1 font-bold">早晨原宿森林浴，表參道吃親子丼。下午搭計程車去新宿御苑平坦大溫室散策。傍晚逛高齡友善防滑的新宿京王百貨，在敘敘苑享用極嫩燒肉。</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-xl transition-all border-t border-gray-100">
-                        <span class="bg-brand-600 text-white font-black px-3 py-1 rounded-lg text-lg shrink-0">D5</span>
+                        <span class="bg-brand-600 text-white font-black px-3.5 py-1.5 rounded-lg text-lg shrink-0">D5</span>
                         <div>
-                            <h4 class="text-xl font-bold">東京車站紅磚 ➔ 皇居外苑松林二重橋 ➔ 巢鴨「老奶奶原宿」懷舊散策</h4>
-                            <p class="text-base text-gray-600 mt-1">欣賞百年車站，在開闊無邊的皇居二重橋散步，下午到專為高齡長輩設計的無障礙老街「巢鴨」散步祈福與享用下午茶。</p>
+                            <h4 class="text-xl font-black text-black">9/21 (一) 東京車站紅磚 ➔ 皇居外苑松林二重橋 ➔ 巢鴨商店街（洗心地藏）</h4>
+                            <p class="text-base text-gray-800 mt-1 font-bold">欣賞百年文藝復興車站，避開皇居碎石走水泥平路。下午悠遊專為樂活散步規劃的巢鴨老街，享用巨大炸蝦，擦拭地藏祈求健康。</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-xl transition-all border-t border-gray-100">
-                        <span class="bg-brand-600 text-white font-black px-3 py-1 rounded-lg text-lg shrink-0">D6</span>
+                        <span class="bg-brand-600 text-white font-black px-3.5 py-1.5 rounded-lg text-lg shrink-0">D6</span>
                         <div>
-                            <h4 class="text-xl font-bold">川越小江戶一日遊（藏造一番街、時之鐘、冰川神社風鈴祭）</h4>
-                            <p class="text-base text-gray-600 mt-1">搭乘全線低底盤無障礙巴士，暢遊江戶古街，參拜風鈴神社，吃百年熱騰騰鰻魚飯。</p>
+                            <h4 class="text-xl font-black text-black">9/22 (二) 淺草雷門寺參拜 ➔ 隅田川景觀遊船 ➔ 晴空塔看落日與夜景</h4>
+                            <p class="text-base text-gray-800 mt-1 font-bold">淺草本堂平緩無障礙大斜坡參拜，登船坐在冷氣沙發艙賞景，傍晚直達晴空塔，在 6 樓享用無骨刺入口即化的經典名古屋備長鰻魚飯。</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-xl transition-all border-t border-gray-100">
-                        <span class="bg-brand-600 text-white font-black px-3 py-1 rounded-lg text-lg shrink-0">D7</span>
+                        <span class="bg-brand-600 text-white font-black px-3.5 py-1.5 rounded-lg text-lg shrink-0">D7</span>
                         <div>
-                            <h4 class="text-xl font-bold">上野公園散步 ➔ 兩百年伊豆榮鰻魚飯（高腳椅座）➔ 機場返家</h4>
-                            <p class="text-base text-gray-600 mt-1">最後一日悠閒時光，公園喝咖啡、品嚐百年鰻魚飯（免盤腿），開心地搭 Skyliner 前往機場。</p>
+                            <h4 class="text-xl font-black text-black">9/23 (三) 上野公園綠意散步 ➔ 兩百年伊豆榮鰻魚飯（高腳椅座）➔ 搭 Skyliner 舒適返家</h4>
+                            <p class="text-base text-gray-800 mt-1 font-bold">最後一日，在公園綠蔭散步，品嚐設有椅子的老店鰻魚飯。回飯店提行李，搭 Skyliner 一線直達機場，優雅回台。</p>
                         </div>
                     </div>
                 </div>
@@ -372,47 +412,47 @@
         <!-- ================= PAGE 2: 每天行程 ================= -->
         <div id="page-itinerary" class="tab-page hidden space-y-6">
             
-            <!-- Stations Visual Badges Legend -->
+            <!-- Visual subway line helper -->
             <div class="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
-                <span class="text-sm font-bold text-brand-600 block mb-2">💡 長輩認路救星：車站內請對準這些圖標與顏色</span>
+                <span class="text-base font-black text-brand-600 block mb-2">💡 車站認路口訣：請對準站內指示牌上的這些底色與英文字母</span>
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                    <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-200">
-                        <span class="w-8 h-8 rounded-full bg-subway-yamanote text-white font-black flex items-center justify-center text-sm">JY</span>
-                        <span class="text-base font-bold">JR 山手線</span>
+                    <div class="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
+                        <span class="w-9 h-9 rounded-full bg-subway-yamanote text-white font-black flex items-center justify-center text-sm shadow-sm">JY</span>
+                        <span class="text-base font-black text-black">JR 山手線</span>
                     </div>
-                    <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-200">
-                        <span class="w-8 h-8 rounded-full bg-subway-ginza text-white font-black flex items-center justify-center text-sm">G</span>
-                        <span class="text-base font-bold">地鐵銀座線</span>
+                    <div class="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
+                        <span class="w-9 h-9 rounded-full bg-subway-ginza text-white font-black flex items-center justify-center text-sm shadow-sm">G</span>
+                        <span class="text-base font-black text-black">地鐵銀座線</span>
                     </div>
-                    <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-200">
-                        <span class="w-8 h-8 rounded-full bg-subway-marunouchi text-white font-black flex items-center justify-center text-sm">M</span>
-                        <span class="text-base font-bold">地鐵丸之內線</span>
+                    <div class="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
+                        <span class="w-9 h-9 rounded-full bg-subway-marunouchi text-white font-black flex items-center justify-center text-sm shadow-sm">M</span>
+                        <span class="text-base font-black text-black">地鐵丸之內</span>
                     </div>
-                    <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-200">
-                        <span class="w-8 h-8 rounded-full bg-subway-keisei text-white font-black flex items-center justify-center text-sm">KS</span>
-                        <span class="text-base font-bold">京成電鐵</span>
+                    <div class="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
+                        <span class="w-9 h-9 rounded-full bg-subway-keisei text-white font-black flex items-center justify-center text-sm shadow-sm">KS</span>
+                        <span class="text-base font-black text-black">京成電鐵</span>
                     </div>
-                    <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-200">
-                        <span class="w-8 h-8 rounded-full bg-subway-hibiya text-white font-black flex items-center justify-center text-sm">H</span>
-                        <span class="text-base font-bold">地鐵日比谷線</span>
+                    <div class="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
+                        <span class="w-9 h-9 rounded-full bg-subway-hibiya text-white font-black flex items-center justify-center text-sm shadow-sm">H</span>
+                        <span class="text-base font-black text-black">地鐵日比谷</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Day Selector (Horizontal Big Buttons) -->
+            <!-- Day Selector (Horizontal Large Scrollable Buttons) -->
             <div class="flex gap-2 overflow-x-auto pb-2 snap-x day-scroll-container">
-                <button onclick="switchDay(1)" id="btn-day-1" class="day-btn snap-start shrink-0 bg-brand-600 text-white font-bold px-5 py-3 rounded-xl text-lg transition-all border-2 border-brand-600 shadow-md">第一天</button>
-                <button onclick="switchDay(2)" id="btn-day-2" class="day-btn snap-start shrink-0 bg-white text-gray-700 font-bold px-5 py-3 rounded-xl text-lg transition-all border border-gray-300">第二天</button>
-                <button onclick="switchDay(3)" id="btn-day-3" class="day-btn snap-start shrink-0 bg-white text-gray-700 font-bold px-5 py-3 rounded-xl text-lg transition-all border border-gray-300">第三天</button>
-                <button onclick="switchDay(4)" id="btn-day-4" class="day-btn snap-start shrink-0 bg-white text-gray-700 font-bold px-5 py-3 rounded-xl text-lg transition-all border border-gray-300">第四天</button>
-                <button onclick="switchDay(5)" id="btn-day-5" class="day-btn snap-start shrink-0 bg-white text-gray-700 font-bold px-5 py-3 rounded-xl text-lg transition-all border border-gray-300">第五天</button>
-                <button onclick="switchDay(6)" id="btn-day-6" class="day-btn snap-start shrink-0 bg-white text-gray-700 font-bold px-5 py-3 rounded-xl text-lg transition-all border border-gray-300">第六天</button>
-                <button onclick="switchDay(7)" id="btn-day-7" class="day-btn snap-start shrink-0 bg-white text-gray-700 font-bold px-5 py-3 rounded-xl text-lg transition-all border border-gray-300">第七天</button>
+                <button onclick="switchDay(1)" id="btn-day-1" class="day-btn snap-start shrink-0 bg-brand-600 text-white font-bold px-5 py-3.5 rounded-xl text-lg transition-all border-2 border-brand-600 shadow-md">9/17 (四)</button>
+                <button onclick="switchDay(2)" id="btn-day-2" class="day-btn snap-start shrink-0 bg-white text-gray-700 font-bold px-5 py-3.5 rounded-xl text-lg transition-all border border-gray-300">9/18 (五)</button>
+                <button onclick="switchDay(3)" id="btn-day-3" class="day-btn snap-start shrink-0 bg-white text-gray-700 font-bold px-5 py-3.5 rounded-xl text-lg transition-all border border-gray-300">9/19 (六)</button>
+                <button onclick="switchDay(4)" id="btn-day-4" class="day-btn snap-start shrink-0 bg-white text-gray-700 font-bold px-5 py-3.5 rounded-xl text-lg transition-all border border-gray-300">9/20 (日)</button>
+                <button onclick="switchDay(5)" id="btn-day-5" class="day-btn snap-start shrink-0 bg-white text-gray-700 font-bold px-5 py-3.5 rounded-xl text-lg transition-all border border-gray-300">9/21 (一)</button>
+                <button onclick="switchDay(6)" id="btn-day-6" class="day-btn snap-start shrink-0 bg-white text-gray-700 font-bold px-5 py-3.5 rounded-xl text-lg transition-all border border-gray-300">9/22 (二)</button>
+                <button onclick="switchDay(7)" id="btn-day-7" class="day-btn snap-start shrink-0 bg-white text-gray-700 font-bold px-5 py-3.5 rounded-xl text-lg transition-all border border-gray-300">9/23 (三)</button>
             </div>
 
             <!-- Day Itinerary Contents -->
             <div id="day-content" class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-6">
-                <!-- Will be dynamically updated by JS -->
+                <!-- Dynamically updated by JavaScript -->
             </div>
 
         </div>
@@ -420,20 +460,20 @@
         <!-- ================= PAGE 3: 手指日語 ================= -->
         <div id="page-japanese" class="tab-page hidden space-y-6">
             
-            <div class="bg-brand-50 p-4 rounded-xl border-l-4 border-brand-600">
-                <p class="text-lg font-bold text-brand-700">
-                    💡 <span class="underline">使用方法</span>：遇到需要幫忙時，點選對應的卡片，會彈出 **【全螢幕超大字體卡片】**，直接將螢幕拿給日本工作人員看即可！
+            <div class="bg-brand-50 p-5 rounded-xl border-l-4 border-brand-600 shadow-sm">
+                <p class="text-lg sm:text-xl font-black text-brand-700 leading-relaxed">
+                    💡 點選以下卡片，可彈出 **【全螢幕超大字體卡片】**，直接將大字與日文出示給店家或車站服務員看，就能在第一時間獲得溫柔的引導與協助！
                 </p>
             </div>
 
             <!-- Category Filter Buttons -->
-            <div class="flex flex-wrap gap-2">
-                <button onclick="filterJapanese('all')" id="btn-jp-all" class="jp-filter-btn px-4 py-2 bg-brand-600 text-white font-bold rounded-xl text-lg">全部</button>
-                <button onclick="filterJapanese('transport')" id="btn-jp-transport" class="jp-filter-btn px-4 py-2 bg-white text-gray-700 border border-gray-300 font-bold rounded-xl text-lg">🚇 交通問路</button>
-                <button onclick="filterJapanese('hotel')" id="btn-jp-hotel" class="jp-filter-btn px-4 py-2 bg-white text-gray-700 border border-gray-300 font-bold rounded-xl text-lg">🛎️ 飯店寄放</button>
-                <button onclick="filterJapanese('restaurant')" id="btn-jp-restaurant" class="jp-filter-btn px-4 py-2 bg-white text-gray-700 border border-gray-300 font-bold rounded-xl text-lg">🥢 餐廳用餐</button>
-                <button onclick="filterJapanese('shopping')" id="btn-jp-shopping" class="jp-filter-btn px-4 py-2 bg-white text-gray-700 border border-gray-300 font-bold rounded-xl text-lg">🛍️ 購物免稅</button>
-                <button onclick="filterJapanese('emergency')" id="btn-jp-emergency" class="jp-filter-btn px-4 py-2 bg-white text-gray-700 border border-gray-300 font-bold rounded-xl text-lg">🚨 緊急醫療</button>
+            <div class="flex flex-wrap gap-2.5">
+                <button onclick="filterJapanese('all')" id="btn-jp-all" class="jp-filter-btn px-5 py-3 bg-brand-600 text-white font-bold rounded-xl text-lg shadow-sm">全部</button>
+                <button onclick="filterJapanese('transport')" id="btn-jp-transport" class="jp-filter-btn px-5 py-3 bg-white text-gray-800 border-2 border-gray-200 font-bold rounded-xl text-lg shadow-sm">🚇 交通問路</button>
+                <button onclick="filterJapanese('hotel')" id="btn-jp-hotel" class="jp-filter-btn px-5 py-3 bg-white text-gray-880 border-2 border-gray-200 font-bold rounded-xl text-lg shadow-sm">🛎️ 飯店寄放</button>
+                <button onclick="filterJapanese('restaurant')" id="btn-jp-restaurant" class="jp-filter-btn px-5 py-3 bg-white text-gray-800 border-2 border-gray-200 font-bold rounded-xl text-lg shadow-sm">🥢 餐廳用餐</button>
+                <button onclick="filterJapanese('shopping')" id="btn-jp-shopping" class="jp-filter-btn px-5 py-3 bg-white text-gray-800 border-2 border-gray-200 font-bold rounded-xl text-lg shadow-sm">🛍️ 購物免稅</button>
+                <button onclick="filterJapanese('emergency')" id="btn-jp-emergency" class="jp-filter-btn px-5 py-3 bg-white text-gray-800 border-2 border-gray-200 font-bold rounded-xl text-lg shadow-sm">🚨 緊急設施</button>
             </div>
 
             <!-- Japanese Cards Grid -->
@@ -446,19 +486,19 @@
         <!-- ================= PAGE 4: 旅行準備清單 ================= -->
         <div id="page-checklist" class="tab-page hidden space-y-6">
             
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="text-2xl font-black flex items-center gap-2">
-                    <span>🎒</span> 物品檢查清單
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-2xl font-black flex items-center gap-2 text-black">
+                    <span>🎒</span> 行前行李物品檢查清單
                 </h3>
-                <button onclick="resetChecklist()" class="text-brand-600 hover:text-brand-700 font-black text-lg bg-brand-50 px-3 py-1 rounded-lg border border-brand-100">
-                    🔄 全部重來
+                <button onclick="resetChecklist()" class="text-brand-600 hover:text-brand-700 font-black text-lg bg-brand-50 px-4 py-2 rounded-xl border-2 border-brand-100 shadow-sm">
+                    🔄 全部重設
                 </button>
             </div>
 
             <!-- Category 1: Daily departure items -->
             <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
                 <h4 class="text-xl font-black text-brand-600 flex items-center gap-2 border-b pb-2">
-                    <span>🚶</span> 每天出發檢查卡 (Daily Essentials)
+                    <span>🚶</span> 每天出發檢查卡 (每日必備品)
                 </h4>
                 <div id="list-daily" class="space-y-3">
                     <!-- Checkboxes generated by JS -->
@@ -469,15 +509,15 @@
             <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b pb-2">
                     <h4 class="text-xl font-black text-brand-600 flex items-center gap-2">
-                        <span>✈️</span> 行程出發前必備卡 (Before Departure)
+                        <span>✈️</span> 行程出發前準備 (可自行增減)
                     </h4>
-                    <span class="text-sm bg-brand-100 text-brand-700 px-2 py-0.5 rounded-full font-bold">可自行增減</span>
+                    <span class="text-sm bg-brand-100 text-brand-700 px-3 py-1 rounded-full font-black">支援手機儲存</span>
                 </div>
                 
                 <!-- Add Custom Item Input -->
                 <div class="flex gap-2">
-                    <input type="text" id="new-item-input" placeholder="新增自訂品項..." class="flex-1 p-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-brand-600 text-lg">
-                    <button onclick="addCustomItem()" class="bg-brand-600 hover:bg-brand-700 text-white font-black px-6 py-2 rounded-xl text-lg">➕ 新增</button>
+                    <input type="text" id="new-item-input" placeholder="新增自訂物品，例如：感冒藥..." class="flex-1 p-3.5 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-brand-600 text-lg font-bold">
+                    <button onclick="addCustomItem()" class="bg-brand-600 hover:bg-brand-700 text-white font-black px-6 py-2 rounded-xl text-lg shadow-sm">➕ 新增</button>
                 </div>
 
                 <div id="list-before" class="space-y-3">
@@ -490,7 +530,7 @@
     </main>
 
     <!-- Japanese Phrase Fullscreen Modal Popup -->
-    <div id="phrase-modal" class="fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-4 hidden">
+    <div id="phrase-modal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-8 space-y-6 shadow-2xl relative border-4 border-brand-600">
             <!-- Modal Close button -->
             <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black focus:outline-none w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full text-2xl font-bold">
@@ -499,25 +539,25 @@
             
             <div class="text-center space-y-6">
                 <!-- Intent in Chinese -->
-                <div class="bg-brand-50 py-3 px-4 rounded-xl inline-block border border-brand-100">
-                    <span class="text-lg text-brand-700 font-bold block">中文意圖</span>
-                    <h5 id="modal-intent" class="text-2xl font-black text-black"></h5>
+                <div class="bg-brand-50 py-3.5 px-5 rounded-xl inline-block border border-brand-100">
+                    <span class="text-sm text-brand-600 font-black block">中文意思</span>
+                    <h5 id="modal-intent" class="text-2xl sm:text-3xl font-black text-black"></h5>
                 </div>
                 
                 <!-- Large Japanese Character -->
-                <div class="bg-gray-50 py-6 px-4 rounded-2xl border-2 border-gray-200">
+                <div class="bg-gray-50 py-7 px-5 rounded-2xl border-2 border-gray-200">
                     <p id="modal-japanese" class="text-4xl md:text-5xl font-black text-brand-700 leading-normal tracking-wide select-all"></p>
                 </div>
                 
                 <!-- Hiragana & Romaji Pronunciation -->
                 <div class="space-y-1">
-                    <span class="text-base text-gray-500 font-bold block">🗣️ 日文發音助讀 (平假名拼音)</span>
-                    <p id="modal-hiragana" class="text-xl font-bold text-gray-700 bg-gray-100 py-2 px-3 rounded-lg inline-block"></p>
+                    <span class="text-sm text-gray-600 font-black block">🗣️ 日文發音助讀 (平假名拼音)</span>
+                    <p id="modal-hiragana" class="text-xl md:text-2xl font-bold text-gray-800 bg-gray-100 py-2.5 px-4 rounded-lg inline-block"></p>
                 </div>
             </div>
             
             <div class="pt-4 border-t border-gray-100 flex flex-col items-center justify-center gap-2">
-                <span class="text-base text-gray-500 font-medium">👉 請直接指著上面的大字給日本工作人員看 👈</span>
+                <span class="text-base text-gray-800 font-bold">👉 請直接指著上面的日文給日本服務人員看 👈</span>
                 <button onclick="closeModal()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-black py-4 rounded-xl text-xl shadow-md">
                     我知道了，關閉卡片
                 </button>
@@ -526,15 +566,15 @@
     </div>
 
     <!-- Sticky Navigation helper for fast taxi call / Suica helper -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-gray-200 py-3 shadow-lg z-30 bottom-sticky-bar">
+    <div class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-gray-200 py-3.5 shadow-lg z-30 bottom-sticky-bar">
         <div class="max-w-4xl mx-auto px-4 flex justify-between items-center">
             <div class="text-sm">
-                <span class="font-bold text-brand-600 block">🚗 走累了嗎？</span>
-                <span class="text-gray-500">推薦用 GO App 一鍵叫車</span>
+                <span class="font-black text-brand-600 block text-base">🚗 走累了嗎？</span>
+                <span class="text-gray-800 font-bold">推薦在路邊攔車或使用 GO App 叫計程車</span>
             </div>
             <div class="flex gap-2">
-                <a href="https://www.google.com/maps" target="_blank" class="bg-blue-600 text-white font-bold px-4 py-2 rounded-xl flex items-center justify-center text-base shadow-sm">
-                    🌐 開 Google Map
+                <a href="https://www.google.com/maps" target="_blank" class="bg-blue-600 text-white font-black px-5 py-2.5 rounded-xl flex items-center justify-center text-base shadow-sm">
+                    🌐 開 Google Maps
                 </a>
             </div>
         </div>
@@ -544,342 +584,403 @@
     <button id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})"
         aria-label="回到最上面"
         style="
-            position:fixed; bottom:90px; right:20px; z-index:50;
-            width:52px; height:52px; border-radius:50%;
+            position:fixed; bottom:110px; right:20px; z-index:50;
+            width:56px; height:56px; border-radius:50%;
             background:#1e4620; color:white; border:none; cursor:pointer;
-            box-shadow:0 4px 16px rgba(0,0,0,0.25);
+            box-shadow:0 4px 16px rgba(0,0,0,0.3);
             display:flex; align-items:center; justify-content:center;
-            font-size:22px; opacity:0; pointer-events:none;
+            font-size:24px; font-weight:bold; opacity:0; pointer-events:none;
             transition:opacity 0.3s ease, transform 0.3s ease;
             transform:translateY(10px);
         ">
         ↑
     </button>
 
+    <!-- Custom Modal for Dialog Box (Replacing browser confirm) -->
+    <div id="custom-confirm-modal" class="fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 space-y-6 shadow-2xl border-4 border-brand-600">
+            <h4 class="text-2xl font-black text-black">🔄 重置確認</h4>
+            <p class="text-lg text-gray-800 font-bold leading-relaxed">確認要重置所有行李清單的勾選進度嗎？這會清除您目前勾選的所有項目並恢復成預設值。</p>
+            <div class="flex gap-3 pt-2">
+                <button onclick="handleConfirmReset(false)" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3.5 rounded-xl text-lg">取消</button>
+                <button onclick="handleConfirmReset(true)" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 rounded-xl text-lg">確認重置</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Script Section -->
     <script>
-        // Comprehensive Itinerary Dataset (Optimized with stations, steps and directions)
         const itineraryData = {
             1: {
                 dayNum: 1,
-                title: "抵達東京 ➔ 京成上野 ➔ 飯店 Check-in ➔ 阿美橫丁與特色小吃慢步",
-                intro: "首日下飛機，搭乘無障礙直達列車最省力。傍晚沿平緩路線前往飯店 check-in，隨後在周圍散步、品嚐入口即化的甜品與軟嫩小吃，開啟舒適假期。",
+                title: "9/17 (四) 抵達東京 ➔ Skyliner 直達上野 ➔ 5步平地步行指南到飯店 ➔ 吉池食堂/阿美橫丁",
+                intro: "首日下飛機後，搭乘無障礙直達列車最省力。傍晚沿著規劃好的平緩斑馬線前往飯店辦理 check-in，隨後在周圍散步、品嚐吉池食堂 9 樓（大電梯，免排隊）的豐盛晚餐與甜品。",
                 transports: [
                     {
                         route: "成田機場 ➔ 京成上野站",
                         badge: "KS",
                         badgeColor: "bg-[#0055a5]",
                         badgeName: "京成電鐵 (Skyliner)",
-                        desc: "由成田機場月台，搭乘京成 Skyliner 直達終點京成上野站。月台至大廳皆設有寬敞無障礙電梯。全車對號入座，安穩舒適。"
+                        desc: "由成田機場月台，搭乘京成 Skyliner 直達終點京成上野站。月台至大廳皆設有電梯，全對號座。",
+                        oneSentenceNav: "在成田機場地下B1乘車，購買 Skyliner 坐 41 分鐘直接到底站「京成上野站」，完全不用中途下車轉車。"
                     }
                 ],
                 accessibility: [
-                    "【1. 出站導航】：下車後請在月台中央尋找標有【エレベーター (電梯)】的指示牌上至一樓大廳，由「正面口」平地出站（全平路無階梯）。",
-                    "【2. 避階梯步行指南】：出正面口後左轉，沿著平坦的中央通人行道直走，路過 JR 上野站「廣小路口」前斑馬線，朝對面「丸井百貨 (OIOI)」走去。",
-                    "【3. 平地過大馬路】：沿丸井百貨前行，直接走「平面行人斑馬線」穿越寬闊的昭和通（高架橋下方），切勿上天橋。過完斑馬線右轉，經過常陽銀行，直走 1.5 分鐘即抵達。",
-                    "【4. 抵達飯店】：看到一樓為「7-Eleven」的飯店大樓，搭乘專用電梯直達 20 樓大廳辦理 check-in，客房均為 20-24 樓。"
+                    "【1. 下車後電梯指示】：下車後請在月台中央尋找標有【エレベーター (電梯)】的指示牌上至一樓大廳，由「正面口」平地出站（全程平坦無階梯）。",
+                    "【2. 避開天橋平坦行進】：出正面口後左轉，沿著平坦的中央通人行道直走，過 JR 上野站「廣小路口」前斑馬線，朝對面「丸井百貨 (OIOI)」走去。",
+                    "【3. 過馬路大門導航】：直接走「平面行人斑馬線」穿越寬闊的昭和通（高架橋下方），切勿上天橋。過完斑馬線右轉，直走 1.5 分鐘即抵達飯店入口。",
+                    "【4. 飯店一樓大廳】：看到一樓為「7-Eleven」的飯店大樓，右側即是高樓層專用電梯大門，搭電梯直達 20 樓大廳 Check-in。"
                 ],
                 spots: [
                     {
-                        name: "京成上野站正面口 (大樓無障礙電梯位置)",
-                        desc: "上野的大型無障礙出入口，與周圍人行道無縫連接，非常適合攜帶行李。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Keisei+Ueno+Station"
+                        name: "京成上野站正面口 (出站平面人行道)",
+                        desc: "上野的大型無障礙出入口，與周圍人行道無縫連接，極度適合攜帶大行李箱緩步前行。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Keisei+Ueno+Station"
                     },
                     {
                         name: "飯店一樓與地標：7-Eleven 東上野2丁目店 (大樓入口)",
                         desc: "飯店正下方就是超商，隨時買熱茶與溫水非常方便。右側即是高樓層專用無障礙電梯大門。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Hotel+Crown+Hills+Ueno+Premier"
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Hotel+Crown+Hills+Ueno+Premier"
                     },
                     {
-                        name: "經典下午茶：みはし (Mihashi) 上野本店",
-                        desc: "傳統日式紅豆蜜老店，綿密紅豆沙、軟Q白玉配水果，口感極佳，入口即化，對長輩而言無檢碎與吞嚥負擔。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Mihashi+Ueno+Honten"
+                        name: "點心推薦：みはし (Mihashi) 上野本店",
+                        desc: "傳統日式紅豆蜜老店，綿密紅豆沙、軟Q白玉配水果，口感極佳，入口即化，對兩位行者而言無牙口與吞嚥負擔。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Mihashi+Ueno+Honten"
                     },
                     {
-                        name: "寬敞舒適首選：吉池食堂 (Yoshiike Shokudo)",
-                        desc: "位於御徒町站旁吉池大樓9樓，設有無障礙大電梯。空間寬敞安靜，座位多，提供新鮮生魚片、天婦羅等各式日式定食，適合不想排隊擁擠的長輩優雅用餐。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Yoshiike+Shokudo"
+                        name: "晚餐推薦：吉池食堂 (Yoshiike Shokudo)",
+                        desc: "兩位旅伴第一晚的最佳安心大餐。位於御徒町站旁吉池大樓 9 樓（大電梯直達，座位非常寬敞安靜），提供多樣化的新鮮定食、生魚片與天婦羅。不用排隊，能安靜舒適地享受美食。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Yoshiike+Shokudo"
                     }
                 ],
-                returnTrans: "從阿美橫丁或吉池食堂步行回飯店極近。沿著平坦的昭和通人行道直走，約 5-8 分鐘即可輕鬆走回飯店，完全不需要搭乘電車。若當天感到疲累，在路邊隨手招計程車回飯店僅需起步價車資。"
+                returnTrans: "從吉池食堂步行回飯店極近。沿著平坦的昭和通人行道直走，約 5-8 分鐘即可輕鬆走回飯店，完全不需要搭乘電車。"
             },
             2: {
                 dayNum: 2,
-                title: "經典淺草寺參拜 ➔ 隅田川景觀遊船 ➔ 晴空塔看日落",
-                intro: "造訪淺草經典地標，體驗平坦好走的人行參拜道。午後登船，坐在冷氣船艙沙發上飽覽河岸景色。傍晚無縫登上晴空塔眺望夜景。",
+                title: "9/18 (五) 【KKday 兩日遊 D1】沼津港駿河灣遊船 ➔ 修善寺溫泉平路足湯 ➔ 溫泉旅館",
+                intro: "行李寄放上野！輕裝出發，由新宿 LOVE 雕塑前搭乘 KKday 舒適遊覽專車。搭乘平穩遊船吹海風、溫泉街平坦小徑散步，夜宿頂級溫泉旅館，享用豪華會席料理。",
                 transports: [
                     {
-                        route: "上野站 ➔ 淺草站",
-                        badge: "G",
-                        badgeColor: "bg-subway-ginza",
-                        badgeName: "東京地鐵銀座線",
-                        desc: "自上野站搭乘銀座線直達終點淺草站。注意：下車後請朝「1號出口」尋找直達地面的電梯。"
-                    },
-                    {
-                        route: "淺草站 ➔ 押上(晴空塔)站",
-                        badge: "M",
-                        badgeColor: "bg-subway-marunouchi",
-                        badgeName: "地鐵或直接自遊船轉乘",
-                        desc: "若直接在吾妻橋登船，可以一路坐船看風景。隨後搭電車1站直達押上晴空塔站。"
-                    }
-                ],
-                accessibility: [
-                    "【1. 淺草寺避階梯】：雷門至本堂皆為平坦柏油路與石板路。進入本堂參拜時，面向本堂的「右手邊」設有無障礙大型斜坡與電梯大樓，長輩完全無須攀爬高聳的正面石階！",
-                    "【2. 遊船無障礙通道】：隅田川水上巴士乘船場（吾妻橋旁）設有坡度平緩的鋼板斜坡。工作人員會細心協助輪椅與步行緩慢的長輩登船。",
-                    "【3. 晴空塔無縫對接】：押上站與晴空塔大樓共構，出站後請沿著牆面上【エレベーター (電梯)】指示牌直上 4 樓入口大廳，全路徑設有雙向自動扶梯與直達大電梯。"
-                ],
-                spots: [
-                    {
-                        name: "淺草寺與雷門 (Senso-ji Temple)",
-                        desc: "東京最古老的寺廟。入口雷門的大紅燈籠是必拍合影處。漫步仲見世街吃軟Q人形燒。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Senso-ji"
-                    },
-                    {
-                        name: "午餐精選：淺草今半 (Asakusa Imahan)",
-                        desc: "百年黑毛和牛壽喜燒老店。午間套餐性價比超高，牛肉入口即化，設有電梯，長輩首選。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Asakusa+Imahan"
-                    },
-                    {
-                        name: "東京晴空塔 (Tokyo Skytree)",
-                        desc: "350與450公尺的高空觀景台，備有超高速電梯，視野開闊。設有無障礙專用優先通道。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Tokyo+Skytree"
-                    }
-                ],
-                returnTrans: "【電車省事路線】：從地鐵「押上(晴空塔)站」搭乘 <b>Toei 都營淺草線</b>（往西馬込方向）坐 1 站到「淺草站」，在同月台平地轉乘 <b>地鐵銀座線</b> 坐 3 站即可直達「上野站」。<br>【極致舒適備案】：直接在晴空塔 4 樓或 B1 的計程車乘車處，搭乘計程車直達上野飯店。車程約 15-20 分鐘（車資約 2,000 日圓），能徹底解放雙腿，對長輩最貼心。"
-            },
-            3: {
-                dayNum: 3,
-                title: "【KKday兩日遊D1】沼津港駿河灣遊船 ➔ 米其林修善寺足湯 ➔ 頂級溫泉旅館",
-                intro: "啟動溫泉慢享之旅！大行李寄放在上野飯店，帶輕便行李搭上豪華遊覽巴士。坐船吹海風、溫泉街漫步，入住頂級日式溫泉旅館享用會席大餐。",
-                transports: [
-                    {
-                        route: "上野站 ➔ 新宿站 (集合點)",
+                        route: "上野站 ➔ 新宿站 (集合點：新宿 i-Land Tower LOVE 雕塑)",
                         badge: "JY",
                         badgeColor: "bg-subway-yamanote",
                         badgeName: "JR 山手線",
-                        desc: "自上野搭山手線到新宿站西口。出站請看天花板標示，搭電梯上地面層抵達大巴集合地點。"
+                        desc: "自上野搭山手線到新宿站。出站請看標示尋找「西口」方向，搭電梯上地面層，步行前往新宿 i-Land Tower 門口的巨大紅色 LOVE 雕塑前集合。",
+                        oneSentenceNav: "在上野站搭乘綠色山手線，坐 13 站直達新宿站，下車後搭電梯上樓，由西口出站後平地步行抵達 LOVE 雕塑集合點。"
                     },
                     {
                         route: "新宿 ➔ 伊豆半島 (駿河灣與修善寺)",
                         badge: "🚌",
                         badgeColor: "bg-green-700",
                         badgeName: "KKday 中文觀光巴士",
-                        desc: "全程搭乘豪華空調大巴士，長輩在車上可舒適補眠。司機會停靠各高速公路豪華休息站，安心如廁。"
+                        desc: "全程搭乘豪華空調大巴士，兩位慢活旅伴在車上可舒適補眠，司機會定時停靠各大型高速公路休息站，如廁極度安心。",
+                        oneSentenceNav: "全程搭乘中文導遊觀光巴士，一路安穩坐著由司機送達所有景點，不用提行李或轉乘電車。"
                     }
                 ],
                 accessibility: [
-                    "【1. 行記神策略】：今日辦理退房時，主動告知上野飯店櫃台「我們明天會回來住 (出示卡片06)」，將大型行李免費寄在飯店。兩天一夜伊豆行只帶裝有換洗內衣褲與藥品的隨身小包！",
-                    "【2. 沼津港平地散步】：沼津港周邊為全平人行道。登上海岸遊船時有專人引導，船艙寬敞防滑，非常平穩。",
-                    "【3. 修善寺無障礙足湯】：竹林小徑與寺院周邊均為平坦的水泥和石板路。小徑設有免費足湯「獨鈷之湯」，旁邊有扶手和木長椅，長輩坐下泡腳非常安全舒適。"
+                    "【1. 行記寄存小撇步】：今天早上退房時，主動告知上野飯店櫃台『我們明天會回來住 (出示卡片06)』，將大型行李免費寄存在飯店。這兩天只帶隨身小包！",
+                    "【2. 新宿集合點地標】：集合點為醒目的「LOVE」巨大紅色雕塑，人行道寬闊且完全沒有高低差，非常安全好認。",
+                    "【3. 修善寺無障礙足湯】：竹林小徑與寺院周邊均為平坦的水泥和石板路。小徑設有免費足湯『獨鈷之湯』，旁邊有扶手和木長椅，坐著泡腳極為療癒。"
                 ],
                 spots: [
                     {
-                        name: "集合地：新宿 Cocoon 大樓 (Mode Gakuen Cocoon Tower)",
-                        desc: "常規的 KKday 行程集合點。大樓周圍人行道極寬闊，地標好認。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Mode+Gakuen+Cocoon+Tower"
+                        name: "KKday 集合地：新宿 i-Land Tower「LOVE」雕塑前",
+                        desc: "新宿地標性紅色 LOVE 藝術雕塑，周圍地面寬平，極易辨識與抵達。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Shinjuku+i-Land+Tower+LOVE+Sculpture",
+                        img: "https://image.kkday.com/v2/image/get/c_fill%2Ch_160%2Cq_99%2Ct_webp%2Cw_240/s1.kkday.com/product_569893/20260109051912_tt2gM/png"
                     },
                     {
-                        name: "第一站：沼津港與駿河灣遊船 (Numazu Port)",
-                        desc: "搭乘豪華遊船遠眺富士山海景。下船後逛逛海鮮街，看各種特產與海產，皆為室內平地。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Numazu+Port"
+                        name: "第一站：沼津港與駿河灣遊船",
+                        desc: "搭乘千鳥觀光汽船，飽覽駿河灣海景，遠眺壯麗的富士山。海鮮街平坦好逛，午餐在此自由享用現撈魚料理。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Numazu+Port"
                     },
                     {
-                        name: "第二站：修善寺・溫泉小鎮 (Shuzenji Temple)",
-                        desc: "米其林二星古都景點。竹林、紅橋、潺潺溪流。空氣清新、綠蔭茂密，是絕佳的森林浴。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Shuzenji"
+                        name: "第二站：修善寺與溫泉老街散步",
+                        desc: "米其林二星古都景點。竹林、紅橋與溪流。綠意盎然，空氣極佳。足湯熱水舒緩步行疲勞。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Shuzenji"
                     }
                 ],
-                returnTrans: "今晚入住伊豆溫泉大飯店，享受舒適的露天大浴池與美味會席料理。今夜無須返回上野飯店，請長輩在溫泉旅館中安心放鬆，睡個好覺！"
+                returnTrans: "今晚大巴會直接將兩位旅伴送抵伊豆高級溫泉大飯店。晚餐在溫泉旅館內享用精緻的<b>日式會席料理（配有舒適椅子高腳座位）</b>，隨後泡溫泉消除首航疲勞，在榻榻米臥室中安穩睡一覺。"
             },
-            4: {
-                dayNum: 4,
-                title: "【KKday兩日遊D2】大室山雙人吊椅 ➔ 門脇吊橋 ➔ 來宮神木 ➔ 返回上野",
-                intro: "親臨大自然奇景。搭乘無須行走的雙人吊椅輕鬆登上大室山火山頂，參拜兩千年巨型神木，傍晚舒適返回上野並 Check-in 大行李。",
+            3: {
+                dayNum: 3,
+                title: "9/19 (六) 【KKday 兩日遊 D2】大室山雙人纜車 ➔ 來宮神社神木 ➔ 返回上野",
+                intro: "親臨大自然奇景。搭乘無須行走的雙人吊椅輕鬆登上大室山火山頂，參拜兩千年巨型神木，傍晚舒適返回上野並 Check-in 再次入住大行李房。",
                 transports: [
                     {
                         route: "溫泉旅館 ➔ 大室山 ➔ 熱海 ➔ 返回新宿解散",
                         badge: "🚌",
                         badgeColor: "bg-green-700",
                         badgeName: "KKday 中文觀光巴士",
-                        desc: "全程大巴，傍晚約 18:00 - 18:30 返回新宿西口解散。"
+                        desc: "全程大巴，傍晚約 18:00 - 18:30 返回新宿西口解散。",
+                        oneSentenceNav: "全程搭乘中文觀光大巴移動，傍晚返回新宿西口解散，下車點鄰近地鐵與JR入口。"
                     }
                 ],
                 accessibility: [
-                    "【1. 大室山纜車減速指引】：大室山纜車為「雙人滑雪吊椅」形式。若長輩行動較慢，請出示【卡片17：纜車放慢卡】，工作人員會專門按下暫停鍵或極度減速，等長輩安穩坐好後再開動，十分體貼。",
-                    "【2. 門脇吊橋防風提示】：海岸吊橋有部分台階與碎石路，若風大或長輩恐高，可在吊橋前的觀景台椅坐上欣賞蔚藍太平洋，不需勉強過橋。",
-                    "【3. 來宮神社無障礙木棧道】：神社入口到主殿皆鋪設平緩的優質木棧道，坐輪椅或推車也能輕鬆通行，並有樹蔭，非常涼爽。"
+                    "【1. 大室山纜車減速指引】：大室山纜車為「雙人滑雪吊椅」形式。若需要動作放慢，請在登車時出示【卡片17：纜車放慢卡】，工作人員會專門按下暫停鍵或極度減速，等您安穩坐好後再開動，十分體貼。",
+                    "【2. 門脇吊橋防風提示】：海岸吊橋有部分台階與碎石路，若風大或有懼高情形，可在吊橋前的觀景台椅坐上欣賞蔚藍太平洋，不需勉強過橋。",
+                    "【3. 來宮神社無障礙木棧道】：神社入口到主殿皆鋪設平緩的優質木棧道，推車或隨身小拉車也能輕鬆通行，並有樹蔭，非常涼爽。"
                 ],
                 spots: [
                     {
-                        name: "抹茶布丁山：大室山纜車 (Mt. Omuro)",
+                        name: "伊豆大室山雙人纜車",
                         desc: "伊豆地標火山。山頂呈完美凹槽綠草地，繞行山頂一圈為水泥平路，能遠眺相模灣群島。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Mt.+Omuro+Lift"
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Mt.+Omuro+Lift",
+                        img: "https://image.kkday.com/v2/image/get/c_fill%2Ch_450%2Cq_99%2Ct_webp%2Cw_800/s1.kkday.com/product_569893/20260109052723_GzhQ6/jpg"
                     },
                     {
-                        name: "熱海來宮神社與大楠樹 (Kinomiya Shrine)",
-                        desc: "兩千年巨大樟樹神木。據說繞大樹走一圈能延壽一年，神社備有精緻露天沙發茶座，可在此享用茶點。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Kinomiya+Shrine"
+                        name: "熱海來宮神社與大楠樹",
+                        desc: "兩千年巨大樟樹神木。據說繞大樹走一圈能延壽一年，神社備有精靜露天沙發茶座，可在此享用茶點。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Kinomiya+Shrine",
+                        img: "https://image.kkday.com/v2/image/get/c_fill%2Ch_450%2Cq_99%2Ct_webp%2Cw_800/s1.kkday.com/product_569893/20260109052429_SoGrk/jpg"
+                    },
+                    {
+                        name: "晚餐推薦：壽喜燒 鉢之木 上野店 (Hachinoki Ueno)",
+                        desc: "兩位旅伴從郊區返回上野後的頂級犒賞大餐。這裡提供極度軟嫩易咬的頂級黑毛和牛壽喜燒與涮涮鍋，配上溫和甘甜的日式醬汁與豐富蔬菜。店內配置寬大且有靠背的沙發椅子座位，環境安靜優雅。免排隊，對兩位行者的膝蓋最溫柔友善。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Hachinoki+Ueno"
                     }
                 ],
-                returnTrans: "在大巴於「新宿站西口」解散後，請長輩進入新宿站搭乘 <b>JR 山手線</b>（往池袋/上野方向，綠色圓圈線路，無須任何轉乘）直達「上野站」，車程約 26 分鐘。此路線完全不用在複雜的車站內轉車，長輩只需在車廂內安穩坐著即可直達上野，隨後步行 4 分鐘回飯店取大行李辦理再次 check-in。"
+                returnTrans: "在大巴於「新宿站西口」解散後，請進入新宿站搭乘 <b>JR 山手線</b>（往池袋/上野方向，綠色圓圈線路，無須任何轉乘）直達「上野站」，車程約 26 分鐘。此路線完全不用在複雜的車站內轉車，只需在車廂內安穩坐著即可直達上野，隨後步行 4 分鐘回飯店取大行李辦理再次 check-in。"
+            },
+            4: {
+                dayNum: 4,
+                title: "9/20 (日) 明治神宮都市森林浴 ➔ 表參道欅木綠蔭 ➔ 新宿御苑大溫室 ➔ 新宿西口購物與晚餐",
+                intro: "早晨在原宿明治神宮享受都心森林浴，隨後沿著表參道寬敞的欅木林蔭人行道悠閒散步。下午漫步全東京無障礙最頂級的新宿御苑，欣賞溫室熱帶植物與日式庭園枯山水。傍晚前往專為長輩設計、極其好逛的新宿西口京王百貨美食街，在舒適包廂餐廳享用豐盛晚餐。",
+                transports: [
+                    {
+                        route: "上野站 ➔ 原宿站 (明治神宮)",
+                        badge: "JY",
+                        badgeColor: "bg-subway-yamanote",
+                        badgeName: "JR 山手線",
+                        desc: "自上野站搭乘 JR 山手線直達原宿站（車程約 26 分鐘）。原宿站設有完善的大型無障礙電梯直達地面層，出站即是明治神宮入口。",
+                        oneSentenceNav: "在上野站搭乘綠色山手線，坐 13 站直達原宿站，下車後搭電梯上樓出站即達明治神宮參道。"
+                    },
+                    {
+                        route: "表參道 ➔ 新宿御苑 (極力推薦搭計程車)",
+                        badge: "🚕",
+                        badgeColor: "bg-amber-500",
+                        badgeName: "樂活計程車 (或地鐵)",
+                        desc: "極力建議在表參道午餐後，直接在路邊或使用 GO App 叫計程車前進新宿御苑（大木戶門），車程僅 10 分鐘，車資約 1,500 日圓，能完美保護兩位行者的體力、避開繁瑣的地鐵轉乘與爬樓梯。",
+                        oneSentenceNav: "若搭乘地鐵，可在表參道站搭乘地鐵副都心線，直達「新宿三丁目站」（僅 4 分鐘），由 E5 出口搭大電梯，平地走 5 分鐘抵達新宿御苑。"
+                    },
+                    {
+                        route: "新宿 ➔ 上野站 (回飯店)",
+                        badge: "JY",
+                        badgeColor: "bg-subway-yamanote",
+                        badgeName: "JR 山手線",
+                        desc: "晚餐後自新宿西口地下通道直接進站，搭乘山手線一線直達上野站，車程約 26 分鐘，全程對號座與優先席座位充足。",
+                        oneSentenceNav: "在新宿站搭乘綠色山手線（外環），坐 12 站直達上野站，廣小路口出站平地走 4 分鐘回飯店。"
+                    }
+                ],
+                accessibility: [
+                    "【1. 明治神宮避碎石路】：南參道兩側皆鋪設極平整的『細平沙土邊路』或水泥石板，極易平緩推行前前行，本堂右手邊亦設有無障礙大斜坡。",
+                    "【2. 表參道欅木步道】：人行道極寬闊，路段平整且隨處都有長椅，綠樹成蔭，行走輕鬆無憂。",
+                    "【3. 新宿御苑平坦溫室】：大溫室及日式庭園全區鋪設平坦柏油路與木板道路，並設有輪椅免費借用服務，長椅極多。",
+                    "【4. 新宿西口京王百貨】：內部規劃平緩防滑，設有無障礙大電梯與大量歇腳沙發座椅，各樓層提供寬敞便利的走動動線。"
+                ],
+                spots: [
+                    {
+                        name: "明治神宮",
+                        desc: "全東京無障礙最友善的都市內綠意參道。空氣極佳，漫步在兩側平坦林蔭道路中非常舒適。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Meiji+Jingu+Shrine+Tokyo"
+                    },
+                    {
+                        name: "表參道與欅木步道",
+                        desc: "欣賞高大欅木與優雅人行道。推薦在街邊露天沙發雅座喝杯熱茶，看著綠葉搖曳。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Omotesando+Avenue+Tokyo"
+                    },
+                    {
+                        name: "中午平價餐廳推薦：おもてなしとりよし 青山店",
+                        desc: "位於表參道優雅巷弄，招牌「親子丼御膳」與日式定食極度軟嫩，無阻礙咀嚼負擔，且全店皆為大長椅雅座，環境舒適安靜，價格平實（中午套餐約 1000 日圓起）。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Omotenashi+Toriyoshi+Aoyama"
+                    },
+                    {
+                        name: "新宿御苑 大溫室與庭園散策",
+                        desc: "平緩無門檻的溫室步道。展示豐富奇花異草，室內全年空調防風遮蔭。日式庭園平坦開闊，風景如畫。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Shinjuku+Gyoen+National+Garden"
+                    },
+                    {
+                        name: "新宿西口 京王百貨與敘敘苑晚餐",
+                        desc: "貼心寬敞防滑人行道、隨處可坐沙發。晚餐在 8 樓包廂或名店敘敘苑享用極嫩燒肉（可搭大電梯直達）。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Keio+Department+Store+Shinjuku"
+                    }
+                ],
+                returnTrans: "晚餐後自「新宿站」西口地下通道直接進入車站月台，搭乘 <b>JR 山手線（外環方向）</b> 直達「上野站」，約 26 分鐘直達免轉車。廣小路口平面出站，走平地人行道 4-5 分鐘即可回到飯店。"
             },
             5: {
                 dayNum: 5,
-                title: "東京車站紅磚 ➔ 皇居外苑松林二重橋 ➔ 巢鴨「老奶奶原宿」懷舊散策",
-                intro: "在開闊宏偉的皇居與丸之內散策。下午避開高壓採購，前往全日本最對長輩胃口、無障礙平地極佳的巢鴨老街。在這裡悠閒參拜、品嚐名物大福，體驗最接地氣的昭和東京風情。",
+                title: "9/21 (一) 東京車站紅磚 ➔ 皇居外苑松林二重橋 ➔ 巢鴨商店街（洗心地藏）",
+                intro: "欣賞百年紅磚車站，皇居外苑走平地水泥路防碎石。下午慢步專為樂活散步規劃的巢鴨老街，吃鹽大福，擦拭地藏祈求健康。",
                 transports: [
                     {
                         route: "上野站 ➔ 東京車站",
                         badge: "JY",
                         badgeColor: "bg-subway-yamanote",
                         badgeName: "JR 山手線/京濱東北線",
-                        desc: "搭乘山手線或京濱東北線僅需 4 站直達（車程 6 分鐘）。月台設有無障礙直達直升電梯。"
+                        desc: "搭乘山手線或京濱東北線僅需 4 站直達（車程 6 分鐘）。月台設有無障礙直達直升電梯。",
+                        oneSentenceNav: "在上野站搭乘綠色山手線或藍色京濱東北線，坐4站（約6分鐘）直達東京車站。"
                     },
                     {
                         route: "東京車站 ➔ 巢鴨站",
                         badge: "JY",
                         badgeColor: "bg-subway-yamanote",
                         badgeName: "JR 山手線 (往上野/巢鴨方向)",
-                        desc: "在東京車站同月台搭乘山手線直達巢鴨站（車程約 17 分鐘）。"
+                        desc: "在東京車站同月台搭乘山手線直達巢鴨站（車程約 17 分鐘）。",
+                        oneSentenceNav: "在東京車站月台搭乘綠色山手線（外環），坐8站直達巢鴨站，無須中途換車。"
                     }
                 ],
                 accessibility: [
                     "【1. 東京車站無階梯路徑】：下車後搭乘電梯至地下一樓「丸之內地下中央口」，接著搭乘站內大直梯往上一樓，由「丸之內中央口」出站，出來即是寬廣無階梯的丸之內廣場。",
-                    "【2. 皇居避碎石路徑】：皇居外苑碎石子路較多。建議長輩沿著靠近護城河的「水泥人行道」散步，同樣能將松樹林、二重橋與護城河盡收眼底，走起來最省力。",
-                    "【3. 巢鴨平坦街道】：巢鴨地藏通商店街（老街）是為日本銀髮族特別規劃的，整條街都是平緩無階梯、防滑的水泥與柏油路面，兩旁商店皆設有無障礙斜坡。"
+                    "【2. 皇居避碎石路徑】：皇居外苑碎石子路較多。建議沿著靠近護城河的「水泥人行道」散步，同樣能將松樹林、二重橋與護城河盡收眼底，走起來最省力。",
+                    "【3. 巢鴨平坦街道】：巢鴨地藏通商店街（老街）是特別規劃的，整條街都是平緩無階梯、防滑的水泥與柏油路面，兩旁商店皆設有無障礙斜坡。"
                 ],
                 spots: [
                     {
-                        name: "東京車站丸之內廣場 (Tokyo Station)",
+                        name: "東京車站丸之內廣場",
                         desc: "百年紅磚文藝復興式大樓，極富歷史美感。廣場全為平坦石板地，是拍照的絕佳背景。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Tokyo+Station"
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Tokyo+Station"
                     },
                     {
-                        name: "皇居外苑與二重橋 (Nijubashi Bridge)",
-                        desc: "日本天皇居所的外側。黑松林立，開闊大氣，可以遠眺古典護城河石橋與鋼橋。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Nijubashi+Bridge"
+                        name: "皇居外苑與二重橋",
+                        desc: "日本天皇居所的外側。黑松林立，開刻大氣，可以遠眺古典護城河石橋與鋼橋。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Nijubashi+Bridge"
                     },
                     {
-                        name: "午餐推薦：巢鴨ときわ食堂 (Tokiwa Shokudo)",
-                        desc: "巢鴨地標級的在地平民美食。以新鮮現炸的超巨大炸蝦、多汁烤魚和傳統定食聞名，口感軟嫩熱呼呼，深受當地日本長輩喜愛，價格平易近人。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Sugamo+Tokiwa+Shokudo"
+                        name: "午餐推薦：巢鴨ときわ食堂",
+                        desc: "巢鴨地標級的在地平民美食。以新鮮現炸的超巨大炸蝦、多汁烤魚和傳統定食聞名，口感軟嫩熱呼呼，非常受歡迎，價格平易近人。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Sugamo+Tokiwa+Shokudo"
                     },
                     {
-                        name: "巢鴨地藏通商店街與高岩寺洗心地藏 (Sugamo Jizodori)",
-                        desc: "被稱為『老奶奶的原宿』。長輩可前往高岩寺，排隊拿乾淨毛巾擦拭地藏王菩薩雕像（據說擦拭地藏的哪個部位，自己身體的對應病痛就能好轉），隨後散步吃著名的『元祖塩大福』。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Koganji+Temple+Sugamo"
+                        name: "巢鴨地藏通商店街與高岩寺洗心地藏",
+                        desc: "被稱為『慢活優雅散策地』。可前往高岩寺，排隊拿乾淨毛巾擦拭地藏王菩薩雕像，隨後散步吃著名的『元祖塩大福』。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Koganji+Temple+Sugamo"
+                    },
+                    {
+                        name: "晚餐推薦：天ぷら 新宿つな八 上野店 (Matsuzakaya Ueno 7F)",
+                        desc: "位於上野「松坂屋百貨 7 樓」（出地鐵或飯店散步即可到，備有大型直達無障礙電梯）。提供口感極其輕盈、不油膩的經典天婦羅定食。食材均去骨去殼且炸得軟嫩多汁，對長輩牙口毫無負擔。店內均為寬敞、桌椅分開的高背椅子座位，環境十分幽靜舒緩。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Tsunahachi+Matsuzakaya+Ueno"
                     }
                 ],
                 returnTrans: "從「巢鴨站」搭乘 <b>JR 山手線</b>（往田端/上野方向，外環線）坐 6 站直達「上野站」，車程僅 12 分鐘。抵達上野站後從「廣小路口」出站，走平面斑馬線過昭和通人行道 4-5 分鐘即可回到飯店休息。"
             },
             6: {
                 dayNum: 6,
-                title: "穿越時空：小江戶川越古街與冰川神社風鈴祭",
-                intro: "前往川越體驗江戶時代風情。川越是全日本對長輩最友善的古街，道路極度平坦。配合小江戶名勝巡迴低底盤巴士，景點直達免走路。",
+                title: "9/22 (二) 淺草雷門寺參拜 ➔ 隅田川景觀遊船 ➔ 晴空塔看落日與夜景",
+                intro: "造訪東京最經典的庶民景點與高空地標。雷門本堂有完善的避開階梯大斜坡，隨後登船吹著舒適冷氣賞景。傍晚一線登上展望台眺望絕景夜色。",
                 transports: [
                     {
-                        route: "上野 ➔ 池袋 ➔ 川越站",
-                        badge: "JY",
-                        badgeColor: "bg-subway-yamanote",
-                        badgeName: "JR 山手線轉東武東上線",
-                        desc: "搭山手線至池袋站。在池袋站「東武窗口」購買【川越特惠周遊券 Premium】(包含來回電車與當地公車無限搭乘)。搭東武東上線急行列車30分鐘直達川越。"
+                        route: "上野站 ➔ 淺草站",
+                        badge: "G",
+                        badgeColor: "bg-subway-ginza",
+                        badgeName: "東京地鐵銀座線",
+                        desc: "自上野站搭乘黃色銀座線（往淺草方向）坐 3 站直達終點「淺草站」。請沿著標示寻找 1 號出口直達地面大電梯，出站即達平地雷門。",
+                        oneSentenceNav: "在上野站搭乘黃色地鐵銀座線，坐3站直達淺草站，下車找1號出口大電梯直上地面."
                     },
                     {
-                        route: "川越站 ➔ 各大老街景點",
-                        badge: "🚌",
-                        badgeColor: "bg-subway-ginza",
-                        badgeName: "東武名勝巡迴巴士",
-                        desc: "川越東口搭乘名勝巡迴公車。全線皆為低底盤無障礙巴士，長輩跨步登車極為輕鬆，公車直接在一番街、冰川神社正門停靠。"
+                        route: "淺草 ➔ 晴空塔（搭船或地鐵）",
+                        badge: "M",
+                        badgeColor: "bg-subway-marunouchi",
+                        badgeName: "冷氣觀光船或東武線",
+                        desc: "可直接搭乘吾妻橋畔的隅田川冷氣景觀觀光船（水上巴士），或搭東武鐵道 1 站直達「晴空塔站」。",
+                        oneSentenceNav: "由淺草乘船碼頭直接搭上隅田川水上巴士，一路坐著吹冷氣看風景抵達晴空塔。"
                     }
                 ],
                 accessibility: [
-                    "【1. 川越老街全平路】：川越一番街（老街）、時之鐘周邊皆為極平坦的人行便道，完全沒有多餘的階梯和陡坡。",
-                    "【2. 避開公車久站】：東武巴士在老街與景點間班次非常密集，長輩累了隨時在老街公車站牌坐著等車，2-3站即可直達下一個點。"
+                    "【1. 淺草本堂避開正面階梯】：本堂正面有高聳的長石梯。請直接繞行至本堂右手邊，該側備有寬敞、防滑且舒適的「無障礙直昇直達電梯」，可以直接平緩升至主殿內參拜。",
+                    "【2. 觀光船平緩鋼板登船口】：吾妻橋的登船處備有專人引導、坡度極緩的水泥鋼板步道，輪椅或隨身小拉車亦能平穩推上，船內皆為平坦寬敞之冷氣座艙。",
+                    "【3. 晴空塔無縫地鐵對接】：搭車回程時，押上（晴空塔）站內部全區配置完善的直昇直達電梯，直接與晴空塔商場 B1 及 4 樓入口無縫連接，完全無須露天行走或爬樓梯。"
                 ],
                 spots: [
                     {
-                        name: "川越一番街與時之鐘 (Kurazukuri & Toki no Kane)",
-                        desc: "黑瓦磚牆的江戶老街，木造鐘樓會在特定時間鳴鐘。街道兩旁充滿地瓜小點心店。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Kurazukuri+Street"
+                        name: "淺草寺雷門",
+                        desc: "東京最著名的地標，漫步平緩的仲見世通，兩側均為無高低差的防滑人行舖面。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Sensoji+Temple+Tokyo"
                     },
                     {
-                        name: "兩百年午餐：小川菊 鰻魚飯 (Ogakiku)",
-                        desc: "江戶時代創立至今的頂級鰻魚老店。炭烤鰻魚幾乎無刺、口感軟綿，特製醬汁甘甜暖胃。推薦一到老街先去拿號碼牌，接著在附近散步，不用現場苦站排隊。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Ogakiku+Kawagoe"
+                        name: "午餐推薦：淺草今半 (國際通本店)",
+                        desc: "百年壽喜燒老店，提供極度軟嫩的和牛牛肉片與暖胃醬汁，店內設有高齡友善直達電梯與椅子包廂。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Asakusa+Imahan"
                     },
                     {
-                        name: "川越冰川神社 (Kawagoe Hikawa Shrine)",
-                        desc: "1500年歷史名社。九月初掛滿清脆悅耳的風鈴，長輩可以在這裡體驗用釣竿「釣鯛魚籤詩」，神社內平路無台階，大樹環繞非常涼爽。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Kawagoe+Hikawa+Shrine"
+                        name: "東京晴空塔展望台",
+                        desc: "350M 展望大廳全區平地，設有無障礙觀景走廊與休息椅，傍晚可一覽無遺壯麗的關東平原夜景。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Tokyo+Skytree"
+                    },
+                    {
+                        name: "晚餐推薦：ひつまぶし名古屋備長 晴空塔店 (Hitsumabushi Skytree 6F)",
+                        desc: "位於晴空塔商場 6 樓美食街（直接搭乘商場內無障礙直達大電梯即可抵合）。這家著名的名古屋鰻魚飯烤得外酥內軟、毫無刺口阻礙。全店採用舒適的靠背大沙發椅子座位，免在戶外風吹雨淋。看完高空落日夜景後，在室內商場內優雅、暖暖地享用一餐大受歡迎的極嫩鰻魚，最為省力享受。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Bincho+Tokyo+Solamachi"
                     }
                 ],
-                returnTrans: "由「川越站」搭乘 <b>東武東上線急行</b> 列車回到「池袋站」（車程約 30 分鐘）；接著在池袋站內轉乘 <b>JR 山手線</b>（往巢鴨/上野方向，外環線）坐 8 站（約 16 分鐘）直達「上野站」。"
+                returnTrans: "【一線直達轉乘】：由地鐵「押上（晴空塔）站」搭乘 <b>地鐵半藏門線</b> 1 站直達「三越前站」，同月台平地走 5 步即可轉乘 <b>地鐵銀座線</b> 坐 3 站直達「上野站」，全程極其輕鬆。<br>【無腦計程車】：直接從晴空塔 4 樓計程車排班處搭車直達上野飯店，車程約 15 分鐘，車資約 2,000 日圓，能徹底解放雙腿，對長輩最貼心。"
             },
             7: {
                 dayNum: 7,
-                title: "上野公園綠意散步 ➔ 兩百年伊豆榮鰻魚飯 ➔ 搭 Skyliner 舒適返家",
-                intro: "最後一天的悠閒時光。在上野公園散步、喝咖啡，隨後前往公園旁的伊豆榮，在設有椅子的包廂中享用江戶前鰻魚飯大餐。隨後直達機場，圓滿返家。",
+                title: "9/23 (三) 上野公園綠意散步 ➔ 兩百年伊豆榮鰻魚飯（高腳椅座）➔ 搭 Skyliner 舒適返家",
+                intro: "最後一日悠閒漫步。在上野公園呼吸林蔭空氣、欣賞噴泉。隨後前往公園旁的伊豆榮，在設有椅子的包廂中享用江戶前鰻魚大餐。隨後直達機場，安穩回台。",
                 transports: [
                     {
-                        route: "上野飯店 ➔ 京成上野站 ➔ 成田機場",
+                        route: "上野飯店 ➔ 京成上野站 ➔ 成田機場第二航廈",
                         badge: "KS",
                         badgeColor: "bg-[#0055a5]",
                         badgeName: "京成 Skyliner 直達",
-                        desc: "從飯店取完大行李，步行 4 分鐘直達京成上野站。搭乘 Skyliner 直達機場，全對號座非常舒適。"
+                        desc: "從飯店取完大行李，步行 4 分鐘直達京成上野站。搭乘 Skyliner 直達機場，全對號座非常舒適。",
+                        oneSentenceNav: "由飯店取大行李步行4分鐘進京成上野站，搭乘13:40左右的 Skyliner 列車，直達「成田機場第二航廈」辦辦理登機。"
                     }
                 ],
                 accessibility: [
-                    "【1. 上野公園平坦路線】：由上野站公園口出站，此處經改建已完全無階梯，與公園廣場無縫連接。公園內人行道寬闊、平整，非常適合最後一日的輕鬆散步。",
-                    "【2. 兩百年伊豆榮（備有椅子包廂）】：許多鰻魚飯老店需跪坐，對長輩膝蓋負擔極大。伊豆榮本店內部特別設有電梯，且包廂內備有「高腳椅子」，長輩不需要盤腿跪坐，非常舒適貼心！"
+                    "【1. 上野公園平坦人行道】：由上野站公園口出站，此處經改建已完全無階梯，與公園廣場平面接軌，無階梯阻礙。",
+                    "【2. 兩百年老字號（備有椅子包廂）】：許多鰻魚飯老店需盤腿跪坐，對膝蓋負擔大。伊豆榮本店內部特別設有直達電梯，且包廂內皆備有「高腳椅子」，長輩不需要跪坐，極度舒適體貼！"
                 ],
                 spots: [
                     {
-                        name: "上野恩賜公園與星巴克露台 (Ueno Park)",
-                        desc: "綠意盎然。推薦在公園中央的星巴克概念店露天座位區，點杯茶坐著，看噴泉、聽鳥鳴，享受悠然時光。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Ueno+Park"
+                        name: "上野恩賜公園與星巴克露台",
+                        desc: "綠蔭與林蔭大道，空氣極佳。推薦在公園中央的星巴克概念店露天座位區，點杯茶坐著，看著噴泉，享受悠然晨光。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Ueno+Park"
                     },
                     {
-                        name: "極致午餐：鰻割烹 伊豆榮 本店 (Izuei Honten)",
-                        desc: "創業兩百餘年的江戶前鰻魚老字號。老店環境古色古香，鰻魚飯香氣撲鼻，口感極軟，無骨刺阻礙。",
-                        link: "https://www.google.com/maps/search/?api=1&query=Izuei+Honten"
+                        name: "午餐推薦：鰻割烹 伊豆榮 本店",
+                        desc: "兩百年歷史 of 江戶前鰻魚老字號。老店環境古色古香，鰻魚飯香氣撲鼻，口感極軟，無骨刺阻礙。吃完後回飯店提行李去京成上野站。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Izuei+Honten"
                     }
                 ],
-                returnTrans: "吃完午餐後回到「Hotel Crown Hills Ueno Premier」取回寄存的大行李，步行 4 分鐘抵達「京成上野站」，搭乘 <b>京成 Skyliner</b> 直達「成田機場」（車程 41 分鐘），輕鬆前往航廈辦理登機與免稅品採購，返回溫馨的家。"
+                returnTrans: "享用完極軟鰻魚大餐後，回飯店大樓 20 樓取大行李，下樓出大門平地走 4 分鐘抵達「京成上野站」，搭乘 **京成 Skyliner** 41 分鐘直達成田機場第二航廈，輕鬆前往第一航廈（回台）辦理 16:20 航班登機手續。"
             }
         };
 
         // Japanese Cards Dataset (Classified & marked with hiragana)
         const japanesePhrases = [
             { id: 1, category: "transport", title: "🚉 尋找電梯卡", intent: "不好意思，請問電梯在哪裡？", jp: "すみません、エレベーターはどこですか？", hiragana: "すみません、えれべーたー は どこですか？" },
-            { id: 2, category: "transport", title: "🚾 多功能洗手間卡", intent: "不好意思，請問多功能（無障礙）洗手洗在哪裡？", jp: "すみません、多目的トイレはどこですか？", hiragana: "すみません、たもくてき といれ は どこですか？" },
+            { id: 2, category: "transport", title: "🚾 多功能洗手間卡", intent: "不好意思，請問多功能（無障礙）洗手間在哪裡？", jp: "すみません、多目的トイレはどこですか？", hiragana: "すみません、たもくてき といれ は どこですか？" },
             { id: 3, category: "transport", title: "♿ 避開樓梯路線卡", intent: "請問去這裡有沒有「不需要爬樓梯」的路（斜坡或電梯）？", jp: "すみません、階段のないルート（スロープやエレベーター）はどちらですか？", hiragana: "すみません、かいだんの ない るーと は どちらですか？" },
             { id: 4, category: "transport", title: "🚇 確認乘車方向卡", intent: "請問這班車（電車或巴士）會到上野嗎？", jp: "すみません、この電車（バス）は上野に行きますか？", hiragana: "すみません、この でんしゃ（ばす）は うえの に いきますか？" },
-            { id: 5, category: "transport", title: "🚕 計程車乘車處卡", intent: "不好意思，請問哪裡可以搭計程車？", jp: "すみません、タクシー乗り場はどこですか？", hiragana: "すみません、たくしー のりば は 飾こですか？" },
+            { id: 5, category: "transport", title: "🚕 計程車乘車處卡", intent: "不好意思，請問哪裡可以搭計程車？", jp: "すみません、タクシー乗り場はどこですか？", hiragana: "すみません、たくしー のりば は どこですか？" },
             { id: 6, category: "hotel", title: "🎒 隔夜寄放行李卡", intent: "我們明天會回來辦理入住。可以幫我們把大行李箱寄存到明天嗎？", jp: "明日またチェックインします。この大きいスーツケースを明日まで預かっていただけますか？", hiragana: "あした また ちぇっくいん します。この おおきい すーつけーす を あしたまで あずかって いただけますか？" },
             { id: 7, category: "hotel", title: "🛎️ 當日行李寄存卡", intent: "請問可以先寄放行李嗎？", jp: "荷物を預かっていただけますか？", hiragana: "にもつ を あずかって いただけますか？" },
             { id: 8, category: "restaurant", title: "📖 中文菜單卡", intent: "請問這裡有中文菜單嗎？", jp: "中国語のメニューはありますか？", hiragana: "ちゅうごくご の めにゅー は ありますか？" },
-            { id: 9, category: "restaurant", title: "🪑 要求椅子座位卡", intent: "不好意思，因為膝蓋不好，不方便盤腿坐。請問有沒有提供「椅子」的座位？", jp: "すみません、膝が悪いので、畳ではなく椅子の席はありますか？", hiragana: "すみません、ひざが わるいので、たたみのせき ではなく いすのせき は ありますか？" },
+            { id: 9, category: "restaurant", title: "🪑 要求椅子座位卡", intent: "不好意思，因為關節不便，不方便盤腿坐。請問有沒有提供「椅子」的座位？", jp: "すみません、膝が悪いので、畳ではなく椅子の席はありますか？", hiragana: "すみません、ひざが わるいので、たたみのせき ではなく いすのせき は ありますか？" },
             { id: 10, category: "restaurant", title: "👉 手指點餐卡", intent: "我要點這個項目。（手指著菜單項目）", jp: "これをお願いします。", hiragana: "これ を おねがいします。" },
-            { id: 11, category: "restaurant", title: "🧊 飲料去冰卡", intent: "飲料請幫我去冰（不要加冰塊），謝謝。", jp: "氷なしでお願いします。", hiragana: "こおり なし で おねがいします。" },
+            { id: 11, category: "restaurant", title: "🧊 飲料去冰卡", intent: "飲料請幫我裝去冰（不要加冰塊），謝謝。", jp: "氷なしでお願いします。", hiragana: "こおり なし で おねがいします。" },
             { id: 12, category: "restaurant", title: "🍵 要熱開水卡", intent: "請問可以給我們一杯熱開水（溫水）嗎？謝謝。", jp: "温かいお湯をいただけますか？", hiragana: "あたたかい おゆ を いただけますか？" },
             { id: 13, category: "restaurant", title: "💴 結帳卡", intent: "不好意思，我們要結帳。", jp: "お会計をお願いします。", hiragana: "おかいけい を おねがいします。" },
             { id: 14, category: "shopping", title: "🏷️ 詢問價格卡", intent: "請問這個多少錢？", jp: "これはいくらですか？", hiragana: "これ は いくら ですか？" },
             { id: 15, category: "shopping", title: "💳 信用卡付款卡", intent: "請問可以使用信用卡付款嗎？", jp: "クレジットカードは使えますか？", hiragana: "くれじっとかーど は つかえますか？" },
             { id: 16, category: "shopping", title: "🛍️ 詢問免稅卡", intent: "請問這裡可以辦理免稅嗎？", jp: "免税はできますか？", hiragana: "めんぜい は できますか？" },
-            { id: 17, category: "emergency", title: "🚠 纜車放慢速度卡", intent: "不好意思，因為我們腳不太好。在上下纜車時，能請您將纜車減速嗎？謝謝。", jp: "すみません、足が悪いので、リフトに乗る（降りる）際に、少し減速していただけますか？", hiragana: "すみません、あしが わるいので、りふと に のる（おりる）さいに、すこし げんそく していただけますか？" },
+            { id: 17, category: "emergency", title: "🚠 纜車放慢速度卡", intent: "不好意思，因為我們行動不太快。在上下纜車時，能請您將纜車減速嗎？謝謝。", jp: "すみません、足が悪いので、リフトに乗る（降りる）際に、少し減速していただけますか？", hiragana: "すみません、あしが わるいので、りふと に のる（おりる）さいに、すこし げんそく していただけますか？" },
             { id: 19, category: "emergency", title: "📍 迷路求助卡", intent: "不好意思，我迷路了。我想回到上野的飯店，請問該怎麼走？", jp: "道に迷ってしまいました。上野のホテルに戻りたいのですが、どう行けばいいですか？", hiragana: "みちに まよって しまいました。うえの の ほてる に もどりたいのですが、どう いけば いいですか？" },
             { id: 20, category: "transport", title: "🚕 計程車直達飯店卡", intent: "我要搭車到「Hotel Crown Hills Ueno Premier」，地址是：東京都台東区東上野2-16-1", jp: "「ホテルクラウンヒルズ上野プレミア」までお願いします。住所は東京都台東区東上野2-16-1です。", hiragana: "「ほてる くらうん ひるず うえの ぷれみあ」まで おねがいします。じゅうしょ は とうきょうと たいとうく ひがしうえの に の じゅうろく の いち です。" }
         ];
 
         // Custom Checklist Default Dataset
         const defaultDailyList = [
-            { text: "📴 手機（確認充飽電、網路通暢）", checked: false },
-            { text: "🛂 護照正本 (入境、免稅查驗必備)", checked: false },
-            { text: "💴 現金（備妥適量日圓零錢與萬元鈔）", checked: false },
-            { text: "🌂 輕便晴雨傘（防曬防雨兩用）", checked: false },
-            { text: "💳 手機 Suica 西瓜卡 (或實體卡)", checked: false },
-            { text: "🍵 保溫水瓶（裝溫水或熱茶）", checked: false },
-            { text: "💊 當日必備常備慢性病藥物", checked: false }
+            { text: "📴 手機（確認電量、網路通暢）", checked: false },
+            { text: "🔋 行動電源 (確認電量) ", checked: false }, 
+            { text: "🛂 護照正本 （購物免稅、飯店登記要用) ", checked: false },
+            { text: "💴 日圓現金 ", checked: false },
+            { text: "🌂 輕便晴雨傘 ", checked: false },
+            { text: "💳 Suica 西瓜卡 ", checked: false },
+            { text: "🍵 保溫水瓶（裝滿熱水/溫水）", checked: false },
+            { text: "💊 當日必吃常備保健/慢性病藥物", checked: false }
         ];
 
         const defaultBeforeList = [
@@ -896,13 +997,12 @@
             { text: "帽子", checked: false },
             { text: "襪子", checked: false },
             { text: "自拍棒", checked: false },
-            { text: "網路 (ESIM 或租借 WIFI 機)", checked: false },
-            { text: "充電器", checked: false },
-            { text: "APP 安裝 (GO 叫車、換匯 App)", checked: false },
-            { text: "充電線", checked: false },
-            { text: "劃位 (Skyliner、觀光巴士劃位確認)", checked: false },
-            { text: "旅遊保險 (海外緊急醫療及不便險)", checked: false },
-            { text: "換匯 (換好適量日幣現金)", checked: false }
+            { text: "網路 (漫遊確認已開通)", checked: false },
+            { text: "充電器 / 充電線 ", checked: false },
+            { text: "APP 安裝 (GO 叫車軟體)", checked: false },
+            { text: "機票劃位", checked: false },
+            { text: "旅遊保險 (海外緊急突發醫療險)", checked: false },
+            { text: "換匯 (換妥日圓現金)", checked: false }
         ];
 
         // State variables
@@ -912,6 +1012,26 @@
         let checklistDaily = [];
         let checklistBefore = [];
 
+        // Font scaling adjust controller
+        function setFontScale(scaleSize) {
+            const htmlEl = document.documentElement;
+            htmlEl.classList.remove('size-standard', 'size-large', 'size-huge');
+            htmlEl.classList.add(`size-${scaleSize}`);
+            
+            // Highlight active button
+            document.querySelectorAll("[id^='btn-size-']").forEach(btn => {
+                btn.classList.remove('size-btn-active', 'bg-brand-600', 'text-white');
+                btn.classList.add('text-brand-100/60');
+            });
+            const activeBtn = document.getElementById(`btn-size-${scaleSize}`);
+            if (activeBtn) {
+                activeBtn.classList.add('size-btn-active');
+                activeBtn.classList.remove('text-brand-100/60');
+            }
+            
+            // Store size preference locally
+            localStorage.setItem("ueno_font_scale_preference", scaleSize);
+        }
 
         // iOS Safari: show install tip once
         function isIOS() {
@@ -927,31 +1047,35 @@
                 const hint = document.createElement('div');
                 hint.id = 'ios-hint';
                 hint.style.cssText = `
-                    position:fixed; bottom:80px; left:16px; right:16px; z-index:100;
+                    position:fixed; bottom:95px; left:16px; right:16px; z-index:100;
                     background:#1e4620; color:white; border-radius:16px; padding:16px;
-                    font-size:14px; font-weight:600; box-shadow:0 8px 32px rgba(0,0,0,0.3);
-                    line-height:1.6; border:1px solid rgba(255,255,255,0.2);
+                    font-size:16px; font-weight:800; box-shadow:0 8px 32px rgba(0,0,0,0.3);
+                    line-height:1.6; border:2px solid rgba(255,255,255,0.2);
                     animation: slideUp 0.4s ease;
                 `;
                 hint.innerHTML = `
                     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
                         <div>
-                            <div style="font-size:16px;margin-bottom:6px">📲 加到主畫面，像 App 一樣使用！</div>
-                            <div style="opacity:0.85">點擊 Safari 下方 <b>「分享」按鈕</b> ⎙ → 選擇 <b>「加入主畫面」</b> → 即可離線使用</div>
+                            <div style="font-size:18px;margin-bottom:6px;font-weight:900">📲 加到主畫面，像 App 一樣使用！</div>
+                            <div style="opacity:0.9">點擊瀏覽器下方 <b>「分享」按鈕</b> ⎙ → 選擇 <b>「加入主畫面」</b> 即可離線開啟。</div>
                         </div>
                         <button onclick="this.parentElement.parentElement.remove(); localStorage.setItem('ios-hint-shown','1')" 
-                                style="background:rgba(255,255,255,0.2);border:none;color:white;border-radius:8px;padding:6px 12px;font-size:18px;min-height:36px;cursor:pointer;flex-shrink:0">✕</button>
+                                style="background:rgba(255,255,255,0.3);border:none;color:white;border-radius:10px;padding:6px 14px;font-size:18px;min-height:40px;cursor:pointer;flex-shrink:0">✕</button>
                     </div>
                 `;
                 document.body.appendChild(hint);
                 localStorage.setItem('ios-hint-shown', '1');
-                setTimeout(() => hint.style.opacity='0', 7000);
-                setTimeout(() => hint.remove(), 7300);
+                setTimeout(() => { if(hint) hint.style.opacity='0'; }, 10000);
+                setTimeout(() => { if(hint) hint.remove(); }, 10300);
             }, 2000);
         }
 
         // Initialize App
         window.onload = function() {
+            // Restore Font Size scale preference or default to "large" for 70+ years old legibility
+            const savedScale = localStorage.getItem("ueno_font_scale_preference") || "large";
+            setFontScale(savedScale);
+
             // Load state from LocalStorage or use defaults
             initChecklist();
             
@@ -996,8 +1120,10 @@
             });
             
             const activeBtn = document.getElementById(`tab-${tabId}`);
-            activeBtn.classList.remove("border-transparent", "text-brand-100/70");
-            activeBtn.classList.add("border-white", "text-white");
+            if (activeBtn) {
+                activeBtn.classList.remove("border-transparent", "text-brand-100/70");
+                activeBtn.classList.add("border-white", "text-white");
+            }
             
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1014,14 +1140,15 @@
             });
             
             const activeBtn = document.getElementById(`btn-day-${dayNum}`);
-            activeBtn.classList.add("bg-brand-600", "text-white", "border-brand-600", "shadow-md");
-            activeBtn.classList.remove("bg-white", "text-gray-700", "border-gray-300");
+            if (activeBtn) {
+                activeBtn.classList.add("bg-brand-600", "text-white", "border-brand-600", "shadow-md");
+                activeBtn.classList.remove("bg-white", "text-gray-700", "border-gray-300");
+            }
             
             // Render Day Content
             renderDayContent(dayNum);
         }
 
-        // Render Day Content in Tab 2
         function renderDayContent(dayNum) {
             const data = itineraryData[dayNum];
             const contentDiv = document.getElementById("day-content");
@@ -1029,42 +1156,60 @@
             if (!data) return;
             
             let transportsHTML = "";
-            data.transports.forEach(t => {
+            (data.transports || []).forEach(t => {
                 transportsHTML += `
-                    <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl flex flex-col md:flex-row md:items-center gap-4">
-                        <div class="flex items-center gap-2 shrink-0">
-                            <span class="w-10 h-10 rounded-full ${t.badgeColor} text-white font-black flex items-center justify-center text-lg shadow-sm">${t.badge}</span>
+                    <div class="bg-gray-50 border border-gray-200 p-5 rounded-xl flex flex-col md:flex-row md:items-center gap-4">
+                        <div class="flex items-center gap-3 shrink-0">
+                            <span class="w-12 h-12 rounded-full ${t.badgeColor} text-white font-black flex items-center justify-center text-xl shadow-sm">${t.badge}</span>
                             <span class="text-xl font-black text-black">${t.badgeName}</span>
                         </div>
-                        <div class="space-y-1">
+                        <div class="space-y-1 flex-1">
                             <span class="text-lg font-black block text-brand-600">➡️ ${t.route}</span>
-                            <p class="text-base text-gray-600">${t.desc}</p>
+                            <p class="text-base text-gray-800 font-bold leading-relaxed">${t.desc}</p>
+                            <!-- 一句話導航高亮區塊 -->
+                            <div class="bg-brand-600/5 border-2 border-brand-600/20 p-3.5 rounded-xl mt-2 text-brand-900 font-black text-base sm:text-lg">
+                                📢 一句話指引：${t.oneSentenceNav}
+                            </div>
                         </div>
                     </div>
                 `;
             });
             
             let accessibilityHTML = "";
-            data.accessibility.forEach(step => {
+            (data.accessibility || []).forEach(step => {
                 accessibilityHTML += `
-                    <li class="flex items-start gap-3 p-2 hover:bg-brand-50 rounded-lg transition-all">
+                    <li class="flex items-start gap-3 p-2.5 hover:bg-brand-50 rounded-lg transition-all">
                         <span class="text-2xl mt-0.5 select-none text-brand-600">📍</span>
-                        <span class="text-lg md:text-xl font-semibold leading-relaxed text-black">${step}</span>
+                        <span class="text-lg md:text-xl font-black leading-relaxed text-black">${step}</span>
                     </li>
                 `;
             });
             
             let spotsHTML = "";
-            data.spots.forEach(spot => {
+            (data.spots || []).forEach((spot, idx) => {
+                const imgContainer = spot.img ? `
+                    <div class="w-full h-52 overflow-hidden relative bg-gray-100" id="spot-img-container-${dayNum}-${idx}">
+                        <img src="${spot.img}" 
+                             alt="${spot.name}" 
+                             onerror="document.getElementById('spot-img-container-${dayNum}-${idx}').style.display='none';"
+                             class="w-full h-full object-cover">
+                    </div>
+                ` : '';
+
                 spotsHTML += `
-                    <div class="bg-white border-2 border-gray-100 hover:border-brand-600 p-5 rounded-2xl shadow-sm transition-all space-y-3">
-                        <div class="flex items-start justify-between gap-2 border-b border-gray-100 pb-2">
-                            <h5 class="text-xl font-black text-black">🚩 ${spot.name}</h5>
+                    <div class="bg-white border-2 border-gray-100 hover:border-brand-600 rounded-2xl shadow-sm transition-all overflow-hidden flex flex-col justify-between">
+                        ${imgContainer}
+                        <div class="p-5 space-y-3 flex-1">
+                            <div class="flex items-start justify-between gap-2 border-b border-gray-100 pb-2">
+                                <h5 class="text-xl font-black text-black">🚩 ${spot.name}</h5>
+                            </div>
+                            <p class="text-base text-gray-800 font-bold leading-relaxed">${spot.desc}</p>
                         </div>
-                        <p class="text-base text-gray-600 font-medium leading-relaxed">${spot.desc}</p>
-                        <a href="${spot.link}" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all text-lg flex items-center justify-center gap-2">
-                            🧭 👉【點我開啟 Google Maps 導航】
-                        </a>
+                        <div class="px-5 pb-5 pt-1">
+                            <a href="${spot.link}" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 px-4 rounded-xl shadow-md transition-all text-lg flex items-center justify-center gap-2">
+                                🧭 👉【點我開啟 Google Maps 路線導航】
+                            </a>
+                        </div>
                     </div>
                 `;
             });
@@ -1074,7 +1219,7 @@
                 <div class="border-b-4 border-brand-100 pb-4">
                     <span class="text-sm font-black uppercase tracking-wider text-brand-600">第 ${data.dayNum} 天行程安排</span>
                     <h3 class="text-2xl md:text-3xl font-black text-black leading-snug">${data.title}</h3>
-                    <p class="text-lg text-gray-600 font-medium mt-2 leading-relaxed">${data.intro}</p>
+                    <p class="text-lg text-gray-800 font-black mt-2 leading-relaxed">${data.intro}</p>
                 </div>
                 
                 <!-- Transports Block -->
@@ -1090,7 +1235,7 @@
                 <!-- Accessibility Walks Block -->
                 <div class="bg-brand-50/70 rounded-2xl p-5 border-2 border-brand-100 space-y-3">
                     <h4 class="text-xl font-black flex items-center gap-2 text-brand-700">
-                        <span>♿</span> 避開階梯與天橋 • 平地慢活指引
+                        <span>♿</span> 避開階梯與天橋 • 優雅平地步行指引
                     </h4>
                     <ul class="space-y-3">
                         ${accessibilityHTML}
@@ -1100,7 +1245,7 @@
                 <!-- Spots & Restaurants Block -->
                 <div class="space-y-4">
                     <h4 class="text-xl font-black flex items-center gap-2 text-brand-700">
-                        <span>🍛</span> 本日推薦餐廳、甜點與小吃
+                        <span>🍛</span> 本日推薦特色景點、餐點與小吃
                     </h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         ${spotsHTML}
@@ -1108,11 +1253,11 @@
                 </div>
 
                 <!-- Return Transportation Block -->
-                <div class="bg-amber-50 rounded-2xl p-5 border-2 border-amber-500/30 space-y-3 mt-6">
-                    <h4 class="text-xl font-black flex items-center gap-2 text-amber-800">
-                        <span>🏠</span> 貼心指引：如何回到「上野皇冠山丘高級酒店」
+                <div class="bg-amber-50 rounded-2xl p-5 border-2 border-amber-500/30 space-y-3 mt-6 animate-pulse">
+                    <h4 class="text-xl font-black flex items-center gap-2 text-amber-900">
+                        <span>🏠</span> 貼心指引：如何安全返回「上野皇冠山丘高級酒店」
                     </h4>
-                    <p class="text-lg font-bold text-gray-800 leading-relaxed">${data.returnTrans}</p>
+                    <p class="text-lg font-black text-gray-900 leading-relaxed">${data.returnTrans}</p>
                 </div>
             `;
         }
@@ -1124,12 +1269,14 @@
             // Update filter buttons styling
             document.querySelectorAll(".jp-filter-btn").forEach(btn => {
                 btn.classList.remove("bg-brand-600", "text-white");
-                btn.classList.add("bg-white", "text-gray-700", "border-gray-300");
+                btn.classList.add("bg-white", "text-gray-800", "border-gray-300");
             });
             
             const activeBtn = document.getElementById(`btn-jp-${category}`);
-            activeBtn.classList.add("bg-brand-600", "text-white");
-            activeBtn.classList.remove("bg-white", "text-gray-700", "border-gray-300");
+            if (activeBtn) {
+                activeBtn.classList.add("bg-brand-600", "text-white");
+                activeBtn.classList.remove("bg-white", "text-gray-800", "border-gray-300");
+            }
             
             renderJapaneseCards();
         }
@@ -1151,13 +1298,13 @@
                     <div class="space-y-2">
                         <div class="flex justify-between items-center border-b border-gray-100 pb-2">
                             <span class="text-lg font-black text-brand-600">${p.title}</span>
-                            <span class="text-xs bg-brand-50 text-brand-600 px-2 py-0.5 rounded-full font-bold">點擊卡片放大 🔍</span>
+                            <span class="text-xs bg-brand-50 text-brand-600 px-3 py-1 rounded-full font-black">點擊放大 🔍</span>
                         </div>
-                        <p class="text-lg font-bold text-gray-500">意圖：${p.intent}</p>
+                        <p class="text-lg font-black text-gray-800">中文：${p.intent}</p>
                         <p class="text-2xl font-black text-brand-700 tracking-wide mt-2 leading-relaxed">${p.jp}</p>
                     </div>
-                    <div class="text-sm bg-gray-50 text-gray-500 p-2 rounded-lg font-medium">
-                        🗣️ 讀音：${p.hiragana}
+                    <div class="text-sm bg-gray-50 text-gray-700 p-2.5 rounded-lg font-black">
+                        🗣️ 讀音拼音：${p.hiragana}
                     </div>
                 `;
                 container.appendChild(card);
@@ -1216,14 +1363,14 @@
             dailyContainer.innerHTML = "";
             beforeContainer.innerHTML = "";
             
-            // Render Daily list
+            // Render Daily list with massive checkboxes and wide clickable target
             checklistDaily.forEach((item, index) => {
                 const wrapper = document.createElement("label");
-                wrapper.className = `flex items-center gap-4 p-4 rounded-xl border-2 transition-all cursor-pointer select-none ${item.checked ? 'bg-brand-50/50 border-brand-600 text-brand-700' : 'bg-white border-gray-200 text-gray-700 hover:border-brand-100'}`;
+                wrapper.className = `flex items-center gap-4 p-4.5 rounded-xl border-2 transition-all cursor-pointer select-none ${item.checked ? 'bg-brand-50/50 border-brand-600 text-brand-700' : 'bg-white border-gray-200 text-gray-800 hover:border-brand-100'}`;
                 
                 wrapper.innerHTML = `
-                    <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleDaily(${index})" class="w-7 h-7 rounded-lg text-brand-600 border-gray-300 focus:ring-brand-600 shrink-0">
-                    <span class="text-lg md:text-xl font-bold ${item.checked ? 'line-through opacity-70' : ''}">${item.text}</span>
+                    <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleDaily(${index})" class="w-8 h-8 rounded-lg text-brand-600 border-gray-300 focus:ring-brand-600 shrink-0">
+                    <span class="text-lg md:text-xl font-black ${item.checked ? 'line-through opacity-60' : ''}">${item.text}</span>
                 `;
                 dailyContainer.appendChild(wrapper);
             });
@@ -1231,14 +1378,14 @@
             // Render Before list
             checklistBefore.forEach((item, index) => {
                 const wrapper = document.createElement("div");
-                wrapper.className = `flex items-center justify-between gap-3 p-4 rounded-xl border-2 transition-all ${item.checked ? 'bg-brand-50/50 border-brand-600 text-brand-700' : 'bg-white border-gray-200 text-gray-700 hover:border-brand-100'}`;
+                wrapper.className = `flex items-center justify-between gap-3 p-4.5 rounded-xl border-2 transition-all ${item.checked ? 'bg-brand-50/50 border-brand-600 text-brand-700' : 'bg-white border-gray-200 text-gray-800 hover:border-brand-100'}`;
                 
                 wrapper.innerHTML = `
                     <label class="flex items-center gap-4 cursor-pointer select-none flex-1">
-                        <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleBefore(${index})" class="w-7 h-7 rounded-lg text-brand-600 border-gray-300 focus:ring-brand-600 shrink-0">
-                        <span class="text-lg md:text-xl font-bold ${item.checked ? 'line-through opacity-70' : ''}">${item.text}</span>
+                        <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleBefore(${index})" class="w-8 h-8 rounded-lg text-brand-600 border-gray-300 focus:ring-brand-600 shrink-0">
+                        <span class="text-lg md:text-xl font-black ${item.checked ? 'line-through opacity-60' : ''}">${item.text}</span>
                     </label>
-                    <button onclick="removeBeforeItem(${index})" class="text-red-500 hover:text-red-700 font-bold px-3 py-1 bg-red-50 hover:bg-red-100 rounded-lg text-sm">
+                    <button onclick="removeBeforeItem(${index})" class="text-red-600 hover:text-red-800 font-black px-4 py-2 bg-red-50 hover:bg-red-100 rounded-xl text-base shrink-0">
                         🗑️ 刪除
                     </button>
                 `;
@@ -1253,6 +1400,7 @@
             renderChecklists();
         }
 
+        // Checklist Interactions
         function toggleBefore(index) {
             checklistBefore[index].checked = !checklistBefore[index].checked;
             saveBeforeState();
@@ -1278,8 +1426,17 @@
             renderChecklists();
         }
 
+        // Custom Confirm Dialog Call
         function resetChecklist() {
-            if (confirm("確認重置所有勾選狀態並回復到預設清單嗎？")) {
+            document.getElementById("custom-confirm-modal").classList.remove("hidden");
+            document.body.classList.add("overflow-hidden");
+        }
+
+        function handleConfirmReset(confirmed) {
+            document.getElementById("custom-confirm-modal").classList.add("hidden");
+            document.body.classList.remove("overflow-hidden");
+            
+            if (confirmed) {
                 checklistDaily = defaultDailyList.map(item => ({ ...item, checked: false }));
                 checklistBefore = defaultBeforeList.map(item => ({ ...item, checked: false }));
                 saveDailyState();
@@ -1289,42 +1446,63 @@
         }
     </script>
 
-    <!-- PWA Service Worker Registration + Install Banner -->
+    <!-- PWA Service Worker Registration + Offline / Online listeners -->
     <script>
-        // Register Service Worker
+        // Service Worker registration using blob config
         if ('serviceWorker' in navigator) {
+            const swCode = `
+const CACHE = 'tokyo-guide-v3';
+self.addEventListener('install', e => {
+    self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+    e.waitUntil(
+        caches.keys().then(keys =>
+            Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+        ).then(() => self.clients.claim())
+    );
+});
+self.addEventListener('fetch', e => {
+    if (new URL(e.request.url).origin !== self.location.origin) return;
+    e.respondWith(
+        caches.match(e.request).then(cached => {
+            if (cached) return cached;
+            return fetch(e.request).then(res => {
+                if (res && res.status === 200 && res.type === 'basic') {
+                    const clone = res.clone();
+                    caches.open(CACHE).then(c => c.put(e.request, clone));
+                }
+                return res;
+            });
+        })
+    );
+});
+`;
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            const swUrl = URL.createObjectURL(blob);
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('[PWA] SW registered:', reg.scope))
+                navigator.serviceWorker.register(swUrl)
+                    .then(reg => console.log('[PWA] SW registered successfully:', reg.scope))
                     .catch(err => console.warn('[PWA] SW failed:', err));
             });
         }
         
-        // Online / Offline indicator
+        // Online / Offline indicators
         const offlineBar = document.getElementById('offline-indicator');
-        window.addEventListener('offline', () => offlineBar.classList.add('show'));
-        window.addEventListener('online',  () => offlineBar.classList.remove('show'));
+        window.addEventListener('offline', () => { if(offlineBar) offlineBar.classList.add('show'); });
+        window.addEventListener('online',  () => { if(offlineBar) offlineBar.classList.remove('show'); });
         
-        // PWA Install prompt (Android Chrome)
+        // Custom installation flow (Android Chrome)
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            
-            // Show our custom banner if not already installed
             if (!window.matchMedia('(display-mode: standalone)').matches) {
-                showInstallBanner();
+                const banner = document.getElementById('pwa-install-banner');
+                if (banner) banner.style.display = 'flex';
+                setTimeout(() => hideBanner(), 10000);
             }
         });
-        
-        function showInstallBanner() {
-            const banner = document.getElementById('pwa-install-banner');
-            if (!banner) return;
-            banner.style.display = 'flex';
-            
-            // Auto-hide after 8 seconds
-            setTimeout(() => hideBanner(), 8000);
-        }
         
         function hideBanner() {
             const banner = document.getElementById('pwa-install-banner');
@@ -1343,14 +1521,6 @@
             deferredPrompt = null;
             hideBanner();
         }
-        
-        // Handle URL hash routing (for shortcuts)
-        window.addEventListener('load', () => {
-            const hash = window.location.hash.replace('#', '');
-            if (['overview','itinerary','japanese','checklist'].includes(hash)) {
-                setTimeout(() => switchTab(hash), 100);
-            }
-        });
     </script>
 
 </body>
