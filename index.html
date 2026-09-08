@@ -1,0 +1,1967 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="size-medium">
+<head>
+    <meta charset="UTF-8">
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- iOS PWA Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="東京川越慢活">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <!-- Android / Chrome PWA -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#1e4620">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>2026 東京自由行：都內慢活與小江戶川越輕旅行</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fcfbf9',   // 溫暖象牙白底色
+                            100: '#f5efe6',  // 米黃分隔線
+                            600: '#1e4620',  // 森林綠無障礙對比色
+                            700: '#143015',
+                            900: '#0b1b0c',
+                        },
+                        subway: {
+                            ginza: '#ff9500', 
+                            yamanote: '#4cd964', 
+                            marunouchi: '#ff3b30', 
+                            keisei: '#0055a5', 
+                            hibiya: '#8e8e93', 
+                            tobu: '#003882',
+                            saikyo: '#00ac9a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html {
+            transition: font-size 0.2s ease;
+        }
+        
+        /* 三段無障礙字體放大模式 */
+        html.size-small { font-size: 16px; }    /* 標準-小 */
+        html.size-medium { font-size: 20px; }   /* 預設放大-中 (125%) */
+        html.size-large { font-size: 24px; }    /* 特大字體-大 (150%) */
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans CJK TC", "Microsoft JhengHei", sans-serif;
+            background-color: #f7f5f0;
+            font-weight: 500;
+        }
+        
+        /* 寬裕的點擊區域，方便手指觸控 */
+        button, a, input[type="checkbox"], label {
+            min-height: 52px;
+            min-width: 52px;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f5efe6;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e4620;
+            border-radius: 6px;
+        }
+
+        body {
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        html {
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        button, nav, header {
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        @media (max-width: 640px) {
+            .pwa-header-title {
+                font-size: 1.15rem !important;
+                line-height: 1.3;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .day-scroll-container {
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+            .day-scroll-container::-webkit-scrollbar {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            #phrase-modal > div {
+                max-width: 100% !important;
+                height: 100dvh !important;
+                border-radius: 0 !important;
+                border: none !important;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+            #modal-japanese {
+                font-size: 2.8rem !important;
+            }
+        }
+        
+        #offline-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #d97706;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-size: 0.95rem;
+            font-weight: 900;
+            z-index: 200;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        #offline-indicator.show {
+            transform: translateY(0);
+        }
+        
+        .tab-page {
+            animation: fadeIn 0.25s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        
+        main {
+            padding-bottom: calc(5rem + env(safe-area-inset-bottom)) !important;
+        }
+
+        .size-btn-active {
+            background-color: #1e4620 !important;
+            color: #ffffff !important;
+            border-color: #ffffff !important;
+        }
+    </style>
+</head>
+<body class="text-brand-900 antialiased selection:bg-brand-100 selection:text-brand-700">
+
+    <!-- 離線模式提示 -->
+    <div id="offline-indicator">⚠️ 目前離線模式 — 所有資料已安全快取，可正常瀏覽</div>
+
+    <!-- 頂部置頂導航欄 -->
+    <header class="sticky top-0 z-40 bg-brand-600 text-white shadow-md">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-3xl shrink-0">🗼</span>
+                <h1 class="text-xl sm:text-2xl font-black tracking-wide pwa-header-title shrink-0">2026 東京自由行</h1>
+                
+                <!-- 標題旁固定的地球按鈕 -->
+                <a href="https://www.google.com/maps" target="_blank" 
+                   class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl px-3.5 py-1 text-sm gap-1.5 transition-all shadow-md shrink-0 border border-blue-400"
+                   title="開啟 Google 地圖">
+                    <span class="text-xl">🌍</span>
+                    <span>地圖導航</span>
+                </a>
+            </div>
+            
+            <!-- 文字大小調整按鈕：小，中，大 -->
+            <div class="flex items-center gap-2 bg-brand-700 px-3 py-1.5 rounded-xl border border-brand-100/30 text-base">
+                <span class="font-black text-brand-50 shrink-0 text-sm sm:text-base">🔍 文字：</span>
+                <div class="flex bg-brand-900 rounded-lg p-0.5 border border-brand-100/10">
+                    <button onclick="setFontScale('small')" id="btn-size-small" class="px-3.5 py-1.5 font-bold rounded-md text-sm transition-all text-brand-100/60 hover:text-white" title="較小字體">小</button>
+                    <button onclick="setFontScale('medium')" id="btn-size-medium" class="px-3.5 py-1.5 font-bold rounded-md text-sm transition-all text-brand-100/60 hover:text-white" title="中等字體">中</button>
+                    <button onclick="setFontScale('large')" id="btn-size-large" class="px-3.5 py-1.5 font-bold rounded-md text-sm transition-all text-brand-100/60 hover:text-white" title="特大字體">大</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5個主要分頁標籤 -->
+        <nav class="bg-brand-700 border-t border-brand-600 max-w-4xl mx-auto">
+            <div class="grid grid-cols-5 text-center">
+                <button onclick="switchTab('overview')" id="tab-overview" class="py-3 px-0.5 text-sm sm:text-base font-bold border-b-4 border-white text-white focus:outline-none transition-all flex flex-col items-center justify-center gap-1">
+                    <span class="text-xl sm:text-2xl">📋</span>
+                    <span class="font-black">行程總覽</span>
+                </button>
+                <button onclick="switchTab('itinerary')" id="tab-itinerary" class="py-3 px-0.5 text-sm sm:text-base font-bold border-b-4 border-transparent text-brand-100/70 hover:text-white focus:outline-none transition-all flex flex-col items-center justify-center gap-1">
+                    <span class="text-xl sm:text-2xl">🚶</span>
+                    <span class="font-black">每天行程</span>
+                </button>
+                <button onclick="switchTab('japanese')" id="tab-japanese" class="py-3 px-0.5 text-sm sm:text-base font-bold border-b-4 border-transparent text-brand-100/70 hover:text-white focus:outline-none transition-all flex flex-col items-center justify-center gap-1">
+                    <span class="text-xl sm:text-2xl">🎴</span>
+                    <span class="font-black">手指日語</span>
+                </button>
+                <button onclick="switchTab('checklist')" id="tab-checklist" class="py-3 px-0.5 text-sm sm:text-base font-bold border-b-4 border-transparent text-brand-100/70 hover:text-white focus:outline-none transition-all flex flex-col items-center justify-center gap-1">
+                    <span class="text-xl sm:text-2xl">✅</span>
+                    <span class="font-black">準備清單</span>
+                </button>
+                <button onclick="switchTab('shopping')" id="tab-shopping" class="py-3 px-0.5 text-sm sm:text-base font-bold border-b-4 border-transparent text-brand-100/70 hover:text-white focus:outline-none transition-all flex flex-col items-center justify-center gap-1">
+                    <span class="text-xl sm:text-2xl">🛍️</span>
+                    <span class="font-black">購物記帳</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+    <main class="max-w-4xl mx-auto px-4 py-6">
+
+        <!-- ================= PAGE 1: 行程總覽 ================= -->
+        <div id="page-overview" class="tab-page space-y-6">
+            
+            <!-- 航班資訊看板 -->
+            <div class="bg-white rounded-2xl p-6 border-2 border-brand-600 shadow-sm space-y-4">
+                <div class="flex items-center gap-3 border-b-2 border-brand-100 pb-3">
+                    <span class="text-4xl">✈️</span>
+                    <div>
+                        <span class="text-sm font-black uppercase tracking-wider text-brand-600">優雅首航安全第一</span>
+                        <h2 class="text-2xl font-black text-black">來回航班與航廈指南</h2>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- 去程航班卡片 -->
+                    <div class="bg-brand-50 p-5 rounded-xl border border-brand-100 space-y-2">
+                        <span class="bg-brand-600 text-white text-sm font-black px-2.5 py-1.5 rounded-md inline-block">🛫 去程航班</span>
+                        <div class="text-xl font-black text-black pt-1">
+                            2026-09-17 (四) 10:40 起飛
+                        </div>
+                        <div class="text-lg font-black text-gray-800">
+                            桃園國際機場 (TPE) <span class="text-brand-600 font-black">第一航廈</span>
+                        </div>
+                        <div class="text-gray-800 font-bold text-base">
+                            ➔ 於 15:05 降落至成田機場 (NRT) <span class="text-brand-700 font-black">第二航廈</span>
+                        </div>
+                        <p class="text-base font-black text-amber-900 bg-amber-50 p-3 rounded-lg border border-amber-300">
+                            💡 乘機技巧：請於早上 08:10 前抵達桃園第一航廈辦理行李託運與出境。
+                        </p>
+                    </div>
+
+                    <!-- 回程航班卡片 -->
+                    <div class="bg-brand-50 p-5 rounded-xl border border-brand-100 space-y-2">
+                        <span class="bg-blue-600 text-white text-sm font-black px-2.5 py-1.5 rounded-md inline-block">🛬 回程航班</span>
+                        <div class="text-xl font-black text-black pt-1">
+                            2026-09-23 (三) 16:20 起飛
+                        </div>
+                        <div class="text-lg font-black text-gray-800">
+                            成田國際機場 (NRT) <span class="text-blue-700 font-black">第二航廈</span>
+                        </div>
+                        <div class="text-gray-800 font-bold text-base">
+                            ➔ 於 19:00 降落至桃園機場 (TPE) <span class="text-brand-700 font-black">第一航廈</span>
+                        </div>
+                        <p class="text-base font-black text-amber-900 bg-amber-50 p-3 rounded-lg border border-amber-300">
+                            💡 乘機技巧：請於下午 13:00 前自上野出發，約 13:50 前輕鬆抵達第二航廈。
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 住宿飯店資訊：Hotel Crown Hills Ueno Premier -->
+            <div class="bg-white rounded-2xl p-6 border-2 border-brand-600 shadow-sm">
+                <div class="flex items-center gap-3 border-b-2 border-brand-100 pb-3 mb-4">
+                    <span class="text-4xl">🏨</span>
+                    <div>
+                        <span class="text-sm font-black uppercase tracking-wider text-brand-600">全程6晚固定住同一間飯店・免搬行李</span>
+                        <h2 class="text-2xl font-black text-black">Hotel Crown Hills Ueno Premier</h2>
+                        <p class="text-base text-gray-800 font-black">上野皇冠山丘高級酒店</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-4 text-lg">
+                    <p class="font-black text-brand-700 bg-brand-50 p-4 rounded-xl border-l-4 border-brand-600 leading-relaxed">
+                        ♨️ <span class="underline">居住亮點</span>：客房全在 20-24 樓極佳景觀，窗外俯瞰上野美景。大樓一樓右手邊就是 7-Eleven 超商，配有「高樓大堂直達專用電梯」，出入安靜、明亮且安全。全程 6 晚不換飯店，省去收拾與搬運行李的體力消耗！
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            <span class="font-black text-gray-800 block mb-1">🗺️ 飯店地址</span>
+                            <span class="font-bold text-black">東京都台東区東上野2-16-1</span>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            <span class="font-black text-gray-800 block mb-1">📞 飯店電話</span>
+                            <span class="font-bold text-black">03-5846-7100</span>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            <span class="font-black text-gray-800 block mb-1">♿ 步行路線</span>
+                            <span class="font-bold text-black">從 JR 上野站「廣小路口」步行 4-5 分鐘或地鐵 3 號出口電梯 3 分鐘，全程平面無階梯。</span>
+                        </div>
+                    </div>
+                    
+                    <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Crown+Hills+Ueno+Premier" target="_blank" class="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-black py-4 px-6 rounded-xl shadow-md transition-all text-xl mt-4">
+                        🧭 👉【點我開啟 Google Maps 定位飯店】
+                    </a>
+                </div>
+            </div>
+            <!-- 7天慢活行程要點 -->
+            <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
+                <h3 class="text-2xl font-black border-b pb-2 mb-4 flex items-center gap-2 text-black">
+                    <span>📅</span> 7天6夜慢活行程精華（都內慢步＋週五近郊川越避人潮）
+                </h3>
+                <div class="space-y-4">
+                    <!-- D1 -->
+                    <div class="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-xl transition-all">
+                        <span class="bg-brand-600 text-white font-black px-3.5 py-1.5 rounded-lg text-lg shrink-0">D1</span>
+                        <div>
+                            <h4 class="text-xl font-black text-black">9/17 (四) 抵達東京 ➔ Skyliner 直達 ➔ 5步平地指南到飯店 ➔ 吉池超市採買 ➔ 吉池食堂/阿美橫丁</h4>
+                            <p class="text-base text-gray-800 mt-1 font-bold">首日抵達上野辦理 check-in。傍晚散步，前往離飯店 4 分鐘的吉池超市採買日本當季水果與鮮乳，在 9 樓備有無障礙大電梯的吉池食堂享用豐盛晚餐，徹底避開人潮排隊。</p>
+                        </div>
+                    </div>
+                    <!-- D2 -->
+                    <div class="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-xl transition-all border-t border-gray-100 bg-amber-50/60">
+                        <span class="bg-amber-700 text-white font-black px-3.5 py-1.5 rounded-lg text-lg shrink-0">D2</span>
+                        <div>
+                            <h4 class="text-xl font-black text-amber-900">9/18 (五) 【近郊輕旅行】小江戶川越藏造老街 ➔ 時之鐘 ➔ 菓子屋橫丁 ➔ 百年鰻魚午餐</h4>
+                            <p class="text-base text-gray-800 mt-1 font-bold">特別安排在週五出遊，徹底避開週末洶湧人潮！從上野出發轉乘東武特急列車約 30 分鐘直達川越。漫步平坦古色古香的黑磚藏造街，欣賞百年木造時之鐘鐘樓，午餐享用軟嫩無細刺的川越百年老字號鰻魚飯，傍晚回上野休息。</p>
+                        </div>
+                    </div>
+                    <!-- D3 -->
+                    <div class="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-xl transition-all border-t border-gray-100">
+                        <span class="bg-brand-600 text-white font-black px-3.5 py-1.5 rounded-lg text-lg shrink-0">D3</span>
+                        <div>
+                            <h4 class="text-xl font-black text-black">9/19 (六) 淺草雷門寺參拜 ➔ 隅田公園綠意林蔭道 ➔ 晴空塔看落日與夜景</h4>
+                            <p class="text-base text-gray-800 mt-1 font-bold">淺草本堂避開正面階梯，搭右手邊直達電梯參拜。午後漫步平緩綠蔭的隅田公園欣賞晴空塔全景，可自選搭東武電車（僅3分鐘）或走平坦景觀步道直達晴空塔，傍晚登塔在 6 樓享用無刺極嫩備長鰻魚飯。</p>
+                        </div>
+                    </div>
+                    <!-- D4 -->
+                    <div class="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-xl transition-all border-t border-gray-100">
+                        <span class="bg-brand-600 text-white font-black px-3.5 py-1.5 rounded-lg text-lg shrink-0">D4</span>
+                        <div>
+                            <h4 class="text-xl font-black text-black">9/20 (日) 明治神宮都市森林浴 ➔ 表參道欅木綠蔭 ➔ 新宿御苑大溫室 ➔ 新宿西口購物與晚餐</h4>
+                            <p class="text-base text-gray-800 mt-1 font-bold">早晨原宿森林浴，表參道吃親子丼。下午搭計程車去新宿御苑平坦大溫室散策。傍晚逛高齡友善防滑的新宿京王百貨，在敘敘苑享用極嫩燒肉。</p>
+                        </div>
+                    </div>
+                    <!-- D5 -->
+                    <div class="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-xl transition-all border-t border-gray-100">
+                        <span class="bg-brand-600 text-white font-black px-3.5 py-1.5 rounded-lg text-lg shrink-0">D5</span>
+                        <div>
+                            <h4 class="text-xl font-black text-black">9/21 (一) 東京車站紅磚 ➔ 皇居外苑松林二重橋 ➔ 巢鴨商店街（洗心地藏）</h4>
+                            <p class="text-base text-gray-800 mt-1 font-bold">欣賞百年文藝復興車站，避開皇居碎石走水泥平路。下午悠遊專為樂活散步規劃的巢鴨老街，享用巨大炸蝦，擦拭地藏祈求健康。</p>
+                        </div>
+                    </div>
+                    <!-- D6 -->
+                    <div class="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-xl transition-all border-t border-gray-100">
+                        <span class="bg-brand-600 text-white font-black px-3.5 py-1.5 rounded-lg text-lg shrink-0">D6</span>
+                        <div>
+                            <h4 class="text-xl font-black text-black">9/22 (二) 築地場外市場平坦美食 ➔ 日本橋古典老舖漫步 ➔ 阿美橫丁伴手禮採買</h4>
+                            <p class="text-base text-gray-800 mt-1 font-bold">上午在全平路的築地場外市場品嚐暖呼呼現做玉子燒與熟食定食，午後漫步老舖百貨林立的日本橋，傍晚回上野採買伴手禮，在松坂屋享用天婦羅定食。</p>
+                        </div>
+                    </div>
+                    <!-- D7 -->
+                    <div class="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-xl transition-all border-t border-gray-100">
+                        <span class="bg-brand-600 text-white font-black px-3.5 py-1.5 rounded-lg text-lg shrink-0">D7</span>
+                        <div>
+                            <h4 class="text-xl font-black text-black">9/23 (三) 上野公園綠意散步 ➔ 兩百年伊豆榮鰻魚飯（高腳椅座）➔ 搭 Skyliner 舒適返家</h4>
+                            <p class="text-base text-gray-800 mt-1 font-bold">最後一日，在公園綠蔭散步，品嚐設有椅子的老店鰻魚飯。回飯店提行李，搭 Skyliner 一線直達機場，優雅回台。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= 隨身地圖指南：[202609東京] 全景點・餐廳・路線總庫 ================= -->
+            <div class="bg-white rounded-2xl p-6 border-2 border-brand-600 shadow-md space-y-6">
+                <div class="border-b-2 border-brand-100 pb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-4xl">🗺️</span>
+                        <div>
+                            <span class="text-sm font-black uppercase tracking-wider text-brand-600">隨身隨點隨走 • 防迷路導航</span>
+                            <h3 class="text-2xl sm:text-3xl font-black text-black">隨身地圖指南：[202609東京]</h3>
+                        </div>
+                    </div>
+                    <p class="text-base text-gray-800 font-bold mt-2 leading-relaxed">
+                        本清單收納了網頁中介紹的<strong>所有飯店、生活超市、景點、各天午晚餐推薦名店（共 38+ 處）與平坦徒步路線</strong>。點擊藍色按鈕即可直接於手機 Google Maps App 開啟即時導航；出發前亦可將其收藏至您的 Google Maps <strong>「[202609東京]」</strong> 專屬清單中！
+                    </p>
+                    
+                    <!-- 快速天數切換過濾標籤 -->
+                    <div class="flex flex-wrap gap-2 pt-4">
+                        <button onclick="filterMapGuide('all')" id="btn-mg-all" class="mg-filter-btn px-4 py-2 bg-brand-600 text-white font-black rounded-xl text-base shadow-sm">全部清單</button>
+                        <button onclick="filterMapGuide('hotel')" id="btn-mg-hotel" class="mg-filter-btn px-4 py-2 bg-gray-100 text-gray-800 font-black rounded-xl text-base">🏨 住宿/超市</button>
+                        <button onclick="filterMapGuide('d1')" id="btn-mg-d1" class="mg-filter-btn px-4 py-2 bg-gray-100 text-gray-800 font-black rounded-xl text-base">D1 上野抵達</button>
+                        <button onclick="filterMapGuide('d2')" id="btn-mg-d2" class="mg-filter-btn px-4 py-2 bg-gray-100 text-gray-800 font-black rounded-xl text-base">D2 川越老街</button>
+                        <button onclick="filterMapGuide('d3')" id="btn-mg-d3" class="mg-filter-btn px-4 py-2 bg-gray-100 text-gray-800 font-black rounded-xl text-base">D3 淺草晴空塔</button>
+                        <button onclick="filterMapGuide('d4')" id="btn-mg-d4" class="mg-filter-btn px-4 py-2 bg-gray-100 text-gray-800 font-black rounded-xl text-base">D4 原宿新宿</button>
+                        <button onclick="filterMapGuide('d5')" id="btn-mg-d5" class="mg-filter-btn px-4 py-2 bg-gray-100 text-gray-800 font-black rounded-xl text-base">D5 車站巢鴨</button>
+                        <button onclick="filterMapGuide('d6')" id="btn-mg-d6" class="mg-filter-btn px-4 py-2 bg-gray-100 text-gray-800 font-black rounded-xl text-base">D6 築地日本橋</button>
+                        <button onclick="filterMapGuide('d7')" id="btn-mg-d7" class="mg-filter-btn px-4 py-2 bg-gray-100 text-gray-800 font-black rounded-xl text-base">D7 上野返台</button>
+                    </div>
+                </div>
+
+                <!-- 地圖項目卡片容器 -->
+                <div id="map-guide-items" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- 由 JavaScript 動態生成所有景點與餐廳 -->
+                </div>
+            </div>
+
+        </div>
+        <!-- ================= PAGE 2: 每天行程 ================= -->
+        <div id="page-itinerary" class="tab-page hidden space-y-6">
+            
+            <!-- 車站地鐵圖標認路輔助卡 -->
+            <div class="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                <span class="text-base font-black text-brand-600 block mb-2">💡 車站認路口訣：請對準站內指示牌上的這些底色與英文字母</span>
+                <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
+                    <div class="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
+                        <span class="w-9 h-9 rounded-full bg-subway-yamanote text-white font-black flex items-center justify-center text-sm shadow-sm">JY</span>
+                        <span class="text-base font-black text-black">JR 山手線</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
+                        <span class="w-9 h-9 rounded-full bg-subway-tobu text-white font-black flex items-center justify-center text-sm shadow-sm">TJ</span>
+                        <span class="text-base font-black text-black">東武東上線</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
+                        <span class="w-9 h-9 rounded-full bg-subway-ginza text-white font-black flex items-center justify-center text-sm shadow-sm">G</span>
+                        <span class="text-base font-black text-black">地鐵銀座線</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
+                        <span class="w-9 h-9 rounded-full bg-subway-marunouchi text-white font-black flex items-center justify-center text-sm shadow-sm">M</span>
+                        <span class="text-base font-black text-black">地鐵丸之內</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
+                        <span class="w-9 h-9 rounded-full bg-subway-keisei text-white font-black flex items-center justify-center text-sm shadow-sm">KS</span>
+                        <span class="text-base font-black text-black">京成電鐵</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
+                        <span class="w-9 h-9 rounded-full bg-subway-hibiya text-white font-black flex items-center justify-center text-sm shadow-sm">H</span>
+                        <span class="text-base font-black text-black">地鐵日比谷</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 天數切換大按鈕 -->
+            <div class="flex gap-2 overflow-x-auto pb-2 snap-x day-scroll-container">
+                <button onclick="switchDay(1)" id="btn-day-1" class="day-btn snap-start shrink-0 bg-brand-600 text-white font-bold px-5 py-3.5 rounded-xl text-lg transition-all border-2 border-brand-600 shadow-md">9/17 (四)</button>
+                <button onclick="switchDay(2)" id="btn-day-2" class="day-btn snap-start shrink-0 bg-white text-gray-700 font-bold px-5 py-3.5 rounded-xl text-lg transition-all border border-gray-300">9/18 (五) 川越</button>
+                <button onclick="switchDay(3)" id="btn-day-3" class="day-btn snap-start shrink-0 bg-white text-gray-700 font-bold px-5 py-3.5 rounded-xl text-lg transition-all border border-gray-300">9/19 (六)</button>
+                <button onclick="switchDay(4)" id="btn-day-4" class="day-btn snap-start shrink-0 bg-white text-gray-700 font-bold px-5 py-3.5 rounded-xl text-lg transition-all border border-gray-300">9/20 (日)</button>
+                <button onclick="switchDay(5)" id="btn-day-5" class="day-btn snap-start shrink-0 bg-white text-gray-700 font-bold px-5 py-3.5 rounded-xl text-lg transition-all border border-gray-300">9/21 (一)</button>
+                <button onclick="switchDay(6)" id="btn-day-6" class="day-btn snap-start shrink-0 bg-white text-gray-700 font-bold px-5 py-3.5 rounded-xl text-lg transition-all border border-gray-300">9/22 (二)</button>
+                <button onclick="switchDay(7)" id="btn-day-7" class="day-btn snap-start shrink-0 bg-white text-gray-700 font-bold px-5 py-3.5 rounded-xl text-lg transition-all border border-gray-300">9/23 (三)</button>
+            </div>
+
+            <!-- 天數行程動態展示容器 -->
+            <div id="day-content" class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-6">
+                <!-- 由 JavaScript 動態生成 -->
+            </div>
+
+        </div>
+        <!-- ================= PAGE 3: 手指日語 ================= -->
+        <div id="page-japanese" class="tab-page hidden space-y-6">
+            
+            <div class="bg-brand-50 p-5 rounded-xl border-l-4 border-brand-600 shadow-sm">
+                <p class="text-lg sm:text-xl font-black text-brand-700 leading-relaxed">
+                    💡 點選以下卡片，可彈出 **【全螢幕超大字體卡片】**，直接將大字出示給店家或車站人員看，就能在第一時間獲得溫柔的引導與協助！
+                </p>
+            </div>
+
+            <!-- 類別篩選按鈕 -->
+            <div class="flex flex-wrap gap-2.5">
+                <button onclick="filterJapanese('all')" id="btn-jp-all" class="jp-filter-btn px-5 py-3 bg-brand-600 text-white font-bold rounded-xl text-lg shadow-sm">全部</button>
+                <button onclick="filterJapanese('transport')" id="btn-jp-transport" class="jp-filter-btn px-5 py-3 bg-white text-gray-800 border-2 border-gray-200 font-bold rounded-xl text-lg shadow-sm">🚇 交通問路</button>
+                <button onclick="filterJapanese('hotel')" id="btn-jp-hotel" class="jp-filter-btn px-5 py-3 bg-white text-gray-800 border-2 border-gray-200 font-bold rounded-xl text-lg shadow-sm">🛎️ 飯店設施</button>
+                <button onclick="filterJapanese('restaurant')" id="btn-jp-restaurant" class="jp-filter-btn px-5 py-3 bg-white text-gray-800 border-2 border-gray-200 font-bold rounded-xl text-lg shadow-sm">🥢 餐廳用餐</button>
+                <button onclick="filterJapanese('shopping')" id="btn-jp-shopping" class="jp-filter-btn px-5 py-3 bg-white text-gray-800 border-2 border-gray-200 font-bold rounded-xl text-lg shadow-sm">🛍️ 購物免稅</button>
+                <button onclick="filterJapanese('emergency')" id="btn-jp-emergency" class="jp-filter-btn px-5 py-3 bg-white text-gray-800 border-2 border-gray-200 font-bold rounded-xl text-lg shadow-sm">🚨 緊急設施</button>
+            </div>
+
+            <!-- 日語卡片格狀排列 -->
+            <div id="japanese-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- 由 JS 動態生成 -->
+            </div>
+
+        </div>
+
+        <!-- ================= PAGE 4: 旅行準備清單 ================= -->
+        <div id="page-checklist" class="tab-page hidden space-y-6">
+            
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-2xl font-black flex items-center gap-2 text-black">
+                    <span>🎒</span> 行前行李物品檢查清單
+                </h3>
+                <button onclick="resetChecklist()" class="text-brand-600 hover:text-brand-700 font-black text-lg bg-brand-50 px-4 py-2 rounded-xl border-2 border-brand-100 shadow-sm">
+                    🔄 全部重設
+                </button>
+            </div>
+
+            <!-- 類別 1: 每日出發必備 -->
+            <div class="bg-white rounded-2xl p-6 border-gray-200 shadow-sm space-y-4">
+                <h4 class="text-xl font-black text-brand-600 flex items-center gap-2 border-b pb-2">
+                    <span>🚶</span> 每天出發檢查卡 (每日必備品)
+                </h4>
+                <div id="list-daily" class="space-y-3">
+                    <!-- Checkboxes generated by JS -->
+                </div>
+            </div>
+
+            <!-- 類別 2: 行前準備物品 -->
+            <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <h4 class="text-xl font-black text-brand-600 flex items-center gap-2">
+                        <span>✈️</span> 行程出發前準備 (可自行增減)
+                    </h4>
+                    <span class="text-sm bg-brand-100 text-brand-700 px-3 py-1 rounded-full font-black">支援手機儲存</span>
+                </div>
+                
+                <!-- 新增自訂物品輸入框 -->
+                <div class="flex gap-2">
+                    <input type="text" id="new-item-input" placeholder="新增自訂物品，例如：感冒藥..." class="flex-1 p-3.5 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-brand-600 text-lg font-bold">
+                    <button onclick="addCustomItem()" class="bg-brand-600 hover:bg-brand-700 text-white font-black px-6 py-2 rounded-xl text-lg shadow-sm">➕ 新增</button>
+                </div>
+
+                <div id="list-before" class="space-y-3">
+                    <!-- Checkboxes generated by JS -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= PAGE 5: 購物記帳 ================= -->
+        <div id="page-shopping" class="tab-page hidden space-y-6">
+            
+            <!-- 頂部消費統計看板 -->
+            <div class="bg-white rounded-2xl p-6 border-2 border-brand-600 shadow-sm space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b-2 border-brand-100 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-3xl">🛍️</span>
+                        <div>
+                            <span class="text-xs font-black uppercase tracking-wider text-brand-600">隨買隨記 • 本機安全儲存</span>
+                            <h3 class="text-2xl font-black text-black">日本購物消費記帳本</h3>
+                        </div>
+                    </div>
+                    <button onclick="resetShoppingRecords()" class="text-red-600 hover:text-red-800 font-black text-sm bg-red-50 hover:bg-red-100 px-3.5 py-1.5 rounded-xl border border-red-200 transition-all">
+                        🗑️ 清空所有記帳
+                    </button>
+                </div>
+
+                <!-- 累計總金額卡片看板 -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                    <div class="bg-brand-50 p-4 rounded-xl border border-brand-100 text-center">
+                        <span class="text-xs sm:text-sm font-black text-brand-700 block mb-1">💴 總消費日圓</span>
+                        <span id="stat-total-jpy" class="text-2xl sm:text-3xl font-black text-brand-900">¥0</span>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 text-center">
+                        <span class="text-xs sm:text-sm font-black text-blue-700 block mb-1">🇹🇼 約合新台幣</span>
+                        <span id="stat-total-twd" class="text-2xl sm:text-3xl font-black text-blue-900">NT$ 0</span>
+                    </div>
+                    <div class="bg-amber-50 p-4 rounded-xl border border-amber-100 text-center">
+                        <span class="text-xs sm:text-sm font-black text-amber-800 block mb-1">📦 累計購買品項</span>
+                        <span id="stat-total-items" class="text-2xl sm:text-3xl font-black text-amber-950">0 件</span>
+                    </div>
+                </div>
+
+                <!-- 匯率自訂調整列 -->
+                <div class="flex flex-wrap items-center justify-between gap-2 bg-gray-50 p-3 rounded-xl border border-gray-200 text-sm">
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg">💱</span>
+                        <span class="font-bold text-gray-800">匯率設定（9/8 參考匯率）：</span>
+                        <span class="font-black text-brand-700">1 JPY ≈</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <input type="number" id="input-rate" step="0.001" min="0.01" max="1" value="0.215" onchange="updateExchangeRate()" class="w-24 p-1.5 text-center font-black text-base border-2 border-brand-600 rounded-lg bg-white">
+                        <span class="font-black text-gray-800">TWD</span>
+                        <button onclick="resetExchangeRate()" class="text-xs text-brand-600 underline font-bold px-1" title="還原9/8參考匯率">還原(0.215)</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 新增購物紀錄輸入表單 -->
+            <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
+                <h4 class="text-xl font-black text-brand-700 flex items-center gap-2 border-b pb-2">
+                    <span>➕</span> 新增一筆購物花費
+                </h4>
+
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                    <!-- 物品名稱 -->
+                    <div class="sm:col-span-6 space-y-1">
+                        <label for="shop-name" class="block text-sm font-black text-gray-800">物品名稱</label>
+                        <input type="text" id="shop-name" placeholder="例如：吉池麝香葡萄、合利他命..." class="w-full p-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-brand-600 text-base font-bold">
+                    </div>
+
+                    <!-- 購買數量 -->
+                    <div class="sm:col-span-3 space-y-1">
+                        <label for="shop-qty" class="block text-sm font-black text-gray-800">數量</label>
+                        <input type="number" id="shop-qty" min="1" value="1" oninput="calcShopPreview()" class="w-full p-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-brand-600 text-base font-bold text-center">
+                    </div>
+
+                    <!-- 購入總金額（日圓） -->
+                    <div class="sm:col-span-3 space-y-1">
+                        <label for="shop-amount" class="block text-sm font-black text-gray-800">購入總金額 (JPY ¥)</label>
+                        <input type="number" id="shop-amount" min="0" step="1" placeholder="例如：1980" oninput="calcShopPreview()" class="w-full p-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-brand-600 text-base font-bold">
+                    </div>
+                </div>
+
+                <!-- 即時計算結果預覽 -->
+                <div id="shop-preview-box" class="bg-brand-50/70 p-3.5 rounded-xl border border-brand-100 flex flex-wrap items-center justify-between gap-2 text-base font-bold text-brand-900">
+                    <div class="flex items-center gap-3">
+                        <span>💡 單價換算：<strong id="preview-unit" class="text-brand-700 font-black">¥ 0</strong></span>
+                        <span class="text-gray-400">|</span>
+                        <span>台幣約合：<strong id="preview-twd" class="text-blue-700 font-black">NT$ 0</strong></span>
+                    </div>
+                    <button onclick="addShoppingRecord()" class="bg-brand-600 hover:bg-brand-700 text-white font-black px-6 py-2.5 rounded-xl text-base shadow-sm transition-all flex items-center gap-1.5">
+                        <span>💾</span>
+                        <span>儲存這筆紀錄</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 購物記錄清單列表 -->
+            <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <h4 class="text-xl font-black text-black flex items-center gap-2">
+                        <span>🧾</span> 已記錄的購物清單
+                    </h4>
+                    <span id="shop-count-badge" class="text-xs bg-brand-100 text-brand-700 px-2.5 py-1 rounded-full font-black">0 筆紀錄</span>
+                </div>
+
+                <div id="shopping-records-list">
+                    <!-- 由 JavaScript 動態生成購物表格 -->
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+    <!-- 日語全螢幕彈出視窗 -->
+    <div id="phrase-modal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white w-full max-w-2xl rounded-3xl p-6 md:p-8 space-y-6 shadow-2xl relative border-4 border-brand-600">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black focus:outline-none w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full text-2xl font-bold">
+                ✕
+            </button>
+            
+            <div class="text-center space-y-6">
+                <div class="bg-brand-50 py-3.5 px-5 rounded-xl inline-block border border-brand-100">
+                    <span class="text-sm text-brand-600 font-black block">中文意思</span>
+                    <h5 id="modal-intent" class="text-2xl sm:text-3xl font-black text-black"></h5>
+                </div>
+                
+                <div class="bg-gray-50 py-7 px-5 rounded-2xl border-2 border-gray-200">
+                    <p id="modal-japanese" class="text-4xl md:text-5xl font-black text-brand-700 leading-normal tracking-wide select-all"></p>
+                </div>
+                
+                <div class="space-y-1">
+                    <span class="text-sm text-gray-600 font-black block">🗣️ 日文發音助讀 (平假名拼音)</span>
+                    <p id="modal-hiragana" class="text-xl md:text-2xl font-bold text-gray-800 bg-gray-100 py-2.5 px-4 rounded-lg inline-block"></p>
+                </div>
+            </div>
+            
+            <div class="pt-4 border-t border-gray-100 flex flex-col items-center justify-center gap-2">
+                <span class="text-base text-gray-800 font-bold">👉 請直接指著上面的日文給日本服務人員看 👈</span>
+                <button onclick="closeModal()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-black py-4 rounded-xl text-xl shadow-md">
+                    我知道了，關閉卡片
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 回到頂端浮動按鈕 -->
+    <button id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})"
+        aria-label="回到最上面"
+        style="
+            position:fixed; bottom:30px; right:20px; z-index:50;
+            width:56px; height:56px; border-radius:50%;
+            background:#1e4620; color:white; border:none; cursor:pointer;
+            box-shadow:0 4px 16px rgba(0,0,0,0.3);
+            display:flex; align-items:center; justify-content:center;
+            font-size:24px; font-weight:bold; opacity:0; pointer-events:none;
+            transition:opacity 0.3s ease, transform 0.3s ease;
+            transform:translateY(10px);
+        ">
+        ↑
+    </button>
+
+    <!-- 自訂重設確認 Modal (不使用原生 confirm) -->
+    <div id="custom-confirm-modal" class="fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 space-y-6 shadow-2xl border-4 border-brand-600">
+            <h4 id="confirm-modal-title" class="text-2xl font-black text-black">🔄 重置確認</h4>
+            <p id="confirm-modal-desc" class="text-lg text-gray-800 font-bold leading-relaxed">確認要重置所有行李清單的勾選進度嗎？這會清除您目前勾選的所有項目並恢復成預設值。</p>
+            <div class="flex gap-3 pt-2">
+                <button onclick="handleConfirmReset(false)" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3.5 rounded-xl text-lg">取消</button>
+                <button onclick="handleConfirmReset(true)" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 rounded-xl text-lg">確認重置</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const itineraryData = {
+            1: {
+                dayNum: 1,
+                title: "9/17 (四) 抵達東京 ➔ Skyliner 直達上野 ➔ 5步平地指南到飯店 ➔ 吉池超市採買 ➔ 晚餐與甜品慢步",
+                intro: "首日下飛機後，搭乘無障礙直達列車最省力。沿著平緩斑馬線前往飯店辦理 check-in，接著前往離飯店走路 4 分鐘的「吉池大型生活超市」採買日本麝香葡萄與鮮奶，隨後在周圍悠閒散步，享受無排隊壓力的豐盛晚餐。",
+                transports: [
+                    {
+                        route: "成田機場 ➔ 京成上野站",
+                        badge: "KS",
+                        badgeColor: "bg-[#0055a5]",
+                        badgeName: "京成電鐵 (Skyliner)",
+                        desc: "由成田機場月台搭乘京成 Skyliner 直達終點京成上野站。月台至大廳皆設有電梯，全對號沙發座。",
+                        oneSentenceNav: "在成田機場地下 B1 乘車，搭乘 Skyliner 坐 41 分鐘直接到底站「京成上野站」，完全不用中途下車轉車。"
+                    }
+                ],
+                accessibility: [
+                    "【1. 下車後電梯指示】：下車後請在月台中央尋找標有【エレベーター (電梯)】的指示牌上至一樓大廳，由「正面口」平地出站（全程平坦無階梯）。",
+                    "【2. 避開天橋平坦行進】：出正面口後左轉，沿著平坦的中央通人行道直走，過 JR 上野站「廣小路口」前斑馬線，朝對面「丸井百貨 (OIOI)」走去。",
+                    "【3. 過馬路大門導航】：直接走「平面行人斑馬線」穿越寬闊的昭和通（高架橋下方），切勿上天橋。過完斑馬線右轉，直走 1.5 分鐘即抵達飯店入口。",
+                    "【4. 飯店一樓大廳】：看到一樓為「7-Eleven」的飯店大樓，右側即是高樓層專用電梯大門，搭電梯直達 20 樓大廳 Check-in。"
+                ],
+                spots: [
+                    {
+                        name: "京成上野站正面口 (出站平面人行道)",
+                        desc: "上野的大型無障礙出入口，與周圍人行道無縫連接，極度適合攜帶大行李箱緩步前行。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Keisei+Ueno+Station"
+                    },
+                    {
+                        name: "飯店一樓與地標：7-Eleven 東上野2丁目店 (大樓入口)",
+                        desc: "飯店正下方就是超商，隨時買熱茶與溫水非常方便。右側即是高樓層專用無障礙電梯大門。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Hotel+Crown+Hills+Ueno+Premier"
+                    },
+                    {
+                        name: "🛒 【超市特別標註】吉池 本店 大型生活生鮮超市 (B1/B2/1F)",
+                        desc: "【長輩必訪生鮮超市】離飯店步行僅 4-5 分鐘！御徒町吉池大樓的地下 B1/B2 與 1 樓是上野最具代表性的綜合超市。B1 專賣產地直送日本新鮮水蜜桃、麝香葡萄、當季蜜蘋果、鮮奶、優格與現做熟食；B2 有豐富仙貝與和風點心。營業至 20:30，採買水果回飯店放冰箱超享受！",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Yoshiike+Main+Store"
+                    },
+                    {
+                        name: "點心推薦 1：みはし (Mihashi) 上野本店",
+                        desc: "【價位：約 750 - 1,100 日圓/人】傳統日式紅豆蜜老店，綿密細緻紅豆沙、軟糯白玉配蜜柑寒天，入口即化，對長者而言完全無咀嚼與吞嚥負擔。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Mihashi+Ueno+Honten"
+                    },
+                    {
+                        name: "點心推薦 2：甘味處 荻野 (Ogino Ueno)",
+                        desc: "【價位：約 800 - 1,300 日圓/人】阿美橫丁旁的昭和風甘味老店，招牌熱紅豆善哉（熱紅豆湯附茶）與宇治抹茶冰淇淋，店內環境清幽安靜，座位舒適。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Ogino+Ueno"
+                    },
+                    {
+                        name: "晚餐選擇 1：吉池食堂 (Yoshiike Shokudo 9F)",
+                        desc: "【價位：約 1,800 - 3,200 日圓/人】首夜最推薦！位於吉池超市樓上 9 樓（大電梯直達），座席寬敞達數百席、安靜無菸，免在街頭排隊。提供新鮮握壽司拼盤、軟嫩天婦羅定食、銀鱈西京燒御膳等多樣日式和食。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Yoshiike+Shokudo"
+                    },
+                    {
+                        name: "晚餐選擇 2：名代 宇奈とと 上野店 (Unatoto Ueno)",
+                        desc: "【價位：約 1,100 - 1,800 日圓/人】高性價比炭火鰻魚飯！鰻魚肉質厚實軟綿、淋上濃醇醬汁非常下飯，沒有細刺感，是想輕鬆簡單吃熱騰騰烤鰻魚的平價好選擇。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Unatoto+Ueno"
+                    },
+                    {
+                        name: "晚餐選擇 3：鳥元 上野昭和通店 (Torigen Ueno)",
+                        desc: "【價位：約 1,500 - 2,500 日圓/人】就在昭和通旁，離飯店步行僅 2 分鐘。主打炭火烤嫩雞定食、滑蛋嫩雞親子丼與熱蕎麥麵，桌位設有舒適靠背隔間，免走遠路即可溫暖飽餐。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Torigen+Ueno"
+                    }
+                ],
+                returnTrans: "從吉池食堂或吉池超市步行回飯店極近。沿著平坦的昭和通人行道直走，約 4-7 分鐘即可輕鬆走回飯店，完全不需要搭乘電車。"
+            },
+            2: {
+                dayNum: 2,
+                title: "9/18 (五) 【近郊輕旅行】小江戶川越藏造老街 ➔ 時之鐘 ➔ 菓子屋橫丁 ➔ 百年老街漫步",
+                intro: "特別安排在週五出遊，徹底避開週末洶湧人潮！從上野出發轉乘東武特急列車約 30 分鐘直達川越。漫步平坦古色古香的黑磚藏造街，欣賞時之鐘鐘樓，午餐與晚餐皆有多重美味且牙口友善的選擇。",
+                transports: [
+                    {
+                        route: "上野站 ➔ 池袋站 ➔ 川越站 (最平穩快速)",
+                        badge: "TJ",
+                        badgeColor: "bg-subway-tobu",
+                        badgeName: "JR 山手線 ＋ 東武東上線 (川越特急)",
+                        desc: "從上野站搭乘 JR 山手線（外環方向）16 分鐘抵達池袋站，在池袋站內走平地通道轉乘「東武東上線 川越特急/快速急行」（僅需 26-30 分鐘，直達免換車），直接抵達川越站！全程刷 Suica 即可進出站。",
+                        oneSentenceNav: "在上野搭山手線到池袋站，轉乘東武東上線的『川越特急』列車，30分鐘舒適直達川越站！"
+                    },
+                    {
+                        route: "川越站 ➔ 藏造老街一番街（自由二選一：計程車 或 徒步街景散策）",
+                        badge: "🚕/🚶",
+                        badgeColor: "bg-amber-600",
+                        badgeName: "計程車 vs 徒步商店街自選",
+                        desc: "【選項 A：搭計程車（省力省時）】川越站東口設有排班計程車站，搭車到『時之鐘』約 6 分鐘（車資約 900-1,100 日圓）。<br>【選項 B：平坦徒步散策（享受逛街樂趣）】出東口沿著川越最熱鬧的行人徒步街「Crea Mall (クレアモール)」慢慢前行，整段路全平無階梯，走約 20-25 分鐘邊逛邊拍照抵達老街核心！",
+                        oneSentenceNav: "想省力直接出東口搭計程車 6 分鐘抵達；想散步體驗當地市集則沿 Crea Mall 徒步平路慢慢逛過去。"
+                    }
+                ],
+                accessibility: [
+                    "【1. 週五人少好走】：週五的老街遊客少、街道空曠，走在平坦的藏造一番街石板行人路面極度舒適，拍照免人擠人。",
+                    "【2. 老街全平無階梯】：川越老街整段為平坦的水泥與石板舖面，兩側均有寬裕的店家騎樓通道，完全沒有高聳石階。",
+                    "【3. 時之鐘與藥師神社】：時之鐘下方的藥師神社境內有開運消災與護眼祈願，全區平坦，設有長椅可坐在木造鐘樓下歇腳賞景。",
+                    "【4. 步行與乘車自主選擇】：若去程選擇徒步漫步，回程若腳部疲累，在一番街路口隨手即可攔計程車直回川越站，彈性極大。"
+                ],
+                spots: [
+                    {
+                        name: "川越站東口 ➔ 藏造老街（徒步地圖路線）",
+                        desc: "為喜歡步行的長者特別規劃的平緩步行路線，途經 Crea Mall 徒步商店街，全路段平整無高低差，商店林立隨時可歇腳。",
+                        link: "https://www.google.com/maps/dir/?api=1&origin=Kawagoe+Station&destination=Toki+no+Kane+Kawagoe&travelmode=walking"
+                    },
+                    {
+                        name: "藏造建築一番街 (蔵造りの町並み)",
+                        desc: "江戶時代風格的厚重黑磚防火建築群，彷彿穿梭時光隧道。路面平坦防滑，兩側有多家和紙、陶器與和風雜貨老舖。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Kurazukuri+no+Machinami+Kawagoe"
+                    },
+                    {
+                        name: "川越地標：時之鐘 (時の鐘)",
+                        desc: "江戶初期建造的三層木造鐘樓，每天定時敲鐘鳴響。鐘樓下方環境清幽，是川越最具代表性的拍照地標。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Toki+no+Kane+Kawagoe"
+                    },
+                    {
+                        name: "川越午餐選擇 1：小川菊 鰻魚飯 (Ogakiku)",
+                        desc: "【價位：約 3,800 - 5,200 日圓/人】文政 10 年（1807年）創業的兩百年名店。鰻魚先蒸後烤極致軟綿細緻、毫無細刺，店內設有舒適椅子座。週五提供號碼牌叫號，免全程罰站。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Ogakiku+Kawagoe"
+                    },
+                    {
+                        name: "川越午餐選擇 2：壽庵 藏之街店 (Kotobukian)",
+                        desc: "【價位：約 1,300 - 2,200 日圓/人】川越名物「紫薯七割蕎麥麵」名店。蕎麥麵條滑順好咬、香氣清雅，可搭配熱高湯或酥脆軟嫩的鮮蝦天婦羅定食，店內古樸清幽，長椅桌位好坐。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Kotobukian+Kuranomachi"
+                    },
+                    {
+                        name: "川越午餐選擇 3：幸すし (Yukisushi Kawagoe)",
+                        desc: "【價位：約 2,200 - 3,800 日圓/人】藏造一番街巷內的明治初期料亭壽司老店。提供極致軟嫩的散壽司御膳、嫩蒸魚與熱茶碗蒸，全店為寬敞座椅，環境寧靜雅致，非常適合長者慢慢享用。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Yukisushi+Kawagoe"
+                    },
+                    {
+                        name: "菓子屋橫丁 (Candy Alley)",
+                        desc: "傳統石板小巷，散發著黑糖仙貝與紫薯甜點的香氣。推薦品嚐軟綿的地瓜霜淇淋與現烤米仙貝，悠閒漫步回味古早甘味。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Kashiya+Yokocho+Kawagoe"
+                    },
+                    {
+                        name: "返回上野晚餐選擇 1：壽喜燒 鉢之木 上野店 (Hachinoki Ueno)",
+                        desc: "【價位：約 4,500 - 7,500 日圓/人】近郊輕旅行返回上野後的頂級犒賞大餐！提供入口即化的頂級黑毛和牛壽喜燒與涮涮鍋，桌邊服務貼心。店內全為寬大靠背沙發椅子座，免排隊、對膝蓋最溫柔友善。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Hachinoki+Ueno"
+                    },
+                    {
+                        name: "返回上野晚餐選擇 2：音音 上野竹林庭園店 (Otoon Ueno)",
+                        desc: "【價位：約 2,800 - 4,200 日圓/人】位於上野公園旁 Bamboo Garden 2 樓（有大電梯）。提供日本各地產地直送鮮魚和食御膳、煮魚定食與時令野菜，挑高日式雅致空間，沙發座位極度寬敞安靜。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Otoon+Ueno+Bamboo+Garden"
+                    },
+                    {
+                        name: "返回上野晚餐選擇 3：麵屋武藏 武骨 上野 (Menya Musashi Bukotsu)",
+                        desc: "【價位：約 1,100 - 1,500 日圓/人】若晚餐想吃一碗熱呼呼的道地日本拉麵，此處提供叉燒肉燉至軟爛多汁的豚骨拉麵，可請店員煮「軟麵（やわらかめ）」並將湯頭調淡，暖胃實惠無負擔。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Menya+Musashi+Bukotsu+Ueno"
+                    }
+                ],
+                returnTrans: "自一番街可自由選擇：搭計程車 6 分鐘或沿商店街散步回「川越站」。搭乘 <b>東武東上線（往池袋方向特急/急行）</b> 30 分鐘直達池袋，在池袋站月台轉乘 <b>JR 山手線</b> 16 分鐘直達「上野站」。出廣小路口步行 4 分鐘即可回到飯店休息。"
+            },
+            3: {
+                dayNum: 3,
+                title: "9/19 (六) 淺草雷門寺參拜 ➔ 隅田公園綠意林蔭道 ➔ 晴空塔看落日與夜景",
+                intro: "造訪東京最經典的庶民景點與高空地標。雷門本堂有完善的避開階梯大斜坡與直達電梯，隨後漫步於平坦綠蔭的隅田公園河畔，可自由選擇搭乘東武鐵道（僅需3分鐘）或漫步景觀步道前往晴空塔。傍晚登塔欣賞關東平原夜景。",
+                transports: [
+                    {
+                        route: "上野站 ➔ 淺草站",
+                        badge: "G",
+                        badgeColor: "bg-subway-ginza",
+                        badgeName: "東京地鐵銀座線",
+                        desc: "自上野站搭乘黃色銀座線（往淺草方向）坐 3 站直達終點「淺草站」。請沿著標示尋找 1 號出口直達地面大電梯，出站即達平地雷門。",
+                        oneSentenceNav: "在上野站搭乘黃色地鐵銀座線，坐3站直達淺草站，下車找1號出口大電梯直上地面。"
+                    },
+                    {
+                        route: "淺草 ➔ 晴空塔（自由三選一：東武電車 / 徒步景觀橋 / 計程車）",
+                        badge: "TS/🚶",
+                        badgeColor: "bg-blue-600",
+                        badgeName: "東武電車 vs 景觀徒步路線自選",
+                        desc: "【選項 A：東武鐵道電車（最省力）】由東武淺草站搭乘「東武晴空塔線」僅 1 站（車程 3 分鐘）直達「東京晴空塔站」，出站直接進商場。<br>【選項 B：徒步景觀步道（風景絕佳）】由隅田公園走專用行人平坦步道「隅田川步道 (Sumida River Walk)」，連接東京水町休閒綠帶，一路平路散步約 15-20 分鐘抵達晴空塔。<br>【選項 C：計程車】淺草雷門前搭計程車，車程約 6-8 分鐘（約 800-1,000 日圓）。",
+                        oneSentenceNav: "想省力直接搭東武電車 3 分鐘即達；想散步賞景可走平坦無階梯的隅田川行人專用步道一路漫步到晴空塔。"
+                    }
+                ],
+                accessibility: [
+                    "【1. 淺草本堂避開正面階梯】：本堂正面有高聳的長石梯。請直接繞行至本堂右手邊，該側備有寬敞、防滑且舒適的「無障礙直昇直達電梯」，可以直接平緩升至主殿內參拜。",
+                    "【2. 隅田川行人專用步道全平路】：從淺草延伸至晴空塔的景觀步道全程平整無階梯，無任何車輛干擾，沿途視野開闊，是欣賞晴空塔全景與拍照的絕佳慢步路徑。",
+                    "【3. 晴空塔無縫地鐵對接】：搭車回程時，押上（晴空塔）站內部全區配置完善的直昇直達電梯，直接與晴空塔商場 B1 及 4 樓入口無縫連接，完全無須露天行走或爬樓梯。"
+                ],
+                spots: [
+                    {
+                        name: "淺草寺雷門與仲見世通",
+                        desc: "東京最著名的地標，漫步平緩的仲見世通，兩側均為無高低差的防滑人行舖面。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Sensoji+Temple+Tokyo"
+                    },
+                    {
+                        name: "淺草午餐選擇 1：淺草今半 (國際通本店)",
+                        desc: "【價位：約 3,800 - 5,500 日圓/人】百年壽喜燒老店。午間黑毛和牛壽喜燒定食肉質極度軟嫩多汁、入口即化。店內設有高齡友善直達電梯與高背椅子包廂，完全免跪坐。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Asakusa+Imahan"
+                    },
+                    {
+                        name: "淺草午餐選擇 2：尾張屋 本店 (Owari-ya Asakusa)",
+                        desc: "【價位：約 1,300 - 2,300 日圓/人】創業於安政年間（160餘年）的蕎麥麵老字號。招牌熱上天婦羅蕎麥麵，巨大純純鮮蝦外皮吸飽鰹魚高湯，軟嫩香醇，溫潤好消化。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Owari-ya+Asakusa"
+                    },
+                    {
+                        name: "淺草午餐選擇 3：淺草 釜飯 むつみ (Mutsumi)",
+                        desc: "【價位：約 1,600 - 2,600 日圓/人】藏身在淺草花街安靜巷弄的釜飯名店。現點現煮的木蓋陶鍋釜飯，米飯吸飽雞肉、鯛魚與鮮筍的高湯精華，熱騰騰、軟糯芳香，長輩牙口負擔為零。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Mutsumi+Asakusa"
+                    },
+                    {
+                        name: "隅田公園與隅田川步道 (Sumida River Walk 徒步路線)",
+                        desc: "全平路無階梯的行人景觀步道，沿途綠樹成蔭、微風徐徐，可一邊散步一邊遠眺壯麗的晴空塔。",
+                        link: "https://www.google.com/maps/dir/?api=1&origin=Sensoji+Temple+Tokyo&destination=Tokyo+Skytree&travelmode=walking"
+                    },
+                    {
+                        name: "東京晴空塔展望台 (Tokyo Skytree)",
+                        desc: "350M 展望大廳全區平地，設有無障礙觀景走廊與休息椅，傍晚可一覽無遺壯麗的關東平原落日與夜景。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Tokyo+Skytree"
+                    },
+                    {
+                        name: "晴空塔晚餐選擇 1：ひつまぶし名古屋備長 晴空塔店 (Solamachi 6F)",
+                        desc: "【價位：約 3,900 - 5,800 日圓/人】位於晴空塔商場 6 樓美食街（商場無障礙直達大電梯直達）。這家著名的名古屋鰻魚飯烤得外酥內軟、毫無刺口阻礙。全店採用舒適沙發椅，看完夜景免吹風直接享用大餐。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Bincho+Tokyo+Solamachi"
+                    },
+                    {
+                        name: "晴空塔晚餐選擇 2：銀座天龍 晴空塔店 (Solamachi 6F)",
+                        desc: "【價位：約 1,500 - 2,500 日圓/人】同在 6 樓的昭和名店。以爆汁多汁的巨大煎餃、軟嫩牛肉廣東炒麵與暖心湯麵聞名，口味親切符合長者胃口，上菜迅速且座位寬大。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Ginza+Tenryu+Tokyo+Solamachi"
+                    },
+                    {
+                        name: "晴空塔晚餐選擇 3：六厘舍 晴空塔店 (Solamachi 6F)",
+                        desc: "【價位：約 1,100 - 1,600 日圓/人】知名東京沾麵名店。熱騰騰的濃厚魚介豚骨高湯溫潤滑順，麵條紮實可口（亦可選溫熱湯拉麵），價格平實，若想吃溫暖飽足的麵食非常推薦。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Rokurinsha+Tokyo+Solamachi"
+                    }
+                ],
+                returnTrans: "【一線直達轉乘】：由地鐵「押上（晴空塔）站」搭乘 <b>地鐵半藏門線</b> 1 站直達「三越前站」，同月台平地走 5 步即可轉乘 <b>地鐵銀座線</b> 坐 3 站直達「上野站」，全程極其輕鬆。<br>【計程車選項】：直接從晴空塔 4 樓計程車排班處搭車直達上野飯店，車程約 15 分鐘，車資約 2,000 日圓，能徹底解放雙腿。"
+            },
+            4: {
+                dayNum: 4,
+                title: "9/20 (日) 明治神宮都市森林浴 ➔ 表參道欅木綠蔭 ➔ 新宿御苑大溫室 ➔ 新宿西口購物與晚餐",
+                intro: "早晨在原宿明治神宮享受都心森林浴，隨後沿著表參道寬敞的欅木林蔭人行道悠閒散步。下午漫步全東京無障礙最頂級的新宿御苑，欣賞溫室熱帶植物與日式庭園枯山水。傍晚前往專為長輩設計的新宿西口京王百貨，享用多樣化晚餐。",
+                transports: [
+                    {
+                        route: "上野站 ➔ 原宿站 (明治神宮)",
+                        badge: "JY",
+                        badgeColor: "bg-subway-yamanote",
+                        badgeName: "JR 山手線",
+                        desc: "自上野站搭乘 JR 山手線直達原宿站（車程約 26 分鐘）。原宿站設有完善的大型無障礙電梯直達地面層，出站即是明治神宮入口。",
+                        oneSentenceNav: "在上野站搭乘綠色山手線，坐 13 站直達原宿站，下車後搭電梯上樓出站即達明治神宮參道。"
+                    },
+                    {
+                        route: "表參道 ➔ 新宿御苑（自由選擇：計程車 / 地鐵電梯 / 徒步綠蔭路）",
+                        badge: "🚕/🚇/🚶",
+                        badgeColor: "bg-amber-500",
+                        badgeName: "計程車 vs 地鐵 vs 徒步自選",
+                        desc: "【選項 A：計程車（推薦最省力）】在表參道路邊攔車或用 GO App 叫車前往新宿御苑（大木戶門），車程約 10 分鐘，車資約 1,500 日圓。<br>【選項 B：地鐵＋電梯（快速）】在表參道站搭乘地鐵副都心線至「新宿三丁目站」（4 分鐘），由 E5 出口大電梯上平地，走 5 分鐘抵達新宿御苑。<br>【選項 C：林蔭徒步（熱愛走路）】沿明治通平坦綠蔭人行道緩步前行約 25 分鐘，路面平整好走。",
+                        oneSentenceNav: "想最省力可在表參道直接搭計程車 10 分鐘直達；想搭地鐵則坐 4 分鐘到新宿三丁目站；想健步也可沿平坦林蔭大道慢步走去。"
+                    },
+                    {
+                        route: "新宿 ➔ 上野站 (回飯店)",
+                        badge: "JY",
+                        badgeColor: "bg-subway-yamanote",
+                        badgeName: "JR 山手線",
+                        desc: "晚餐後自新宿西口地下通道直接進站，搭乘山手線一線直達上野站，車程約 26 分鐘，全程對號座與優先席座位充足。",
+                        oneSentenceNav: "在新宿站搭乘綠色山手線（外環），坐 12 站直達上野站，廣小路口出站平地走 4 分鐘回飯店。"
+                    }
+                ],
+                accessibility: [
+                    "【1. 明治神宮避碎石路】：南參道兩側皆鋪設極平整的『細平沙土邊路』或水泥石板，極易平緩推行前前行，本堂右手邊亦設有無障礙大斜坡。",
+                    "【2. 表參道欅木步道】：人行道極寬闊，路段平整且隨處都有長椅，綠樹成蔭，行走輕鬆無憂。",
+                    "【3. 新宿御苑平坦溫室】：大溫室及日式庭園全區鋪設平坦柏油路與木板道路，並設有輪椅免費借用服務，長椅極多。",
+                    "【4. 新宿西口京王百貨】：內部規劃平緩防滑，設有無障礙大電梯與大量歇腳沙發座椅，各樓層提供寬敞便利的走動動線。"
+                ],
+                spots: [
+                    {
+                        name: "明治神宮",
+                        desc: "全東京無障礙最友善的都市內綠意參道。空氣極佳，漫步在兩側平坦林蔭道路中非常舒適。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Meiji+Jingu+Shrine+Tokyo"
+                    },
+                    {
+                        name: "表參道與欅木步道",
+                        desc: "欣賞高大欅木與優雅人行道。推薦在街邊露天沙發雅座喝杯熱茶，看著綠葉搖曳。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Omotesando+Avenue+Tokyo"
+                    },
+                    {
+                        name: "表參道午餐選擇 1：おもてなしとりよし 青山店",
+                        desc: "【價位：約 1,100 - 1,900 日圓/人】位於表參道優雅巷弄，招牌「鳥良親子丼御膳」蛋香滑順、雞肉軟嫩易嚼，全店皆為寬敞長椅雅座與安靜隔間，性價比極高。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Omotenashi+Toriyoshi+Aoyama"
+                    },
+                    {
+                        name: "表參道午餐選擇 2：舞泉豬排 青山本店 (Tonkatsu Maisen)",
+                        desc: "【價位：約 1,900 - 3,300 日圓/人】以「用筷子就能切斷」的軟嫩炸豬排聞名的日本殿堂級老店。炸衣酥脆化口、豬肉無筋多汁，店內設有無障礙電梯與舒適椅子座。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Tonkatsu+Maisen+Aoyama"
+                    },
+                    {
+                        name: "表參道午餐選擇 3：蕎麥處 川上 (Kawakami Aoyama)",
+                        desc: "【價位：約 1,200 - 2,200 日圓/人】青山安靜巷弄的和風名店。手作蕎麥麵條口感細緻，搭配軟煮鴨肉熱湯或鮮菇蔬菜天婦羅，清爽少油膩，長輩極為喜愛。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Kawakami+Aoyama"
+                    },
+                    {
+                        name: "新宿御苑 大溫室與庭園散策",
+                        desc: "平緩無門檻的溫室步道。展示豐富奇花異草，室內全年空調防風遮蔭。日式庭園平坦開闊，風景如畫。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Shinjuku+Gyoen+National+Garden"
+                    },
+                    {
+                        name: "新宿晚餐選擇 1：敘敘苑 燒肉 新宿西口店",
+                        desc: "【價位：約 6,500 - 9,500 日圓/人】新宿西口名店。提供油花細密、軟嫩多汁的極品和牛燒肉，入口即化，專人桌邊服務體貼，全店配置高背大沙發座椅與包廂。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Jojoen+Shinjuku+Nishiguchi"
+                    },
+                    {
+                        name: "新宿晚餐選擇 2：京王百貨 8F 美濃吉 (Minokichi Keio Shinjuku)",
+                        desc: "【價位：約 3,800 - 6,500 日圓/人】源自京都三百年歷史的傳統京料理老舖（京王百貨大電梯直達）。餐點注重當季天然食材，軟煮蘿蔔、燉鰻魚與玉子豆腐細緻柔軟，清爽養生。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Minokichi+Keio+Shinjuku"
+                    },
+                    {
+                        name: "新宿晚餐選擇 3：京王百貨 8F つばめグリル (Tsubame Grill Keio)",
+                        desc: "【價位：約 1,800 - 2,800 日圓/人】老牌洋食鐵板名店。招牌「鋁箔包漢堡排」包裹熱騰騰燉牛肉醬汁，肉排口感細軟無硬筋、用叉子即能輕鬆分開，附整顆香甜蒸烤馬鈴薯。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Tsubame+Grill+Keio+Shinjuku"
+                    }
+                ],
+                returnTrans: "晚餐後自「新宿站」西口地下通道直接進入車站月台，搭乘 <b>JR 山手線（外環方向）</b> 直達「上野站」，約 26 分鐘直達免轉車。廣小路口平面出站，走平地人行道 4-5 分鐘即可回到飯店。"
+            },
+            5: {
+                dayNum: 5,
+                title: "9/21 (一) 東京車站紅磚 ➔ 皇居外苑松林二重橋 ➔ 巢鴨商店街（洗心地藏）",
+                intro: "欣賞百年紅磚車站，皇居外苑走平地水泥路防碎石。下午慢步專為樂活散步規劃的巢鴨老街，吃鹽大福，擦拭地藏祈求健康，午餐與晚餐皆提供平價可口的在地特色名店。",
+                transports: [
+                    {
+                        route: "上野站 ➔ 東京車站",
+                        badge: "JY",
+                        badgeColor: "bg-subway-yamanote",
+                        badgeName: "JR 山手線/京濱東北線",
+                        desc: "搭乘山手線或京濱東北線僅需 4 站直達（車程 6 分鐘）。月台設有無障礙直達直升電梯。",
+                        oneSentenceNav: "在上野站搭乘綠色山手線或藍色京濱東北線，坐4站（約6分鐘）直達東京車站。"
+                    },
+                    {
+                        route: "東京車站 ➔ 巢鴨站",
+                        badge: "JY",
+                        badgeColor: "bg-subway-yamanote",
+                        badgeName: "JR 山手線 (往上野/巢鴨方向)",
+                        desc: "在東京車站同月台搭乘山手線直達巢鴨站（車程約 17 分鐘）。",
+                        oneSentenceNav: "在東京車站月台搭乘綠色山手線（外環），坐8站直達巢鴨站，無須中途換車。"
+                    }
+                ],
+                accessibility: [
+                    "【1. 東京車站無階梯路徑】：下車後搭乘電梯至地下一樓「丸之內地下中央口」，接著搭乘站內大直梯往上一樓，由「丸之內中央口」出站，出來即是寬廣無階梯的丸之內廣場。",
+                    "【2. 皇居避碎石路徑】：皇居外苑碎石子路較多。建議沿著靠近護城河的「水泥人行道」散步，同樣能將松樹林、二重橋與護城河盡收眼底，走起來最省力。",
+                    "【3. 巢鴨平坦街道】：巢鴨地藏通商店街（老街）是特別規劃的，整條街都是平緩無階梯、防滑的水泥與柏油路面，兩旁商店皆設有無障礙斜坡。"
+                ],
+                spots: [
+                    {
+                        name: "東京車站丸之內廣場",
+                        desc: "百年紅磚文藝復興式大樓，極富歷史美感。廣場全為平坦石板地，是拍照的絕佳背景。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Tokyo+Station"
+                    },
+                    {
+                        name: "皇居外苑與二重橋",
+                        desc: "日本天皇居所的外側。黑松林立，開闊大氣，可以遠眺古典護城河石橋與鋼橋。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Nijubashi+Bridge"
+                    },
+                    {
+                        name: "巢鴨午餐選擇 1：巢鴨ときわ食堂 (Tokiwa Shokudo)",
+                        desc: "【價位：約 1,100 - 1,900 日圓/人】巢鴨地標級的平民美食殿堂。招牌超巨大炸蝦定食、現烤多汁西京漬鯖魚，外酥內嫩、熱呼呼好咬，白飯香軟，深受日本銀髮長者喜愛。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Sugamo+Tokiwa+Shokudo"
+                    },
+                    {
+                        name: "巢鴨午餐選擇 2：古奈屋 巢鴨本店 (Konaya)",
+                        desc: "【價位：約 1,200 - 1,800 日圓/人】全日本知名的鮮奶咖哩烏龍麵元祖店。高湯加入香濃鮮乳調和，湯頭溫潤香濃、完全不刺激辛辣，烏龍麵條Q彈軟滑好吞嚥。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Konaya+Sugamo"
+                    },
+                    {
+                        name: "巢鴨午餐選擇 3：菊姫 (Kikuhime Sugamo)",
+                        desc: "【價位：約 1,300 - 2,200 日圓/人】地藏通老街上的清爽和食老店。提供現炊雞肉野菜釜飯御膳與溫熱蕎麥麵，少油少鹽，口味家常溫和，長輩消化吸收完全無負擔。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Kikuhime+Sugamo"
+                    },
+                    {
+                        name: "巢鴨地藏通商店街與高岩寺洗心地藏",
+                        desc: "被稱為『老奶奶原宿』。可前往高岩寺，拿毛巾擦拭地藏王菩薩雕像祈求健康，隨後散步品嚐著名的『元祖塩大福』（約 160 日圓/顆）。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Koganji+Temple+Sugamo"
+                    },
+                    {
+                        name: "返回上野晚餐選擇 1：天ぷら 新宿つな八 上野店 (松坂屋 7F)",
+                        desc: "【價位：約 2,800 - 4,800 日圓/人】位於上野松坂屋百貨 7 樓（大電梯直達）。百年名店的經典天婦羅定食，去骨去刺炸得極其輕盈軟嫩不膩口，環境幽靜幽雅，桌椅舒適開闊。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Tsunahachi+Matsuzakaya+Ueno"
+                    },
+                    {
+                        name: "返回上野晚餐選擇 2：鰻 伊豆榮 上野松坂屋店 (松坂屋 7F)",
+                        desc: "【價位：約 3,800 - 5,800 日圓/人】同在松坂屋 7 樓，是兩百年老店伊豆榮的百貨分店。全平路無階梯，設有寬敞高背椅子座，免去本店排隊即可吃到鬆軟入味的江戶前烤鰻魚。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Izuei+Matsuzakaya+Ueno"
+                    },
+                    {
+                        name: "返回上野晚餐選擇 3：札幌 彌助壽司 松坂屋上野店 (松坂屋 7F)",
+                        desc: "【價位：約 2,000 - 3,500 日圓/人】北海道札幌直送的鮮魚壽司專賣店。新鮮軟嫩的握壽司拼盤與海鮮茶碗蒸，魚肉細軟鮮甜，份量適中，是疲累時的清爽開胃選擇。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Yasuke+Sushi+Matsuzakaya+Ueno"
+                    }
+                ],
+                returnTrans: "從「巢鴨站」搭乘 <b>JR 山手線</b>（往田端/上野方向，外環線）坐 6 站直達「上野站」，車程僅 12 分鐘。抵達上野站後從「廣小路口」出站，走平面斑馬線過昭和通人行道 4-5 分鐘即可回到飯店休息。"
+            },
+            6: {
+                dayNum: 6,
+                title: "9/22 (二) 築地場外市場平坦美食 ➔ 日本橋古典老舖漫步 ➔ 阿美橫丁伴手禮採買",
+                intro: "輕鬆漫遊東京最經典的食尚街區。在全平路無階梯的築地場外市場品嚐暖胃玉子燒與熟食定食，下午漫步老舖百貨林立的日本橋，傍晚回到上野採買伴手禮並享用豐富晚餐。",
+                transports: [
+                    {
+                        route: "上野站 ➔ 築地站",
+                        badge: "H",
+                        badgeColor: "bg-subway-hibiya",
+                        badgeName: "東京地鐵日比谷線",
+                        desc: "從上野站搭乘地鐵日比谷線（往中目黑方向）直達「築地站」（僅 11 分鐘）。尋找 1 號出口大電梯直上地面，出站步行 2 分鐘即達場外市場平坦街道。",
+                        oneSentenceNav: "在上野站搭乘地鐵日比谷線，坐 6 站直達築地站，由 1 號出口搭電梯上地面即達市場。"
+                    },
+                    {
+                        route: "築地 ➔ 銀座/日本橋 ➔ 上野",
+                        badge: "G",
+                        badgeColor: "bg-subway-ginza",
+                        badgeName: "地鐵銀座線 / 日比谷線",
+                        desc: "由銀座站或日本橋站搭乘銀座線，只需 10 分鐘即直達上野站，全程無階梯通道直通。",
+                        oneSentenceNav: "由日本橋站搭乘黃色地鐵銀座線，坐 5 站直達上野站，廣小路口出站平地走回飯店。"
+                    }
+                ],
+                accessibility: [
+                    "【1. 築地平坦水泥動線】：築地場外市場皆為平緩柏油與水泥街道，店面皆為平面無高台階，上午人潮較溫和，走起來輕鬆愜意。",
+                    "【2. 日本橋百貨無障礙專梯】：日本橋三越與高島屋為百年文化古蹟百貨，內部設有寬敞無障礙專用電梯與極多沙發休息座，室內冷暖空調非常舒適。",
+                    "【3. 阿美橫丁平地採買】：上野阿美橫丁與多慶屋皆設有平緩斜坡與電梯，買伴手禮、日式仙貝、茶葉非常方便，買完直接步行走回飯店放戰利品。"
+                ],
+                spots: [
+                    {
+                        name: "築地場外市場 (平坦美食街區)",
+                        desc: "東京最知名的傳統美食市場。街道寬平好走，推薦品嚐丸武現煎軟綿香甜的厚蛋玉子燒（約 150 日圓）。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Tsukiji+Outer+Market"
+                    },
+                    {
+                        name: "築地午餐選擇 1：築地 虎杖 (Itadori) 別館",
+                        desc: "【價位：約 2,200 - 3,600 日圓/人】招牌「海鮮ひつまぶし（海鮮三吃）」。切成細丁的新鮮海膽、生魚片與鮭魚卵拌入醋飯，第二吃加入醃菜，第三吃沖入熱高湯做成茶泡飯，入口即化，極易咀嚼吞嚥。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Itadori+Bekkan+Tsukiji"
+                    },
+                    {
+                        name: "築地午餐選擇 2：鳥めし 鳥藤分店 (Toritoh)",
+                        desc: "【價位：約 1,100 - 1,600 日圓/人】明治 40 年創業的雞肉名舖。特上親子丼與照燒雞肉定食雞肉軟嫩多汁、蛋液綿滑香甜，沒有硬筋，附一碗醇厚好喝的濃白雞高湯，暖胃又平價。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Toritoh+Branch+Tsukiji"
+                    },
+                    {
+                        name: "築地午餐選擇 3：築地 秀德 (Shutoku) 2號店",
+                        desc: "【價位：約 2,500 - 4,500 日圓/人】以江戶前熟成赤酢握壽司聞名。可挑選炙燒握壽司或熟煮星鰻丼，肉質細嫩無比，店面乾淨整潔，椅子舒適。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Shutoku+Tsukiji"
+                    },
+                    {
+                        name: "日本橋三越本店與古蹟街區",
+                        desc: "文藝復興式古典石造建築，內部典雅壯麗。推薦在 7 樓傳統茶室點份抹茶與和菓子，坐在軟沙發上感受江戶老舖的優雅氛圍。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Nihombashi+Mitsukoshi+Main+Store"
+                    },
+                    {
+                        name: "上野多慶屋與阿美橫丁",
+                        desc: "上野最齊全的免稅伴手禮百貨，設有大電梯。各式長輩喜愛的日本仙貝、黑豆茶、抹茶點心與常備保健品應有盡有，離飯店僅 5 分鐘步程。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Takeya+Ueno"
+                    },
+                    {
+                        name: "上野晚餐選擇 1：音音 上野公園伴三千 (Otoon Ueno)",
+                        desc: "【價位：約 2,800 - 4,500 日圓/人】位於上野公園旁竹林大樓 2 樓（配有專用直達大電梯）。提供以日本各地時令鮮魚與蔬菜熬煮的精緻和食御膳。挑高雅致的大沙發座椅與安靜隔間，極其適合旅程最後一晚的溫馨家庭大餐。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Otoon+Ueno+Bamboo+Garden"
+                    },
+                    {
+                        name: "上野晚餐選擇 2：過門香 上野店 (Kamonka Ueno)",
+                        desc: "【價位：約 2,500 - 4,200 日圓/人】位於上野車站對面大樓（有大電梯直達）。高檔雅致的和風中華料理名店，提供極度鮮嫩的蟹黃湯包、鮮蝦燒賣、清蒸海鮮與滑蛋牛肉炒飯，熱騰騰好消化，非常暖胃。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Kamonka+Ueno"
+                    },
+                    {
+                        name: "上野晚餐選擇 3：上野 藪蕎麥 (Yabu Soba)",
+                        desc: "【價位：約 1,600 - 2,800 日圓/人】創業於明治 25 年的江戶三大蕎麥麵名店之一。招牌熱鴨肉南蠻蕎麥麵，鴨肉燉得香軟入味，鰹魚醬汁醇香甘美，店面為古樸日式座椅，老牌風範令人回味。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Yabu+Soba+Ueno"
+                    }
+                ],
+                returnTrans: "晚餐後出餐廳，沿著平緩的中央通人行道走斑馬線直走 6 分鐘，即可輕鬆回到「上野皇冠山丘高級酒店」整理行囊，準備明天的返台航班。"
+            },
+            7: {
+                dayNum: 7,
+                title: "9/23 (三) 上野公園綠意散步 ➔ 兩百年伊豆榮鰻魚飯（高腳椅座）➔ 搭 Skyliner 舒適返家",
+                intro: "最後一日悠閒漫步。在上野公園呼吸林蔭空氣、欣賞噴泉。隨後前往公園旁的歷史名店享用豐盛午餐大餐，回飯店提行李直達機場，安穩回台。",
+                transports: [
+                    {
+                        route: "上野飯店 ➔ 京成上野站 ➔ 成田機場第二航廈",
+                        badge: "KS",
+                        badgeColor: "bg-[#0055a5]",
+                        badgeName: "京成 Skyliner 直達",
+                        desc: "從飯店取完大行李，步行 4 分鐘直達京成上野站。搭乘 Skyliner 直達機場，全對號座非常舒適。",
+                        oneSentenceNav: "由飯店取大行李步行4分鐘進京成上野站，搭乘13:40左右的 Skyliner 列車，直達「成田機場第二航廈」辦理登機。"
+                    }
+                ],
+                accessibility: [
+                    "【1. 上野公園平坦人行道】：由上野站公園口出站，此處經改建已完全無階梯，與公園廣場平面接軌，無階梯阻礙。",
+                    "【2. 兩百年老字號（備有椅子包廂）】：許多鰻魚飯老店需盤腿跪坐，對膝蓋負擔大。伊豆榮本店內部特別設有直達電梯，且包廂內皆備有「高腳椅子」，長輩不需要跪坐，極度舒適體貼！"
+                ],
+                spots: [
+                    {
+                        name: "上野恩賜公園與星巴克露台",
+                        desc: "綠蔭與林蔭大道，空氣極佳。推薦在公園中央的星巴克概念店露天座位區，點杯茶坐著，看著噴泉，享受悠然晨光。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Ueno+Park"
+                    },
+                    {
+                        name: "最後午餐選擇 1：鰻割烹 伊豆榮 本店",
+                        desc: "【價位：約 4,200 - 6,800 日圓/人】兩百年歷史的江戶前鰻魚老字號。老店環境古色古香，鰻魚先蒸後烤香氣撲鼻，肉質入口即化、無骨刺阻礙。店內設有電梯與高腳椅子座位包廂，完全免跪坐。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Izuei+Honten"
+                    },
+                    {
+                        name: "最後午餐選擇 2：韻松亭 (Inshotei 上野公園內)",
+                        desc: "【價位：約 3,200 - 4,800 日圓/人】明治 8 年創業、坐落於上野公園綠蔭中的百年料亭。午間花籠御膳匯集軟綿豆皮、手作豆腐、茶碗蒸與時令炊飯，滋味淡雅溫和、養生好吸收，窗外能俯瞰公園綠意。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Inshotei+Ueno"
+                    },
+                    {
+                        name: "最後午餐選擇 3：上野 精養軒 (Seiyoken Ueno)",
+                        desc: "【價位：約 2,200 - 3,900 日圓/人】日本西洋料理開山鼻祖名店。招牌老法式紅酒燉牛肉牛肉燉得軟爛入味、入口即散，搭配滑嫩煎蛋包飯，老派優雅氛圍與落地窗景觀極佳。",
+                        link: "https://www.google.com/maps/dir/?api=1&destination=Seiyoken+Ueno"
+                    }
+                ],
+                returnTrans: "享用完極軟鰻魚大餐後，回飯店大樓 20 樓取大行李，下樓出大門平地走 4 分鐘抵達「京成上野站」，搭乘 **京成 Skyliner** 41 分鐘直達成田機場第二航廈，輕鬆前往第一航廈（回台）辦理 16:20 航班登機手續。"
+            }
+        };
+        const japanesePhrases = [
+            { id: 20, category: "transport", title: "🚕 計程車直達飯店卡", intent: "我要搭車到「Hotel Crown Hills Ueno Premier」，地址是：東京都台東区東上野2-16-1", jp: "「ホテルクラウンヒルズ上野プレミア」までお願いします。住所は東京都台東区東上野2-16-1です。", hiragana: "「ほてる くらうん ひるず うえの ぷれみあ」まで おねがいします。じゅうしょ は とうきょうと たいとうく ひがしうえの に の じゅうろく の いち です。" },
+            { id: 21, category: "transport", title: "🚕 計程車直達川越時之鐘卡", intent: "我要搭車到川越的「時之鐘（鐘樓）」，謝謝。", jp: "川越の「時の鐘」までお願いします。", hiragana: "かわごえ の「ときの かね」まで おねがいします。" },
+            { id: 1, category: "transport", title: "🚉 尋找電梯卡", intent: "不好意思，請問電梯在哪裡？", jp: "すみません、エレベーターはどこですか？", hiragana: "すみません、えれべーたー は どこですか？" },
+            { id: 2, category: "transport", title: "🚾 多功能洗手間卡", intent: "不好意思，請問多功能（無障礙）洗手間在哪裡？", jp: "すみません、多目的トイレはどこですか？", hiragana: "すみません、たもくてき といれ は どこですか？" },
+            { id: 3, category: "transport", title: "♿ 避開樓梯路線卡", intent: "請問去這裡有沒有「不需要爬樓梯」的路（斜坡或電梯）？", jp: "すみません、階段のないルート（スロープやエレベーター）はどちらですか？", hiragana: "すみません、かいだんの ない るーと は どちらですか？" },
+            { id: 4, category: "transport", title: "🚇 確認乘車方向卡", intent: "請問這班車（電車或巴士）會到上野嗎？", jp: "すみません、この電車（バス）は上野に行きますか？", hiragana: "すみません、この でんしゃ（ばす）は うえの に いきますか？" },
+            { id: 5, category: "transport", title: "🚕 計程車乘車處卡", intent: "不好意思，請問哪裡可以搭計程車？", jp: "すみません、タクシー乗り場はどこですか？", hiragana: "すみません、たくしー のりば は どこですか？" },
+            { id: 6, category: "hotel", title: "🎒 飯店行李寄存卡", intent: "請問退房後，可以先把行李寄放在這裡嗎？", jp: "チェックアウト後、荷物を預かっていただけますか？", hiragana: "ちぇっくあうとご、にもつ を あずかって いただけますか？" },
+            { id: 7, category: "hotel", title: "🛎️ 提早行李寄存卡", intent: "請問還沒到入住時間，可以先寄放行李嗎？", jp: "チェックイン前ですが、荷物を預かっていただけますか？", hiragana: "ちぇっくいんまえ ですが、にもつ を あずかって いただけますか？" },
+            { id: 8, category: "restaurant", title: "📖 中文菜單卡", intent: "請問這裡有中文菜單嗎？", jp: "中国語のメニューはありますか？", hiragana: "ちゅうごくご の めにゅー は ありますか？" },
+            { id: 9, category: "restaurant", title: "🪑 要求椅子座位卡", intent: "不好意思，因為關節不便，不方便盤腿坐。請問有沒有提供「椅子」的座位？", jp: "すみません、膝が悪いので、畳ではなく椅子の席はありますか？", hiragana: "すみません、ひざが わるいので、たたみのせき ではなく いすのせき は ありますか？" },
+            { id: 10, category: "restaurant", title: "👉 手指點餐卡", intent: "我要點這個項目。（手指著菜單項目）", jp: "これをお願いします。", hiragana: "これ を おねがいします。" },
+            { id: 11, category: "restaurant", title: "🧊 飲料去冰卡", intent: "飲料請幫我裝去冰（不要加冰塊），謝謝。", jp: "氷なしでお願いします。", hiragana: "こおり なし で おねがいします。" },
+            { id: 12, category: "restaurant", title: "🍵 要熱開水卡", intent: "請問可以給我們一杯熱開水（溫水）嗎？謝謝。", jp: "温かいお湯をいただけますか？", hiragana: "あたたかい おゆ を いただけますか？" },
+            { id: 13, category: "restaurant", title: "💴 結帳卡", intent: "不好意思，我們要結帳。", jp: "お会計をお願いします。", hiragana: "おかいけい を おねがいします。" },
+            { id: 14, category: "shopping", title: "🏷️ 詢問價格卡", intent: "請問這個多少錢？", jp: "これはいくらですか？", hiragana: "これ は いくら ですか？" },
+            { id: 15, category: "shopping", title: "💳 信用卡付款卡", intent: "請問可以使用信用卡付款嗎？", jp: "クレジットカードは使えますか？", hiragana: "くれじっとかーど は つかえますか？" },
+            { id: 16, category: "shopping", title: "🛍️ 詢問免稅卡", intent: "請問這裡可以辦理免稅嗎？", jp: "免税はできますか？", hiragana: "めんぜい は できますか？" },
+            { id: 19, category: "emergency", title: "📍 迷路求助卡", intent: "不好意思，我迷路了。我想回到上野的飯店，請問該怎麼走？", jp: "道に迷ってしまいました。上野のホテルに戻りたいのですが、どう行けばいいですか？", hiragana: "みちに まよって しまいました。うえの の ほてる に もどりたいのですが、どう いけば いいですか？" }
+        ];
+
+        const defaultDailyList = [
+            { text: "📴 手機（確認電量、網路通暢）", checked: false },
+            { text: "🔋 行動電源 (確認電量) ", checked: false }, 
+            { text: "🛂 護照正本 （購物免稅、飯店登記要用) ", checked: false },
+            { text: "💴 日圓現金 ", checked: false },
+            { text: "🌂 輕便晴雨傘 ", checked: false },
+            { text: "💳 Suica 西瓜卡 ", checked: false },
+            { text: "🍵 保溫水瓶（裝滿熱水/溫水）", checked: false },
+            { text: "💊 當日必吃常備保健/慢性病藥物", checked: false }
+        ];
+
+        const defaultBeforeList = [
+            { text: "退燒藥 💊", checked: false },
+            { text: "胃藥/頭痛藥 💊", checked: false },
+            { text: "牙刷、牙膏", checked: false },
+            { text: "肌肉鬆弛劑 💊", checked: false },
+            { text: "肌樂", checked: false },
+            { text: "防曬乳液", checked: false },
+            { text: "內衣褲", checked: false },
+            { text: "外套", checked: false },
+            { text: "衣服（洋蔥式搭配）", checked: false },
+            { text: "褲子", checked: false },
+            { text: "帽子", checked: false },
+            { text: "襪子", checked: false },
+            { text: "自拍棒", checked: false },
+            { text: "網路 (漫遊確認已開通)", checked: false },
+            { text: "充電器 / 充電線 ", checked: false },
+            { text: "APP 安裝 (GO 叫車軟體)", checked: false },
+            { text: "機票劃位", checked: false },
+            { text: "旅遊保險 (海外緊急突發醫療險)", checked: false },
+            { text: "換匯 (換妥日圓現金)", checked: false }
+        ];
+
+        let activeTab = "overview";
+        let activeDay = 1;
+        let jpFilter = "all";
+        let checklistDaily = [];
+        let checklistBefore = [];
+        let currentConfirmAction = "checklist"; // "checklist" or "shopping"
+
+        /* 購物記帳資料集與 9/8 參考匯率 */
+        let shoppingRecords = [];
+        let currentExchangeRate = 0.215; // 9/8 參考日幣匯率 (1 JPY ≈ 0.215 TWD)
+
+        /* [202609東京] 隨身地圖指南完整景點與餐廳總庫 */
+        const allMapGuidePlaces = [
+            // 住宿與生活超市
+            { day: "hotel", tag: "🏨 住宿飯店", name: "Hotel Crown Hills Ueno Premier", sub: "上野皇冠山丘高級酒店", desc: "全程 6 晚固定入住同一間飯店，免搬運行李。20-24 樓極佳景觀，1 樓右手邊為 7-Eleven 超商。", link: "https://www.google.com/maps/search/?api=1&query=Hotel+Crown+Hills+Ueno+Premier" },
+            { day: "hotel", tag: "🛒 生活超市", name: "吉池 本店 大型生活生鮮超市 (B1/B2/1F)", sub: "御徒町吉池大樓", desc: "離飯店步行僅 4 分鐘！B1 專賣產地水蜜桃、麝香葡萄、當季蜜蘋果、鮮奶與現做熟食；B2 有各式日式點心仙貝。營業至 20:30。", link: "https://www.google.com/maps/dir/?api=1&destination=Yoshiike+Main+Store" },
+            { day: "hotel", tag: "🏪 超商地標", name: "7-Eleven 東上野2丁目店", sub: "飯店 1 樓", desc: "飯店正下方超商，隨時買溫熱茶水非常方便，右側即是高樓層專用無障礙電梯大門。", link: "https://www.google.com/maps/dir/?api=1&destination=Hotel+Crown+Hills+Ueno+Premier" },
+
+            // D1 (9/17 四)
+            { day: "d1", tag: "🚇 交通樞紐", name: "京成上野站正面口", sub: "Skyliner 終點站", desc: "月台搭乘電梯至 1 樓正面口出站，全程平坦無階梯，過斑馬線步行直達飯店。", link: "https://www.google.com/maps/dir/?api=1&destination=Keisei+Ueno+Station" },
+            { day: "d1", tag: "🍵 甜點下午茶", name: "みはし (Mihashi) 上野本店", sub: "日式甜湯 (約 750-1,100 日圓)", desc: "傳統紅豆蜜老店，細緻紅豆沙配軟糯白玉與寒天，入口即化，完全無咀嚼負擔。", link: "https://www.google.com/maps/dir/?api=1&destination=Mihashi+Ueno+Honten" },
+            { day: "d1", tag: "🍵 甜點下午茶", name: "甘味處 荻野 (Ogino Ueno)", sub: "昭和和風點心 (約 800-1,300 日圓)", desc: "阿美橫丁旁甘味老舖，熱紅豆善哉與宇治抹茶冰淇淋，座位舒適安靜。", link: "https://www.google.com/maps/dir/?api=1&destination=Ogino+Ueno" },
+            { day: "d1", tag: "🍱 D1 晚餐推薦 1", name: "吉池食堂 (Yoshiike Shokudo 9F)", sub: "和食大會席 (約 1,800-3,200 日圓)", desc: "首夜首選！吉池超市 9 樓（大電梯直達），座席寬敞達數百席、免街頭排隊，生魚片、天婦羅與銀鱈西京燒定食多樣。", link: "https://www.google.com/maps/dir/?api=1&destination=Yoshiike+Shokudo" },
+            { day: "d1", tag: "🍱 D1 晚餐推薦 2", name: "名代 宇奈とと 上野店", sub: "炭火烤鰻魚 (約 1,100-1,800 日圓)", desc: "平價炭火鰻魚飯，肉質厚實軟綿、濃醇醬汁好配飯，無細刺感。", link: "https://www.google.com/maps/dir/?api=1&destination=Unatoto+Ueno" },
+            { day: "d1", tag: "🍱 D1 晚餐推薦 3", name: "鳥元 上野昭和通店", sub: "嫩雞和食定食 (約 1,500-2,500 日圓)", desc: "離飯店步行僅 2 分鐘！炭火烤嫩雞、滑蛋親子丼與熱蕎麥麵，桌位設有靠背隔間，免走遠路即可溫暖飽餐。", link: "https://www.google.com/maps/dir/?api=1&destination=Torigen+Ueno" },
+
+            // D2 (9/18 五 川越)
+            { day: "d2", tag: "🚶 步道路線", name: "川越站東口 ➔ 藏造老街（徒步地圖路線）", sub: "途經 Crea Mall 商店街", desc: "全路段平整無高低差，商店林立隨時可歇腳，散步約 20-25 分鐘邊逛邊拍照抵達老街核心。", link: "https://www.google.com/maps/dir/?api=1&origin=Kawagoe+Station&destination=Toki+no+Kane+Kawagoe&travelmode=walking" },
+            { day: "d2", tag: "🏯 經典景點", name: "藏造建築一番街 (蔵造りの町並み)", sub: "江戶黑磚老街", desc: "江戶風黑磚建築群，路面平坦防滑，兩側有多家和紙、陶器與和風雜貨老舖。", link: "https://www.google.com/maps/dir/?api=1&destination=Kurazukuri+no+Machinami+Kawagoe" },
+            { day: "d2", tag: "🔔 標誌地標", name: "川越地標：時之鐘 (時の鐘)", sub: "三層木造鐘樓", desc: "江戶初期三層木造鐘樓，環境清幽，境內藥師神社平坦設有長椅可歇腳賞景。", link: "https://www.google.com/maps/dir/?api=1&destination=Toki+no+Kane+Kawagoe" },
+            { day: "d2", tag: "🥢 D2 川越午餐 1", name: "小川菊 鰻魚飯 (Ogakiku)", sub: "百年名店 (約 3,800-5,200 日圓)", desc: "200 年老店，鰻魚先蒸後烤極致軟綿細緻、毫無細刺，設有舒適椅子座，提供號碼牌免罰站。", link: "https://www.google.com/maps/dir/?api=1&destination=Ogakiku+Kawagoe" },
+            { day: "d2", tag: "🥢 D2 川越午餐 2", name: "壽庵 藏之街店 (Kotobukian)", sub: "紫薯蕎麥麵 (約 1,300-2,200 日圓)", desc: "川越名物紫薯蕎麥麵，麵條滑順好咬，搭配熱高湯或酥脆軟嫩鮮蝦天婦羅，古樸長椅座。", link: "https://www.google.com/maps/dir/?api=1&destination=Kotobukian+Kuranomachi" },
+            { day: "d2", tag: "🥢 D2 川越午餐 3", name: "幸すし (Yukisushi Kawagoe)", sub: "料亭壽司 (約 2,200-3,800 日圓)", desc: "一番街巷內明治壽司老店，極致軟嫩散壽司御膳、蒸魚與熱茶碗蒸，全店寬敞座椅。", link: "https://www.google.com/maps/dir/?api=1&destination=Yukisushi+Kawagoe" },
+            { day: "d2", tag: "🍡 老街散步", name: "菓子屋橫丁 (Candy Alley)", sub: "傳統點心街", desc: "石板小巷，散發黑糖仙貝香氣，推薦地瓜霜淇淋與現烤米仙貝，平路悠閒漫步。", link: "https://www.google.com/maps/dir/?api=1&destination=Kashiya+Yokocho+Kawagoe" },
+            { day: "d2", tag: "🍲 回上野晚餐 1", name: "壽喜燒 鉢之木 上野店", sub: "黑毛和牛壽喜燒 (約 4,500-7,500 日圓)", desc: "入口即化頂級和牛壽喜燒，專人貼心桌邊服務，全為寬大靠背沙發椅座，免排隊、對膝蓋最友善。", link: "https://www.google.com/maps/dir/?api=1&destination=Hachinoki+Ueno" },
+            { day: "d2", tag: "🍲 回上野晚餐 2", name: "音音 上野竹林庭園店", sub: "鮮魚和食御膳 (約 2,800-4,200 日圓)", desc: "上野公園旁 Bamboo Garden 2 樓（有大電梯），日本直送鮮魚定食，沙發座位寬敞安靜。", link: "https://www.google.com/maps/dir/?api=1&destination=Otoon+Ueno+Bamboo+Garden" },
+            { day: "d2", tag: "🍲 回上野晚餐 3", name: "麵屋武藏 武骨 上野", sub: "軟嫩叉燒拉麵 (約 1,100-1,500 日圓)", desc: "叉燒燉至軟爛多汁，可請店員煮「軟麵（やわらかめ）」並將湯頭調淡，暖胃實惠無負擔。", link: "https://www.google.com/maps/dir/?api=1&destination=Menya+Musashi+Bukotsu+Ueno" },
+
+            // D3 (9/19 六 淺草/晴空塔)
+            { day: "d3", tag: "⛩️ 經典參拜", name: "淺草寺雷門與仲見世通", sub: "江戶信仰中心", desc: "本堂避開正面階梯，直接繞行至右手邊搭乘直達無障礙電梯進入大殿參拜，路面平整防滑。", link: "https://www.google.com/maps/dir/?api=1&destination=Sensoji+Temple+Tokyo" },
+            { day: "d3", tag: "🍲 D3 淺草午餐 1", name: "淺草今半 (國際通本店)", sub: "百年壽喜燒 (約 3,800-5,500 日圓)", desc: "百年老舖，黑毛和牛壽喜燒極度軟嫩多汁，店內設有高齡友善直達電梯與高背椅子包廂。", link: "https://www.google.com/maps/dir/?api=1&destination=Asakusa+Imahan" },
+            { day: "d3", tag: "🍲 D3 淺草午餐 2", name: "尾張屋 本店 (Owari-ya)", sub: "天婦羅蕎麥麵 (約 1,300-2,300 日圓)", desc: "160 餘年老字號，招牌熱上天婦羅蕎麥麵，巨大鮮蝦吸飽鰹魚高湯，軟嫩香醇好消化。", link: "https://www.google.com/maps/dir/?api=1&destination=Owari-ya+Asakusa" },
+            { day: "d3", tag: "🍲 D3 淺草午餐 3", name: "淺草 釜飯 むつみ", sub: "日式釜飯 (約 1,600-2,600 日圓)", desc: "現點現煮木蓋陶鍋釜飯，米飯吸飽雞肉鮮筍高湯精華，熱騰騰、軟糯芳香，牙口零負擔。", link: "https://www.google.com/maps/dir/?api=1&destination=Mutsumi+Asakusa" },
+            { day: "d3", tag: "🚶 步道路線", name: "隅田公園與隅田川步道 (Sumida River Walk)", sub: "全平路觀景步道", desc: "連接淺草與晴空塔的專用行人步道，全程無階梯無車輛干擾，綠樹成蔭可遠眺晴空塔全景。", link: "https://www.google.com/maps/dir/?api=1&origin=Sensoji+Temple+Tokyo&destination=Tokyo+Skytree&travelmode=walking" },
+            { day: "d3", tag: "🗼 景觀地標", name: "東京晴空塔展望台 (Tokyo Skytree)", sub: "350M 展望台", desc: "350M 展望大廳全區平地，設有無障礙走廊與休息椅，傍晚欣賞壯麗的關東平原落日與夜景。", link: "https://www.google.com/maps/dir/?api=1&destination=Tokyo+Skytree" },
+            { day: "d3", tag: "🍱 D3 晴空塔晚餐 1", name: "ひつまぶし名古屋備長 晴空塔店", sub: "名古屋鰻魚飯 (約 3,900-5,800 日圓)", desc: "商場 6 樓（大電梯直達），鰻魚烤得外酥內軟、毫無刺口阻礙，舒適沙發椅，看完夜景免吹風。", link: "https://www.google.com/maps/dir/?api=1&destination=Bincho+Tokyo+Solamachi" },
+            { day: "d3", tag: "🍱 D3 晴空塔晚餐 2", name: "銀座天龍 晴空塔店", sub: "多汁煎餃與廣東炒麵 (約 1,500-2,500 日圓)", desc: "6 樓昭和名店，巨大爆汁煎餃、軟嫩牛肉炒麵與熱湯麵，口味親切，座位寬大上菜迅速。", link: "https://www.google.com/maps/dir/?api=1&destination=Ginza+Tenryu+Tokyo+Solamachi" },
+            { day: "d3", tag: "🍱 D3 晴空塔晚餐 3", name: "六厘舍 晴空塔店", sub: "濃厚沾麵/拉麵 (約 1,100-1,600 日圓)", desc: "6 樓知名沾麵，魚介豚骨高湯溫潤滑順，亦可選溫熱湯拉麵，熱騰騰暖胃無負擔。", link: "https://www.google.com/maps/dir/?api=1&destination=Rokurinsha+Tokyo+Solamachi" },
+
+            // D4 (9/20 日 原宿/新宿)
+            { day: "d4", tag: "🌳 都心森林", name: "明治神宮", sub: "原宿森林浴", desc: "兩側皆有平坦細平土道與水泥路，本堂右手邊備有無障礙大斜坡，林蔭空氣極佳。", link: "https://www.google.com/maps/dir/?api=1&destination=Meiji+Jingu+Shrine+Tokyo" },
+            { day: "d4", tag: "🍂 綠蔭街道", name: "表參道與欅木步道", sub: "寬敞人行步道", desc: "欣賞高大欅木與優雅街景，兩側人行道極寬闊，隨處設有長椅可坐下喝茶休息。", link: "https://www.google.com/maps/dir/?api=1&destination=Omotesando+Avenue+Tokyo" },
+            { day: "d4", tag: "🍱 D4 表參道午餐 1", name: "おもてなしとりよし 青山店", sub: "鳥良親子丼御膳 (約 1,100-1,900 日圓)", desc: "優雅巷弄和食名店，蛋香滑順、雞肉軟嫩易嚼，全店皆為寬敞長椅雅座與安靜隔間。", link: "https://www.google.com/maps/dir/?api=1&destination=Omotenashi+Toriyoshi+Aoyama" },
+            { day: "d4", tag: "🍱 D4 表參道午餐 2", name: "舞泉豬排 青山本店 (Maisen)", sub: "筷子能切斷的豬排 (約 1,900-3,300 日圓)", desc: "日本殿堂級炸豬排，炸衣化口、豬肉無筋軟嫩多汁，店內設有電梯與舒適椅子座。", link: "https://www.google.com/maps/dir/?api=1&destination=Tonkatsu+Maisen+Aoyama" },
+            { day: "d4", tag: "🍱 D4 表參道午餐 3", name: "蕎麥處 川上 (Kawakami Aoyama)", sub: "和風蕎麥麵 (約 1,200-2,200 日圓)", desc: "手作蕎麥麵細緻，搭配軟煮鴨肉熱湯或鮮菇蔬菜天婦羅，清爽少油膩，長輩極愛。", link: "https://www.google.com/maps/dir/?api=1&destination=Kawakami+Aoyama" },
+            { day: "d4", tag: "🌺 溫室庭園", name: "新宿御苑 大溫室與庭園散策", sub: "全平坦無障礙溫室", desc: "大溫室展示奇花異草，室內全年空調防風遮蔭，庭園全鋪設柏油與木道，長椅極多。", link: "https://www.google.com/maps/dir/?api=1&destination=Shinjuku+Gyoen+National+Garden" },
+            { day: "d4", tag: "🥩 D4 新宿晚餐 1", name: "敘敘苑 燒肉 新宿西口店", sub: "頂級黑毛和牛 (約 6,500-9,500 日圓)", desc: "油花細密軟嫩多汁的和牛燒肉，入口即化，專人桌邊服務，全店配置高背大沙發座。", link: "https://www.google.com/maps/dir/?api=1&destination=Jojoen+Shinjuku+Nishiguchi" },
+            { day: "d4", tag: "🥩 D4 新宿晚餐 2", name: "京王百貨 8F 美濃吉 (Minokichi)", sub: "京都三百年料理 (約 3,800-6,500 日圓)", desc: "京王百貨大電梯直達，當季天然食材，軟煮蘿蔔、燉鰻魚與玉子豆腐細緻柔軟，養生清爽。", link: "https://www.google.com/maps/dir/?api=1&destination=Minokichi+Keio+Shinjuku" },
+            { day: "d4", tag: "🥩 D4 新宿晚餐 3", name: "京王百貨 8F つばめグリル", sub: "經典鐵板漢堡排 (約 1,800-2,800 日圓)", desc: "鋁箔包漢堡排包裹燉牛肉醬汁，肉排細軟無硬筋、叉子即可輕鬆分開，附香甜蒸馬鈴薯。", link: "https://www.google.com/maps/dir/?api=1&destination=Tsubame+Grill+Keio+Shinjuku" },
+
+            // D5 (9/21 一 東京車站/巢鴨)
+            { day: "d5", tag: "🏛️ 歷史地標", name: "東京車站丸之內廣場", sub: "百年文藝復興紅磚站", desc: "地下中央口搭乘站內大直梯上一樓，廣場全為平坦石板地，紅磚車站拍照背景絕佳。", link: "https://www.google.com/maps/dir/?api=1&destination=Tokyo+Station" },
+            { day: "d5", tag: "🌲 皇居景觀", name: "皇居外苑與二重橋", sub: "松林護城河", desc: "建議沿護城河水泥人行道散步，避開碎石子路，將黑松林與二重橋石橋美景盡收眼底。", link: "https://www.google.com/maps/dir/?api=1&destination=Nijubashi+Bridge" },
+            { day: "d5", tag: "🍤 D5 巢鴨午餐 1", name: "巢鴨ときわ食堂 (Tokiwa Shokudo)", sub: "巨大炸蝦定食 (約 1,100-1,900 日圓)", desc: "巢鴨平民美食殿堂，現炸超大炸蝦、現烤鯖魚，外酥內嫩好咬，深得長者喜愛。", link: "https://www.google.com/maps/dir/?api=1&destination=Sugamo+Tokiwa+Shokudo" },
+            { day: "d5", tag: "🍤 D5 巢鴨午餐 2", name: "古奈屋 巢鴨本店 (Konaya)", sub: "牛奶咖哩烏龍 (約 1,200-1,800 日圓)", desc: "鮮奶咖哩烏龍元祖店，香濃鮮乳調和高湯溫潤不辣，烏龍麵條軟滑好吞嚥。", link: "https://www.google.com/maps/dir/?api=1&destination=Konaya+Sugamo" },
+            { day: "d5", tag: "🍤 D5 巢鴨午餐 3", name: "菊姫 (Kikuhime Sugamo)", sub: "清爽野菜釜飯 (約 1,300-2,200 日圓)", desc: "現炊雞肉野菜釜飯御膳與溫熱蕎麥麵，少油少鹽家常溫和，消化完全無負擔。", link: "https://www.google.com/maps/dir/?api=1&destination=Kikuhime+Sugamo" },
+            { day: "d5", tag: "👵 老街散策", name: "巢鴨地藏通商店街與高岩寺洗心地藏", sub: "平坦防滑老街", desc: "拿毛巾擦拭洗心地藏王菩薩雕像祈求健康，品嚐軟糯元祖鹽大福（約 160 日圓/顆）。", link: "https://www.google.com/maps/dir/?api=1&destination=Koganji+Temple+Sugamo" },
+            { day: "d5", tag: "🍤 回上野晚餐 1", name: "天ぷら 新宿つな八 上野店", sub: "松坂屋 7F (約 2,800-4,800 日圓)", desc: "松坂屋百貨 7 樓大電梯直達，去骨去刺炸得輕盈軟嫩不膩口，環境幽雅，桌椅舒適。", link: "https://www.google.com/maps/dir/?api=1&destination=Tsunahachi+Matsuzakaya+Ueno" },
+            { day: "d5", tag: "🍤 回上野晚餐 2", name: "鰻 伊豆榮 上野松坂屋店", sub: "松坂屋 7F (約 3,800-5,800 日圓)", desc: "松坂屋 7 樓兩百年老店分店，全平路無階梯，寬敞高背椅子座，免排隊吃鬆軟烤鰻魚。", link: "https://www.google.com/maps/dir/?api=1&destination=Izuei+Matsuzakaya+Ueno" },
+            { day: "d5", tag: "🍤 回上野晚餐 3", name: "札幌 彌助壽司 松坂屋上野店", sub: "松坂屋 7F (約 2,000-3,500 日圓)", desc: "札幌直送鮮魚握壽司拼盤與海鮮茶碗蒸，魚肉細軟鮮甜份量適中，清爽開胃。", link: "https://www.google.com/maps/dir/?api=1&destination=Yasuke+Sushi+Matsuzakaya+Ueno" },
+
+            // D6 (9/22 二 築地/日本橋/阿美橫丁)
+            { day: "d6", tag: "🐟 平坦市集", name: "築地場外市場 (平坦美食街區)", sub: "柏油平路美食街", desc: "1 號出口大電梯上平地，街道平坦好走，丸武現煎厚蛋玉子燒（約 150 日圓）軟綿香甜。", link: "https://www.google.com/maps/dir/?api=1&destination=Tsukiji+Outer+Market" },
+            { day: "d6", tag: "🥢 D6 築地午餐 1", name: "築地 虎杖 (Itadori) 別館", sub: "海鮮三吃 (約 2,200-3,600 日圓)", desc: "新鮮海膽、生魚片與鮭魚卵細丁，第三吃沖熱高湯成茶泡飯，入口即化好咀嚼。", link: "https://www.google.com/maps/dir/?api=1&destination=Itadori+Bekkan+Tsukiji" },
+            { day: "d6", tag: "🥢 D6 築地午餐 2", name: "鳥めし 鳥藤分店 (Toritoh)", sub: "特上嫩雞親子丼 (約 1,100-1,600 日圓)", desc: "明治雞肉名舖，雞肉軟嫩多汁無硬筋，附濃白雞高湯，暖胃又平價。", link: "https://www.google.com/maps/dir/?api=1&destination=Toritoh+Branch+Tsukiji" },
+            { day: "d6", tag: "🥢 D6 築地午餐 3", name: "築地 秀德 (Shutoku) 2號店", sub: "炙燒壽司/星鰻丼 (約 2,500-4,500 日圓)", desc: "熟成赤酢握壽司名店，熟煮星鰻肉質細嫩無比，乾淨整潔且椅子舒適。", link: "https://www.google.com/maps/dir/?api=1&destination=Shutoku+Tsukiji" },
+            { day: "d6", tag: "🏛️ 百年古典", name: "日本橋三越本店與古蹟街區", sub: "文藝復興古蹟百貨", desc: "石造古蹟建築，7 樓傳統茶室點抹茶與和菓子，軟沙發感受江戶老舖優雅氛圍。", link: "https://www.google.com/maps/dir/?api=1&destination=Nihombashi+Mitsukoshi+Main+Store" },
+            { day: "d6", tag: "🛍️ 伴手禮百貨", name: "上野多慶屋與阿美橫丁", sub: "免稅購物大樓", desc: "上野最齊全免稅伴手禮大樓，設有大電梯，仙貝、綠茶與常備品齊全，離飯店僅 5 分鐘步程。", link: "https://www.google.com/maps/dir/?api=1&destination=Takeya+Ueno" },
+            { day: "d6", tag: "🍱 D6 上野晚餐 1", name: "音音 上野公園竹林店", sub: "精緻和食御膳 (約 2,800-4,500 日圓)", desc: "竹林大樓 2 樓（專用大電梯直達），時令鮮魚野菜，挑高大沙發椅座與安靜隔間，極適合最後一晚溫馨聚餐。", link: "https://www.google.com/maps/dir/?api=1&destination=Otoon+Ueno+Bamboo+Garden" },
+            { day: "d6", tag: "🍱 D6 上野晚餐 2", name: "過門香 上野店 (Kamonka)", sub: "雅致和風中菜 (約 2,500-4,200 日圓)", desc: "車站對面大樓直達電梯，蟹黃湯包、鮮蝦燒賣與清蒸海鮮，熱騰騰好消化非常暖胃。", link: "https://www.google.com/maps/dir/?api=1&destination=Kamonka+Ueno" },
+            { day: "d6", tag: "🍱 D6 上野晚餐 3", name: "上野 藪蕎麥 (Yabu Soba)", sub: "江戶三大老店 (約 1,600-2,800 日圓)", desc: "明治 25 年名店，熱鴨肉南蠻蕎麥麵香軟入味，鰹魚高湯甘美，古樸座椅回味無窮。", link: "https://www.google.com/maps/dir/?api=1&destination=Yabu+Soba+Ueno" },
+
+            // D7 (9/23 三 上野/返台)
+            { day: "d7", tag: "🌳 晨間公園", name: "上野恩賜公園與星巴克露台", sub: "噴泉林蔭廣場", desc: "公園口出站全平路無階梯，露天座位區點杯熱茶看著噴泉，享受最後悠閒時光。", link: "https://www.google.com/maps/dir/?api=1&destination=Ueno+Park" },
+            { day: "d7", tag: "🍱 D7 盛宴午餐 1", name: "鰻割烹 伊豆榮 本店", sub: "江戶前烤鰻 (約 4,200-6,800 日圓)", desc: "兩百年老字號，內部設有電梯與高腳椅子座位包廂，完全免跪坐，肉質入口即化無刺阻礙。", link: "https://www.google.com/maps/dir/?api=1&destination=Izuei+Honten" },
+            { day: "d7", tag: "🍱 D7 盛宴午餐 2", name: "韻松亭 (Inshotei 上野公園內)", sub: "百年料亭花籠御膳 (約 3,200-4,800 日圓)", desc: "明治 8 年料亭，軟綿豆皮、手作豆腐與茶碗蒸，淡雅溫和養生，窗外俯瞰公園綠意。", link: "https://www.google.com/maps/dir/?api=1&destination=Inshotei+Ueno" },
+            { day: "d7", tag: "🍱 D7 盛宴午餐 3", name: "上野 精養軒 (Seiyoken)", sub: "老牌西洋紅酒燉牛肉 (約 2,200-3,900 日圓)", desc: "日本西洋料理鼻祖，老法式紅酒燉牛肉軟爛入味入口即散，落地窗景觀優雅舒適。", link: "https://www.google.com/maps/dir/?api=1&destination=Seiyoken+Ueno" },
+            { day: "d7", tag: "✈️ 機場登機", name: "成田國際機場 第二航廈 (NRT)", sub: "搭乘 16:20 返台航班", desc: "搭 Skyliner 41 分鐘直達機場第二航廈，辦理行李託運與出境返台。", link: "https://www.google.com/maps/dir/?api=1&destination=Narita+Airport+Terminal+2" }
+        ];
+
+        let currentMgFilter = "all";
+
+        function filterMapGuide(filter) {
+            currentMgFilter = filter;
+            document.querySelectorAll(".mg-filter-btn").forEach(btn => {
+                btn.classList.remove("bg-brand-600", "text-white");
+                btn.classList.add("bg-gray-100", "text-gray-800");
+            });
+            const activeBtn = document.getElementById(`btn-mg-${filter}`);
+            if (activeBtn) {
+                activeBtn.classList.add("bg-brand-600", "text-white");
+                activeBtn.classList.remove("bg-gray-100", "text-gray-800");
+            }
+            renderMapGuide();
+        }
+
+        function renderMapGuide() {
+            const container = document.getElementById("map-guide-items");
+            if (!container) return;
+            container.innerHTML = "";
+
+            const filtered = currentMgFilter === "all" 
+                ? allMapGuidePlaces 
+                : allMapGuidePlaces.filter(p => p.day === currentMgFilter);
+
+            filtered.forEach(place => {
+                const card = document.createElement("div");
+                card.className = "bg-gray-50/80 hover:bg-white border-2 border-gray-200 hover:border-brand-600 rounded-2xl p-4.5 flex flex-col justify-between gap-3 transition-all shadow-sm";
+                card.innerHTML = `
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between gap-2 border-b border-gray-200 pb-2">
+                            <span class="bg-brand-600 text-white text-xs sm:text-sm font-black px-2.5 py-1 rounded-md">${place.tag}</span>
+                            <span class="text-xs text-brand-700 font-black">${place.sub}</span>
+                        </div>
+                        <h4 class="text-lg sm:text-xl font-black text-black pt-1">${place.name}</h4>
+                        <p class="text-sm sm:text-base text-gray-800 font-bold leading-relaxed">${place.desc}</p>
+                    </div>
+                    <div class="pt-2 border-t border-gray-200/60">
+                        <a href="${place.link}" target="_blank" 
+                           class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-2.5 px-3 rounded-xl shadow-sm text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all">
+                            <span>🧭</span>
+                            <span>👉 開啟 Google Maps 路線導航</span>
+                        </a>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function setFontScale(scaleSize) {
+            const htmlEl = document.documentElement;
+            htmlEl.classList.remove('size-small', 'size-medium', 'size-large');
+            htmlEl.classList.add(`size-${scaleSize}`);
+            
+            document.querySelectorAll("[id^='btn-size-']").forEach(btn => {
+                btn.classList.remove('size-btn-active', 'bg-brand-600', 'text-white');
+                btn.classList.add('text-brand-100/60');
+            });
+            const activeBtn = document.getElementById(`btn-size-${scaleSize}`);
+            if (activeBtn) {
+                activeBtn.classList.add('size-btn-active');
+                activeBtn.classList.remove('text-brand-100/60');
+            }
+            localStorage.setItem("ueno_font_scale_preference_v5", scaleSize);
+        }
+
+        window.onload = function() {
+            const savedScale = localStorage.getItem("ueno_font_scale_preference_v5") || "medium";
+            setFontScale(savedScale);
+
+            initChecklist();
+            initShopping();
+            switchTab('overview');
+            switchDay(1);
+            renderJapaneseCards();
+            renderMapGuide();
+
+            const scrollBtn = document.getElementById('scroll-top-btn');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    scrollBtn.style.opacity = '1';
+                    scrollBtn.style.pointerEvents = 'auto';
+                    scrollBtn.style.transform = 'translateY(0)';
+                } else {
+                    scrollBtn.style.opacity = '0';
+                    scrollBtn.style.pointerEvents = 'none';
+                    scrollBtn.style.transform = 'translateY(10px)';
+                }
+            });
+        };
+
+        function switchTab(tabId) {
+            activeTab = tabId;
+            document.querySelectorAll(".tab-page").forEach(page => page.classList.add("hidden"));
+            document.getElementById(`page-${tabId}`).classList.remove("hidden");
+            
+            document.querySelectorAll("nav button").forEach(btn => {
+                btn.classList.remove("border-white", "text-white");
+                btn.classList.add("border-transparent", "text-brand-100/70");
+            });
+            
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove("border-transparent", "text-brand-100/70");
+                activeBtn.classList.add("border-white", "text-white");
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function switchDay(dayNum) {
+            activeDay = dayNum;
+            document.querySelectorAll(".day-btn").forEach(btn => {
+                btn.classList.remove("bg-brand-600", "text-white", "border-brand-600", "shadow-md");
+                btn.classList.add("bg-white", "text-gray-700", "border-gray-300");
+            });
+            
+            const activeBtn = document.getElementById(`btn-day-${dayNum}`);
+            if (activeBtn) {
+                activeBtn.classList.add("bg-brand-600", "text-white", "border-brand-600", "shadow-md");
+                activeBtn.classList.remove("bg-white", "text-gray-700", "border-gray-300");
+            }
+            renderDayContent(dayNum);
+        }
+        function renderDayContent(dayNum) {
+            const data = itineraryData[dayNum];
+            const contentDiv = document.getElementById("day-content");
+            if (!data) return;
+            
+            let transportsHTML = "";
+            (data.transports || []).forEach(t => {
+                transportsHTML += `
+                    <div class="bg-gray-50 border border-gray-200 p-5 rounded-xl flex flex-col md:flex-row md:items-center gap-4">
+                        <div class="flex items-center gap-3 shrink-0">
+                            <span class="w-12 h-12 rounded-full ${t.badgeColor} text-white font-black flex items-center justify-center text-xl shadow-sm">${t.badge}</span>
+                            <span class="text-xl font-black text-black">${t.badgeName}</span>
+                        </div>
+                        <div class="space-y-1 flex-1">
+                            <span class="text-lg font-black block text-brand-600">➡️ ${t.route}</span>
+                            <p class="text-base text-gray-800 font-bold leading-relaxed">${t.desc}</p>
+                            <div class="bg-brand-600/5 border-2 border-brand-600/20 p-3.5 rounded-xl mt-2 text-brand-900 font-black text-base sm:text-lg">
+                                📢 一句話指引：${t.oneSentenceNav}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            let accessibilityHTML = "";
+            (data.accessibility || []).forEach(step => {
+                accessibilityHTML += `
+                    <li class="flex items-start gap-3 p-2.5 hover:bg-brand-50 rounded-lg transition-all">
+                        <span class="text-2xl mt-0.5 select-none text-brand-600">📍</span>
+                        <span class="text-lg md:text-xl font-black leading-relaxed text-black">${step}</span>
+                    </li>
+                `;
+            });
+            
+            let spotsHTML = "";
+            (data.spots || []).forEach(spot => {
+                spotsHTML += `
+                    <div class="bg-white border-2 border-gray-100 hover:border-brand-600 rounded-2xl shadow-sm transition-all overflow-hidden flex flex-col justify-between">
+                        <div class="p-5 space-y-3 flex-1">
+                            <div class="flex items-start justify-between gap-2 border-b border-gray-100 pb-2">
+                                <h5 class="text-xl font-black text-black">🚩 ${spot.name}</h5>
+                            </div>
+                            <p class="text-base text-gray-800 font-bold leading-relaxed">${spot.desc}</p>
+                        </div>
+                        <div class="px-5 pb-5 pt-1">
+                            <a href="${spot.link}" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 px-4 rounded-xl shadow-md transition-all text-lg flex items-center justify-center gap-2">
+                                🧭 👉【點我開啟 Google Maps 路線導航】
+                            </a>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            contentDiv.innerHTML = `
+                <div class="border-b-4 border-brand-100 pb-4">
+                    <span class="text-sm font-black uppercase tracking-wider text-brand-600">第 ${data.dayNum} 天行程安排</span>
+                    <h3 class="text-2xl md:text-3xl font-black text-black leading-snug">${data.title}</h3>
+                    <p class="text-lg text-gray-800 font-black mt-2 leading-relaxed">${data.intro}</p>
+                </div>
+                
+                <div class="space-y-3">
+                    <h4 class="text-xl font-black flex items-center gap-2 text-brand-700">
+                        <span>🚇</span> 建議交通手段 (交通認路牌)
+                    </h4>
+                    <div class="space-y-3">${transportsHTML}</div>
+                </div>
+                
+                <div class="bg-brand-50/70 rounded-2xl p-5 border-2 border-brand-100 space-y-3">
+                    <h4 class="text-xl font-black flex items-center gap-2 text-brand-700">
+                        <span>♿</span> 避開階梯與天橋 • 優雅平地步行指引
+                    </h4>
+                    <ul class="space-y-3">${accessibilityHTML}</ul>
+                </div>
+                
+                <div class="space-y-4">
+                    <h4 class="text-xl font-black flex items-center gap-2 text-brand-700">
+                        <span>🍛</span> 本日推薦特色景點、餐點與小吃
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">${spotsHTML}</div>
+                </div>
+
+                <div class="bg-amber-50 rounded-2xl p-5 border-2 border-amber-500/30 space-y-3 mt-6">
+                    <h4 class="text-xl font-black flex items-center gap-2 text-amber-900">
+                        <span>🏠</span> 貼心指引：如何安全返回「上野皇冠山丘高級酒店」
+                    </h4>
+                    <p class="text-lg font-black text-gray-900 leading-relaxed">${data.returnTrans}</p>
+                </div>
+            `;
+        }
+        function filterJapanese(category) {
+            jpFilter = category;
+            document.querySelectorAll(".jp-filter-btn").forEach(btn => {
+                btn.classList.remove("bg-brand-600", "text-white");
+                btn.classList.add("bg-white", "text-gray-800", "border-gray-200");
+            });
+            const activeBtn = document.getElementById(`btn-jp-${category}`);
+            if (activeBtn) {
+                activeBtn.classList.add("bg-brand-600", "text-white");
+                activeBtn.classList.remove("bg-white", "text-gray-800", "border-gray-200");
+            }
+            renderJapaneseCards();
+        }
+
+        function renderJapaneseCards() {
+            const container = document.getElementById("japanese-cards");
+            container.innerHTML = "";
+            const filtered = jpFilter === "all" ? japanesePhrases : japanesePhrases.filter(p => p.category === jpFilter);
+                
+            filtered.forEach(p => {
+                const card = document.createElement("div");
+                card.className = "bg-white border-2 border-brand-100 hover:border-brand-600 rounded-2xl p-5 shadow-sm transition-all cursor-pointer flex flex-col justify-between gap-4";
+                card.onclick = () => openModal(p);
+                
+                card.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center border-b border-gray-100 pb-2">
+                            <span class="text-lg font-black text-brand-600">${p.title}</span>
+                            <span class="text-xs bg-brand-50 text-brand-600 px-2.5 py-0.5 rounded-full font-black">點擊放大 🔍</span>
+                        </div>
+                        <p class="text-lg font-black text-gray-800">中文：${p.intent}</p>
+                        <p class="text-2xl font-black text-brand-700 tracking-wide mt-2 leading-relaxed">${p.jp}</p>
+                    </div>
+                    <div class="text-sm bg-gray-50 text-gray-700 p-2.5 rounded-lg font-black">
+                        🗣️ 讀音拼音：${p.hiragana}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openModal(phraseObj) {
+            document.getElementById("modal-intent").textContent = phraseObj.intent;
+            document.getElementById("modal-japanese").textContent = phraseObj.jp;
+            document.getElementById("modal-hiragana").textContent = phraseObj.hiragana;
+            document.getElementById("phrase-modal").classList.remove("hidden");
+            document.body.classList.add("overflow-hidden");
+        }
+
+        function closeModal() {
+            document.getElementById("phrase-modal").classList.add("hidden");
+            document.body.classList.remove("overflow-hidden");
+        }
+
+        function initChecklist() {
+            const savedDaily = localStorage.getItem("ueno_guide_daily_v5");
+            const savedBefore = localStorage.getItem("ueno_guide_before_v5");
+            
+            checklistDaily = savedDaily ? JSON.parse(savedDaily) : [...defaultDailyList];
+            checklistBefore = savedBefore ? JSON.parse(savedBefore) : [...defaultBeforeList];
+            
+            renderChecklists();
+        }
+
+        function saveDailyState() {
+            localStorage.setItem("ueno_guide_daily_v5", JSON.stringify(checklistDaily));
+        }
+
+        function saveBeforeState() {
+            localStorage.setItem("ueno_guide_before_v5", JSON.stringify(checklistBefore));
+        }
+
+        function renderChecklists() {
+            const dailyContainer = document.getElementById("list-daily");
+            const beforeContainer = document.getElementById("list-before");
+            
+            dailyContainer.innerHTML = "";
+            beforeContainer.innerHTML = "";
+            
+            checklistDaily.forEach((item, index) => {
+                const wrapper = document.createElement("label");
+                wrapper.className = `flex items-center gap-4 p-4.5 rounded-xl border-2 transition-all cursor-pointer select-none ${item.checked ? 'bg-brand-50/50 border-brand-600 text-brand-700' : 'bg-white border-gray-200 text-gray-800 hover:border-brand-100'}`;
+                wrapper.innerHTML = `
+                    <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleDaily(${index})" class="w-8 h-8 rounded-lg text-brand-600 border-gray-300 focus:ring-brand-600 shrink-0">
+                    <span class="text-lg md:text-xl font-black ${item.checked ? 'line-through opacity-60' : ''}">${item.text}</span>
+                `;
+                dailyContainer.appendChild(wrapper);
+            });
+            
+            checklistBefore.forEach((item, index) => {
+                const wrapper = document.createElement("div");
+                wrapper.className = `flex items-center justify-between gap-3 p-4.5 rounded-xl border-2 transition-all ${item.checked ? 'bg-brand-50/50 border-brand-600 text-brand-700' : 'bg-white border-gray-200 text-gray-800 hover:border-brand-100'}`;
+                wrapper.innerHTML = `
+                    <label class="flex items-center gap-4 cursor-pointer select-none flex-1">
+                        <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleBefore(${index})" class="w-8 h-8 rounded-lg text-brand-600 border-gray-300 focus:ring-brand-600 shrink-0">
+                        <span class="text-lg md:text-xl font-black ${item.checked ? 'line-through opacity-60' : ''}">${item.text}</span>
+                    </label>
+                    <button onclick="removeBeforeItem(${index})" class="text-red-600 hover:text-red-800 font-black px-4 py-2 bg-red-50 hover:bg-red-100 rounded-xl text-base shrink-0">
+                        🗑️ 刪除
+                    </button>
+                `;
+                beforeContainer.appendChild(wrapper);
+            });
+        }
+
+        function toggleDaily(index) {
+            checklistDaily[index].checked = !checklistDaily[index].checked;
+            saveDailyState();
+            renderChecklists();
+        }
+
+        function toggleBefore(index) {
+            checklistBefore[index].checked = !checklistBefore[index].checked;
+            saveBeforeState();
+            renderChecklists();
+        }
+
+        function addCustomItem() {
+            const input = document.getElementById("new-item-input");
+            const text = input.value.trim();
+            if (text === "") return;
+            checklistBefore.push({ text: text, checked: false });
+            saveBeforeState();
+            renderChecklists();
+            input.value = "";
+        }
+
+        function removeBeforeItem(index) {
+            checklistBefore.splice(index, 1);
+            saveBeforeState();
+            renderChecklists();
+        }
+
+        function resetChecklist() {
+            currentConfirmAction = "checklist";
+            document.getElementById("confirm-modal-title").textContent = "🔄 行李清單重置確認";
+            document.getElementById("confirm-modal-desc").textContent = "確認要重置所有行李清單的勾選進度嗎？這會清除您目前勾選的所有項目並恢復成預設值。";
+            document.getElementById("custom-confirm-modal").classList.remove("hidden");
+            document.body.classList.add("overflow-hidden");
+        }
+
+        /* ================= 購物記帳管理邏輯 ================= */
+        function initShopping() {
+            const savedRecords = localStorage.getItem("ueno_shopping_records_v1");
+            const savedRate = localStorage.getItem("ueno_exchange_rate_v1");
+
+            if (savedRate) {
+                currentExchangeRate = parseFloat(savedRate) || 0.215;
+            }
+            const rateInput = document.getElementById("input-rate");
+            if (rateInput) rateInput.value = currentExchangeRate;
+
+            if (savedRecords) {
+                try {
+                    shoppingRecords = JSON.parse(savedRecords);
+                } catch(e) {
+                    shoppingRecords = [];
+                }
+            } else {
+                // 預設示範記錄（方便長者初次開啟體驗）
+                shoppingRecords = [
+                    {
+                        id: 1,
+                        name: "吉池生鮮超市 麝香葡萄",
+                        qty: 1,
+                        amount: 1980,
+                        unitPrice: 1980,
+                        twd: Math.round(1980 * currentExchangeRate),
+                        time: "9/17 下午"
+                    }
+                ];
+                saveShoppingRecords();
+            }
+
+            calcShopPreview();
+            renderShoppingList();
+        }
+
+        function saveShoppingRecords() {
+            localStorage.setItem("ueno_shopping_records_v1", JSON.stringify(shoppingRecords));
+        }
+
+        function updateExchangeRate() {
+            const input = document.getElementById("input-rate");
+            const val = parseFloat(input.value);
+            if (!isNaN(val) && val > 0) {
+                currentExchangeRate = val;
+                localStorage.setItem("ueno_exchange_rate_v1", currentExchangeRate.toString());
+                // 重新換算所有記錄的台幣值
+                shoppingRecords.forEach(r => {
+                    r.twd = Math.round(r.amount * currentExchangeRate);
+                });
+                saveShoppingRecords();
+                calcShopPreview();
+                renderShoppingList();
+            }
+        }
+
+        function resetExchangeRate() {
+            currentExchangeRate = 0.215;
+            const input = document.getElementById("input-rate");
+            if (input) input.value = "0.215";
+            localStorage.setItem("ueno_exchange_rate_v1", "0.215");
+            shoppingRecords.forEach(r => {
+                r.twd = Math.round(r.amount * currentExchangeRate);
+            });
+            saveShoppingRecords();
+            calcShopPreview();
+            renderShoppingList();
+        }
+
+        function calcShopPreview() {
+            const qtyInput = document.getElementById("shop-qty");
+            const amtInput = document.getElementById("shop-amount");
+            const unitEl = document.getElementById("preview-unit");
+            const twdEl = document.getElementById("preview-twd");
+
+            if (!qtyInput || !amtInput || !unitEl || !twdEl) return;
+
+            const qty = parseInt(qtyInput.value) || 1;
+            const amt = parseFloat(amtInput.value) || 0;
+
+            const unit = qty > 0 ? Math.round(amt / qty) : amt;
+            const twd = Math.round(amt * currentExchangeRate);
+
+            unitEl.textContent = `¥ ${unit.toLocaleString()}`;
+            twdEl.textContent = `NT$ ${twd.toLocaleString()}`;
+        }
+
+        function addShoppingRecord() {
+            const nameInput = document.getElementById("shop-name");
+            const qtyInput = document.getElementById("shop-qty");
+            const amtInput = document.getElementById("shop-amount");
+
+            const name = nameInput.value.trim();
+            const qty = parseInt(qtyInput.value) || 1;
+            const amt = parseFloat(amtInput.value) || 0;
+
+            if (!name) {
+                nameInput.focus();
+                nameInput.classList.add("border-red-500");
+                setTimeout(() => nameInput.classList.remove("border-red-500"), 1500);
+                return;
+            }
+
+            const unit = qty > 0 ? Math.round(amt / qty) : amt;
+            const twd = Math.round(amt * currentExchangeRate);
+            
+            const now = new Date();
+            const timeStr = `${now.getMonth() + 1}/${now.getDate()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            const newRecord = {
+                id: Date.now(),
+                name: name,
+                qty: qty,
+                amount: amt,
+                unitPrice: unit,
+                twd: twd,
+                time: timeStr
+            };
+
+            shoppingRecords.unshift(newRecord);
+            saveShoppingRecords();
+            renderShoppingList();
+
+            // 重設輸入欄
+            nameInput.value = "";
+            amtInput.value = "";
+            qtyInput.value = "1";
+            calcShopPreview();
+        }
+
+        function removeShoppingRecord(id) {
+            shoppingRecords = shoppingRecords.filter(r => r.id !== id);
+            saveShoppingRecords();
+            renderShoppingList();
+        }
+
+        function resetShoppingRecords() {
+            currentConfirmAction = "shopping";
+            document.getElementById("confirm-modal-title").textContent = "🗑️ 清空購物紀錄確認";
+            document.getElementById("confirm-modal-desc").textContent = "確認要清空所有已記下的購物與消費明細嗎？此操作無法還原。";
+            document.getElementById("custom-confirm-modal").classList.remove("hidden");
+            document.body.classList.add("overflow-hidden");
+        }
+
+        function renderShoppingList() {
+            const container = document.getElementById("shopping-records-list");
+            const badge = document.getElementById("shop-count-badge");
+            const statJpy = document.getElementById("stat-total-jpy");
+            const statTwd = document.getElementById("stat-total-twd");
+            const statItems = document.getElementById("stat-total-items");
+
+            if (!container) return;
+
+            let totalJ = 0;
+            let totalT = 0;
+            let totalQ = 0;
+
+            shoppingRecords.forEach(r => {
+                totalJ += r.amount || 0;
+                totalT += r.twd || 0;
+                totalQ += r.qty || 1;
+            });
+
+            if (badge) badge.textContent = `${shoppingRecords.length} 筆紀錄`;
+            if (statJpy) statJpy.textContent = `¥ ${totalJ.toLocaleString()}`;
+            if (statTwd) statTwd.textContent = `NT$ ${totalT.toLocaleString()}`;
+            if (statItems) statItems.textContent = `${totalQ} 件 (${shoppingRecords.length}項)`;
+
+            container.innerHTML = "";
+
+            if (shoppingRecords.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 text-gray-500 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+                        <span class="text-4xl block mb-2">🛒</span>
+                        <p class="text-base font-bold">目前尚無購物紀錄，趕快買點好吃的或伴手禮記上一筆吧！</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let rowsHtml = "";
+            shoppingRecords.forEach((item, idx) => {
+                rowsHtml += `
+                    <tr class="border-b border-gray-200 hover:bg-brand-50/50 transition-colors ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}">
+                        <td class="py-3.5 px-3 font-black text-black text-base whitespace-nowrap sm:whitespace-normal">
+                            ${item.name}
+                        </td>
+                        <td class="py-3.5 px-3 font-bold text-center text-gray-800 text-base whitespace-nowrap">
+                            <span class="bg-brand-100 text-brand-900 px-2.5 py-1 rounded-md font-black text-sm">× ${item.qty}</span>
+                        </td>
+                        <td class="py-3.5 px-3 font-bold text-right text-gray-800 text-base whitespace-nowrap">
+                            ¥${(item.unitPrice || 0).toLocaleString()}
+                        </td>
+                        <td class="py-3.5 px-3 font-black text-right text-brand-700 text-base sm:text-lg whitespace-nowrap">
+                            ¥${(item.amount || 0).toLocaleString()}
+                        </td>
+                        <td class="py-3.5 px-3 font-black text-right text-blue-700 text-base whitespace-nowrap">
+                            NT$ ${(item.twd || 0).toLocaleString()}
+                        </td>
+                        <td class="py-3.5 px-3 font-bold text-center text-gray-500 text-xs sm:text-sm whitespace-nowrap">
+                            ${item.time || '-'}
+                        </td>
+                        <td class="py-3.5 px-3 text-center whitespace-nowrap">
+                            <button onclick="removeShoppingRecord(${item.id})" class="text-red-600 hover:text-red-800 font-black px-3 py-1.5 bg-red-50 hover:bg-red-100 rounded-lg text-sm border border-red-200 transition-all inline-flex items-center gap-1" title="刪除此筆">
+                                <span>🗑️</span>
+                                <span class="hidden sm:inline">刪除</span>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="overflow-x-auto rounded-xl border-2 border-brand-100 shadow-sm">
+                    <table class="w-full text-left border-collapse min-w-[620px]">
+                        <thead>
+                            <tr class="bg-brand-600 text-white text-sm sm:text-base font-black">
+                                <th class="py-3 px-3">物品名稱</th>
+                                <th class="py-3 px-3 text-center">數量</th>
+                                <th class="py-3 px-3 text-right">日圓單價</th>
+                                <th class="py-3 px-3 text-right">購入總額</th>
+                                <th class="py-3 px-3 text-right">約合台幣</th>
+                                <th class="py-3 px-3 text-center">時間</th>
+                                <th class="py-3 px-3 text-center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rowsHtml}
+                        </tbody>
+                        <tfoot>
+                            <tr class="bg-brand-50 border-t-2 border-brand-600 font-black text-brand-900 text-base sm:text-lg">
+                                <td class="py-3 px-3 text-brand-800">總計（${shoppingRecords.length} 項）</td>
+                                <td class="py-3 px-3 text-center font-black text-brand-800">${totalQ} 件</td>
+                                <td class="py-3 px-3 text-right text-gray-400 text-sm font-bold">-</td>
+                                <td class="py-3 px-3 text-right font-black text-brand-700">¥${totalJ.toLocaleString()}</td>
+                                <td class="py-3 px-3 text-right font-black text-blue-700">NT$ ${totalT.toLocaleString()}</td>
+                                <td colspan="2" class="py-3 px-3 text-center text-xs text-gray-500 font-bold">即時加總</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            `;
+        }
+
+        function handleConfirmReset(confirmed) {
+            document.getElementById("custom-confirm-modal").classList.add("hidden");
+            document.body.classList.remove("overflow-hidden");
+            if (confirmed) {
+                if (currentConfirmAction === "checklist") {
+                    checklistDaily = defaultDailyList.map(item => ({ ...item, checked: false }));
+                    checklistBefore = defaultBeforeList.map(item => ({ ...item, checked: false }));
+                    saveDailyState();
+                    saveBeforeState();
+                    renderChecklists();
+                } else if (currentConfirmAction === "shopping") {
+                    shoppingRecords = [];
+                    saveShoppingRecords();
+                    renderShoppingList();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
