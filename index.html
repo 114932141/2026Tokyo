@@ -9,11 +9,11 @@
     <!-- PWA Manifest & Mobile Viewport -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="東京慢活">
+    <meta name="apple-mobile-web-app-title" content="東京自由行">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#1e4620">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>2026 東京伊豆自由行</title>
+    <title>2026 東京自由行</title>
     
     <!-- Tailwind CSS for modern accessible UI -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -111,80 +111,86 @@
 
     <div id="offline-indicator">⚠️ 目前處於離線狀態 — 已載入安全離線快取，可正常查閱</div>
 
-    <header class="sticky top-0 z-40 bg-brand-600 text-white shadow-md">
-        <div class="max-w-4xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-3">
-            <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
-                <span class="text-3xl">♨️</span>
-                <h1 class="text-xl sm:text-2xl font-black tracking-wide">2026 東京伊豆自由行</h1>
-                <div class="flex items-center gap-2">
-                    <a href="https://www.google.com/maps" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white font-black px-3 py-1.5 rounded-xl text-base flex items-center gap-1 shadow border border-white/20 transition-all" title="開啟 Google 地圖">
-                        <span>🌍</span>
-                        <span class="text-sm sm:text-base">地圖</span>
-                    </a>
-                    <button onclick="openHeaderAiAssistant()" class="bg-[#10a37f] hover:bg-[#0e8e6e] text-white font-black px-3 py-1.5 rounded-xl text-base flex items-center gap-1 shadow border border-white/20 transition-all" title="開啟 ChatGPT 語音提問">
-                        <span>🤖</span>
-                        <span class="text-sm sm:text-base">AI小助理</span>
-                    </button>
-                </div>
+    <header class="sticky top-0 z-40 bg-brand-600 text-white shadow-md transition-all duration-300">
+        <!-- 頂部精簡列：標題 + 核心操作 + 收合切換鈕 -->
+        <div class="max-w-4xl mx-auto px-3 py-1.5 flex items-center justify-between gap-1.5 sm:gap-3">
+            <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                <span class="text-xl sm:text-2xl">🗼</span>
+                <h1 class="text-base sm:text-xl font-black tracking-tight whitespace-nowrap">東京自由行</h1>
             </div>
             
-            <div class="flex items-center gap-2 bg-brand-700 px-3 py-1.5 rounded-xl border border-brand-100/30 text-base">
-                <span class="font-black text-brand-50 shrink-0 text-sm sm:text-base">文字：</span>
-                <div class="flex bg-brand-900 rounded-lg p-0.5 border border-brand-100/10">
-                    <button onclick="setFontScale('standard')" id="btn-size-standard" class="px-3 py-1 font-bold rounded text-sm transition-all text-brand-100/60 hover:text-white">小</button>
-                    <button onclick="setFontScale('large')" id="btn-size-large" class="px-3 py-1 font-bold rounded text-sm transition-all text-white bg-brand-600 shadow">中</button>
-                    <button onclick="setFontScale('huge')" id="btn-size-huge" class="px-3 py-1 font-bold rounded text-sm transition-all text-brand-100/60 hover:text-white">大</button>
-                </div>
-                <!-- 強制刷新快取按鈕 (長者/使用者友善) -->
-                <button onclick="forcePurgeCacheAndReload()" class="ml-1 bg-brand-800 hover:bg-brand-900 text-brand-100 hover:text-white px-2 py-1 rounded-lg text-xs font-black border border-brand-100/20 transition-all flex items-center gap-1" title="清除快取並載入最新版本（保留您的記帳與清單）">
-                    <span>🔄</span>
-                    <span class="hidden sm:inline">更新</span>
+            <!-- 核心快捷按鈕群 (水平緊湊排列) -->
+            <div class="flex items-center gap-1.5">
+                <a href="https://www.google.com/maps" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white font-black px-2.5 py-1 rounded-lg text-xs sm:text-sm flex items-center gap-1 shadow border border-white/20 transition-all shrink-0" title="開啟 Google 地圖">
+                    <span>🌍</span>
+                    <span>地圖</span>
+                </a>
+                <button onclick="openHeaderAiAssistant()" class="bg-[#10a37f] hover:bg-[#0e8e6e] text-white font-black px-2.5 py-1 rounded-lg text-xs sm:text-sm flex items-center gap-1 shadow border border-white/20 transition-all shrink-0" title="開啟 ChatGPT 語音提問">
+                    <span>🤖</span>
+                    <span>AI助理</span>
+                </button>
+                
+                <!-- 收合 / 展開次要工具面板切換按鈕 -->
+                <button onclick="toggleHeaderTools()" id="btn-toggle-tools" class="bg-brand-700 hover:bg-brand-800 text-brand-100 px-2 py-1 rounded-lg text-xs font-black border border-brand-100/20 flex items-center gap-0.5" title="收合或展開字體調整工具">
+                    <span id="toggle-tools-icon">⚙️</span>
                 </button>
             </div>
         </div>
 
-        <!-- 6 Main Navigation Tabs -->
+        <!-- 可收合次要工具面板：字體縮放與強制更新 -->
+        <div id="header-tools-panel" class="hidden bg-brand-700/90 border-t border-brand-500/30 px-3 py-1.5 transition-all">
+            <div class="max-w-4xl mx-auto flex items-center justify-between text-xs sm:text-sm">
+                <div class="flex items-center gap-1.5">
+                    <span class="font-black text-brand-100 shrink-0">字級：</span>
+                    <div class="flex bg-brand-900 rounded-lg p-0.5 border border-brand-100/10">
+                        <button onclick="setFontScale('standard')" id="btn-size-standard" class="px-2.5 py-0.5 font-bold rounded text-xs transition-all text-brand-100/60 hover:text-white">小</button>
+                        <button onclick="setFontScale('large')" id="btn-size-large" class="px-2.5 py-0.5 font-bold rounded text-xs transition-all text-white bg-brand-600 shadow">中</button>
+                        <button onclick="setFontScale('huge')" id="btn-size-huge" class="px-2.5 py-0.5 font-bold rounded text-xs transition-all text-brand-100/60 hover:text-white">大</button>
+                    </div>
+                </div>
+                
+                <button onclick="forcePurgeCacheAndReload()" class="bg-brand-800 hover:bg-brand-900 text-brand-100 hover:text-white px-2.5 py-1 rounded-lg text-xs font-black border border-brand-100/20 transition-all flex items-center gap-1" title="清除快取更新">
+                    <span>🔄</span>
+                    <span>重新整理</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 5 大主分頁導航 -->
         <nav class="bg-brand-700 border-t border-brand-600 max-w-4xl mx-auto">
-            <div class="grid grid-cols-3 sm:grid-cols-5 text-center">
-                <button onclick="switchTab('overview')" id="tab-overview" class="py-2.5 px-1 font-bold border-b-4 border-white text-white focus:outline-none transition-all flex flex-col items-center justify-center gap-0.5">
-                    <span class="text-2xl">📋</span>
-                    <span class="font-black text-sm sm:text-base">行程總覽</span>
+            <div class="grid grid-cols-5 text-center">
+                <button onclick="switchTab('overview')" id="tab-overview" class="py-1.5 px-0.5 font-bold border-b-2 sm:border-b-4 border-white text-white focus:outline-none transition-all flex flex-col sm:flex-row items-center justify-center sm:gap-1">
+                    <span class="text-lg sm:text-xl">📋</span>
+                    <span class="font-black text-[11px] sm:text-sm tracking-tighter sm:tracking-normal">總覽</span>
                 </button>
-                <button onclick="switchTab('itinerary')" id="tab-itinerary" class="py-2.5 px-1 font-bold border-b-4 border-transparent text-brand-100/70 hover:text-white focus:outline-none transition-all flex flex-col items-center justify-center gap-0.5">
-                    <span class="text-2xl">🚶</span>
-                    <span class="font-black text-sm sm:text-base">每天行程</span>
+                <button onclick="switchTab('itinerary')" id="tab-itinerary" class="py-1.5 px-0.5 font-bold border-b-2 sm:border-b-4 border-transparent text-brand-100/70 hover:text-white focus:outline-none transition-all flex flex-col sm:flex-row items-center justify-center sm:gap-1">
+                    <span class="text-lg sm:text-xl">🚶</span>
+                    <span class="font-black text-[11px] sm:text-sm tracking-tighter sm:tracking-normal">行程</span>
                 </button>
-                <button onclick="switchTab('japanese')" id="tab-japanese" class="py-2.5 px-1 font-bold border-b-4 border-transparent text-brand-100/70 hover:text-white focus:outline-none transition-all flex flex-col items-center justify-center gap-0.5">
-                    <span class="text-2xl">🎴</span>
-                    <span class="font-black text-sm sm:text-base">手指日語</span>
+                <button onclick="switchTab('japanese')" id="tab-japanese" class="py-1.5 px-0.5 font-bold border-b-2 sm:border-b-4 border-transparent text-brand-100/70 hover:text-white focus:outline-none transition-all flex flex-col sm:flex-row items-center justify-center sm:gap-1">
+                    <span class="text-lg sm:text-xl">🎴</span>
+                    <span class="font-black text-[11px] sm:text-sm tracking-tighter sm:tracking-normal">日語</span>
                 </button>
-                <button onclick="switchTab('checklist')" id="tab-checklist" class="py-2.5 px-1 font-bold border-b-4 border-transparent text-brand-100/70 hover:text-white focus:outline-none transition-all flex flex-col items-center justify-center gap-0.5">
-                    <span class="text-2xl">✅</span>
-                    <span class="font-black text-sm sm:text-base">準備清單</span>
+                <button onclick="switchTab('checklist')" id="tab-checklist" class="py-1.5 px-0.5 font-bold border-b-2 sm:border-b-4 border-transparent text-brand-100/70 hover:text-white focus:outline-none transition-all flex flex-col sm:flex-row items-center justify-center sm:gap-1">
+                    <span class="text-lg sm:text-xl">✅</span>
+                    <span class="font-black text-[11px] sm:text-sm tracking-tighter sm:tracking-normal">清單</span>
                 </button>
-                <button onclick="switchTab('shopping')" id="tab-shopping" class="py-2.5 px-1 font-bold border-b-4 border-transparent text-brand-100/70 hover:text-white focus:outline-none transition-all flex flex-col items-center justify-center gap-0.5">
-                    <span class="text-2xl">🛍️</span>
-                    <span class="font-black text-sm sm:text-base">購物記帳</span>
+                <button onclick="switchTab('shopping')" id="tab-shopping" class="py-1.5 px-0.5 font-bold border-b-2 sm:border-b-4 border-transparent text-brand-100/70 hover:text-white focus:outline-none transition-all flex flex-col sm:flex-row items-center justify-center sm:gap-1">
+                    <span class="text-lg sm:text-xl">🛍️</span>
+                    <span class="font-black text-[11px] sm:text-sm tracking-tighter sm:tracking-normal">記帳</span>
                 </button>
             </div>
         </nav>
     </header>
 
-    <main class="max-w-4xl mx-auto px-4 py-6 pb-20">
-
+    <main class="max-w-4xl mx-auto px-4 py-4 pb-20">
         <!-- ================= PAGE 1: 行程總覽 ================= -->
         <div id="page-overview" class="tab-page space-y-6">
-            
-            <!-- Flight Details Card -->
-            <div class="bg-white rounded-2xl p-6 border-2 border-brand-600 shadow-sm space-y-4">
-                <div class="flex items-center gap-3 border-b-2 border-brand-100 pb-3">
-                    <span class="text-4xl">✈️</span>
-                    <div>
-                        <span class="text-sm font-black uppercase tracking-wider text-brand-600">來回班機指引</span>
-                        <h2 class="text-2xl font-black text-black">航班與航廈登機資訊</h2>
-                    </div>
-                </div>
-                
+            <!-- Flight Section -->
+            <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
+                <h3 class="text-2xl font-black border-b pb-2 flex items-center gap-2 text-black">
+                    <span>✈️</span> 航班資訊
+                </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="bg-brand-50 p-5 rounded-xl border border-brand-100 space-y-2">
                         <span class="bg-brand-600 text-white text-sm font-black px-2.5 py-1 rounded-md inline-block">🛫 去程航班</span>
@@ -233,7 +239,7 @@
                             <span class="font-bold text-black">JR 上野站「廣小路口」步行 4 分鐘，平面斑馬線直達。</span>
                         </div>
                     </div>
-                    <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Crown+Hills+Ueno+Premier" target="_blank" class="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-black py-3 px-6 rounded-xl shadow transition-all text-lg mt-2">
+                    <a href="https://maps.google.com/?cid=3776151992955148480&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-black py-3 px-6 rounded-xl shadow transition-all text-lg mt-2">
                         🧭 👉【點我開啟 Google Maps 定位飯店】
                     </a>
                 </div>
@@ -264,7 +270,7 @@
                     </div>
                 </div>
                 <p class="text-base font-bold text-gray-700">
-                    完整收納全程景點、生鮮超市與 30+ 間牙口友善推薦餐廳，點選即可直接呼叫 Google Maps 進行步行或車行導航：
+                    完整收納全程景點、生鮮超市與推薦餐廳，點選即可直接呼叫 Google Maps 進行步行或車行導航：
                 </p>
                 <div class="flex flex-wrap gap-2 pt-1" id="map-filter-buttons">
                     <button onclick="filterMapGuide('all')" class="map-tag-btn px-3 py-1.5 bg-blue-600 text-white text-sm font-black rounded-lg">全部清單</button>
@@ -574,7 +580,7 @@
                 ],
                 accessibility: [
                     "【1. 川越老街全平坦路面】：藏造一番街與時之鐘周邊皆為寬闊平整的石板柏油路，無階梯阻礙，輪椅或長輩散步極輕鬆。",
-                    "【2. 冰川神社平緩無障礙】：神社境內為平緩木棧石板路，參拜無高聳石階；往返老街建議搭計程車（約 4 分鐘，出示卡片20）最省力。",
+                    "【2. 冰川神社平緩無障礙】：神社境內為平緩木棧石板路，參拜無高聳石階；往返老街建議搭計程車（約 4 分鐘，出示卡片7）最省力。",
                     "【3. 老街歇腳茶房】：多間百年和菓子舖（如くらづくり本舗）附設寬敞沙發椅內用茶房，隨時可坐下品茗休足。"
                 ],
                 spots: [
@@ -845,7 +851,7 @@
                 accessibility: [
                     "【1. 築地場外平坦路面】：避開車輛行駛的主幹道，沿人行道漫步，熟食店家門口均為平地無階梯。",
                     "【2. 日本橋三越古蹟大樓】：國家重要文化財，內部配有無障礙大電梯、電扶梯與各大樓層專屬沙發休息區。",
-                    "【3. 多慶屋新館採買】：多慶屋 TAKEYA 1 超級免稅大樓設有大電梯與中文退稅櫃台，推車動線平坦寬敞。"
+                    "【3. 多慶屋新館採買】：多慶屋 TAKEYA 1 超級免稅大樓設有大電梯與中文退稅櫃台，推車動線平坦寬敞。",
                 ],
                 spots: [
                     {
@@ -932,7 +938,7 @@
         };
 
         const mapGuidePlaces = [
-            { name: "上野皇冠山丘高級酒店 (Hotel Crown Hills)", desc: "全程固定住宿點 (20-24F高景觀客房，樓下7-11)", cat: "stay", url: "https://www.google.com/maps/search/?api=1&query=Hotel+Crown+Hills+Ueno+Premier" },
+            { name: "上野皇冠山丘高級酒店 (Hotel Crown Hills)", desc: "全程固定住宿點 (20-24F高景觀客房，樓下7-11)", cat: "stay", url: "https://maps.google.com/?cid=3776151992955148480&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
             { name: "吉池 本店 大型生鮮生活超市 (B1/B2/1F)", desc: "離飯店4分鐘，採買日本麝香葡萄、鮮奶與仙貝", cat: "stay", url: "https://www.google.com/maps/search/?api=1&query=Yoshiike+Main+Store" },
             { name: "京成上野站 (Skyliner 出入口)", desc: "來回機場直達車站，正面口全平坦步道", cat: "d1", url: "https://www.google.com/maps/search/?api=1&query=Keisei+Ueno+Station" },
             { name: "みはし (Mihashi) 上野本店", desc: "傳統白玉紅豆蜜老店，綿密入口即化 (¥700-¥1,000)", cat: "d1", url: "https://www.google.com/maps/search/?api=1&query=Anmitsu+Mihashi+Ueno+Main+Shop" },
@@ -1069,7 +1075,6 @@
         // 🚀 強力快取清理與保護機制 (保留 localStorage)
         // ==========================================
         function purgeStaleServiceWorkersAndCaches() {
-            // 1. 若有遺留的 Service Worker，立即註銷解綁，防止它攔截請求傳回舊網頁
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.getRegistrations().then(registrations => {
                     for (let registration of registrations) {
@@ -1080,7 +1085,6 @@
                 }).catch(e => console.warn('[CacheGuard] SW unregister notice:', e));
             }
 
-            // 2. 清理瀏覽器 CacheStorage 快取快照（保留 localStorage 的記帳與準備清單）
             if ('caches' in window) {
                 caches.keys().then(keys => {
                     return Promise.all(keys.map(key => caches.delete(key)));
@@ -1090,38 +1094,41 @@
             }
         }
 
-        // 供長輩或使用者在點選頂部「🔄 更新」時執行
         function forcePurgeCacheAndReload() {
             purgeStaleServiceWorkersAndCaches();
-            // 加入時間戳記避免被瀏覽器 HTTP 快取攔截，保留目前的 hash / 狀態
             const cleanUrl = window.location.origin + window.location.pathname + '?v=' + Date.now();
             window.location.replace(cleanUrl);
         }
 
         // Initialize App on DOM Load
         window.onload = function() {
-            // 每次頁面啟動時，主動確保沒有殘留的 SW 快取在作怪
             purgeStaleServiceWorkersAndCaches();
 
-            // Restore scale preference (從 localStorage 安全還原)
             const savedScale = localStorage.getItem("ueno_font_scale_pref") || "large";
             setFontScale(savedScale);
 
-            // Restore Checklist (從 localStorage 安全還原)
             initChecklist();
-
-            // Restore Shopping (從 localStorage 安全還原)
             initShopping();
-
-            // Render Map Guide
             renderMapGuide();
-
-            // Render Day Content
             renderDayContent(1);
-
-            // Render Japanese Cards
             renderJapaneseCards();
         };
+
+        // 收合 / 展開頂部次要功能工具列
+        function toggleHeaderTools() {
+            const panel = document.getElementById("header-tools-panel");
+            const icon = document.getElementById("toggle-tools-icon");
+            if (!panel) return;
+            
+            const isHidden = panel.classList.contains("hidden");
+            if (isHidden) {
+                panel.classList.remove("hidden");
+                if (icon) icon.textContent = "✖️";
+            } else {
+                panel.classList.add("hidden");
+                if (icon) icon.textContent = "⚙️";
+            }
+        }
 
         // Font scale switcher
         function setFontScale(scale) {
@@ -1307,21 +1314,19 @@
             if (!('speechSynthesis' in window)) {
                 return;
             }
-            window.speechSynthesis.cancel(); // 停止目前可能正在播放的語音
+            window.speechSynthesis.cancel();
 
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'ja-JP';
-            utterance.rate = 0.85; // 稍慢速，咬字清晰，更適合長者與日本店員聆聽
+            utterance.rate = 0.85;
             utterance.pitch = 1.0;
 
-            // 尋找最佳 ja-JP 本地語音
             const voices = window.speechSynthesis.getVoices();
             const jpVoice = voices.find(v => v.lang === 'ja-JP' || v.lang.startsWith('ja'));
             if (jpVoice) {
                 utterance.voice = jpVoice;
             }
 
-            // 按鈕動畫與狀態回饋
             if (btnElement) {
                 const originalHTML = btnElement.innerHTML;
                 btnElement.disabled = true;
@@ -1416,7 +1421,7 @@
 
         function closeModal() {
             if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // 關閉彈窗時即刻停止發音
+                window.speechSynthesis.cancel();
             }
             document.getElementById("phrase-modal").classList.add("hidden");
             document.body.classList.remove("overflow-hidden");
@@ -1622,13 +1627,10 @@
 
     <script>
         // ==========================================
-        // 🤖 AI 伴遊助理模組 (智慧秒回庫 + 官方App直連 + API支援)
-        // ==========================================
         // 🤖 AI 伴遊助理模組 (頂部 AI 小助理專用)
         // ==========================================
         const ELDER_COUPLE_PROMPT_TEXT = "你好！我們是兩位來自台灣 70歲的夫妻，目前在東京自助旅行，住在「上野皇冠山丘高級酒店（Hotel Crown Hills Ueno Premier）」。我們行動自如但走太久會疲勞，希望能以平坦無障礙、有電梯、餐飲軟嫩好咀嚼、交通手段以公共運輸及步行為原則。請問：";
 
-        // 🚀 頂部快捷 AI 小助理專用點擊事件
         function openHeaderAiAssistant() {
             const promptEncoded = encodeURIComponent(ELDER_COUPLE_PROMPT_TEXT);
             window.open(`https://chatgpt.com/?q=${promptEncoded}`, '_blank');
