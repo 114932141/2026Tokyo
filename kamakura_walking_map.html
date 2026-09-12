@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>古都鎌倉慢活散步地圖 - 漫畫風手繪指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Yuji+Boku&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Zen Maru Gothic', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f6f0e6;
+            color: #2b2520;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .brush-font {
+            font-family: 'Yuji Boku', serif;
+        }
+        /* 漫畫網點與手繪紙質感 */
+        .paper-pattern {
+            background-color: #faf6ee;
+            background-image: radial-gradient(#d6c9b5 1px, transparent 1px);
+            background-size: 16px 16px;
+        }
+        /* 漫畫框陰影與邊框 */
+        .manga-panel {
+            border: 3.5px solid #2e261f;
+            box-shadow: 4px 5px 0px #2e261f;
+            border-radius: 20px;
+        }
+        .manga-bubble {
+            border: 2.5px solid #2e261f;
+            box-shadow: 2px 3px 0px #2e261f;
+        }
+        /* 漫畫對話框小尾巴 */
+        .speech-arrow-down {
+            position: relative;
+        }
+        .speech-arrow-down::after {
+            content: '';
+            position: absolute;
+            bottom: -9px;
+            left: 24px;
+            border-width: 9px 8px 0;
+            border-style: solid;
+            border-color: #2e261f transparent;
+            display: block;
+            width: 0;
+        }
+        .speech-arrow-down::before {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 26px;
+            border-width: 7px 6px 0;
+            border-style: solid;
+            border-color: #ffffff transparent;
+            display: block;
+            width: 0;
+            z-index: 1;
+        }
+        /* 閃爍亮點動畫 */
+        @keyframes gentle-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.95; }
+            50% { transform: scale(1.04); opacity: 1; }
+        }
+        .pulse-card {
+            animation: gentle-pulse 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="p-2 sm:p-4 max-w-md mx-auto min-h-screen">
+
+    <!-- 頂部操作按鈕（返回主行程與下載圖檔） -->
+    <header class="flex items-center justify-between gap-2 mb-3 px-1">
+        <a href="index.html" class="bg-amber-800 hover:bg-amber-900 text-white font-black text-sm px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-md border border-amber-950">
+            <span>🔙</span>
+            <span>返回行程</span>
+        </a>
+        <div class="flex items-center gap-2">
+            <button onclick="downloadMapImage()" id="btn-download" class="bg-emerald-700 hover:bg-emerald-800 text-white font-black text-sm px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-md border border-emerald-950 transition-all">
+                <span>📸</span>
+                <span>存為手機圖片</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 地圖主畫布容器（比例符合手機直式閱讀 9:16～9:19） -->
+    <div id="manga-map-canvas" class="paper-pattern manga-panel p-4 pb-6 relative overflow-hidden bg-[#faf6ee]">
+        
+        <!-- 背景日式印章與插圖元素 -->
+        <div class="absolute top-2 right-3 opacity-20 pointer-events-none select-none text-right">
+            <div class="brush-font text-5xl text-red-900">湘南</div>
+            <div class="font-black text-xs tracking-widest text-stone-700">KAMAKURA</div>
+        </div>
+        
+        <!-- 地圖大標題區塊 -->
+        <div class="border-b-4 border-dashed border-[#2e261f]/40 pb-3 mb-4 text-center">
+            <div class="inline-flex items-center gap-1.5 bg-[#e95438] text-white px-3 py-1 rounded-full text-xs font-black tracking-wider uppercase shadow-sm border border-[#2e261f]">
+                <span>⛩️</span> 9/22 (二) DAY 6 慢活專用
+            </div>
+            <h1 class="text-3xl font-black mt-2 text-[#2e261f] tracking-tight flex items-center justify-center gap-2">
+                <span>鎌倉散步地圖</span>
+                <span class="text-2xl">🍵</span>
+            </h1>
+            <p class="text-xs font-black text-[#6d5e52] mt-1 bg-amber-100/80 inline-block px-3 py-0.5 rounded-lg border border-amber-300">
+                ✨ 70歲長輩親善・全平路・電梯高腳椅・計程車直達
+            </p>
+        </div>
+
+        <!-- 漫畫路徑主軸線（貫穿整張直式地圖） -->
+        <div class="relative">
+            <!-- 虛線路徑軌道 -->
+            <div class="absolute left-7 top-6 bottom-8 w-1.5 border-l-4 border-dashed border-amber-700/60 z-0"></div>
+
+            <!-- ================= STEP 1: 上野出發 ================= -->
+            <div class="relative z-10 flex items-start gap-3.5 mb-5">
+                <!-- 站點小圓標 -->
+                <div class="w-12 h-12 rounded-full bg-blue-700 text-white font-black flex flex-col items-center justify-center border-3 border-[#2e261f] shadow-md shrink-0">
+                    <span class="text-xs leading-none">JR</span>
+                    <span class="text-[10px] font-bold">55分</span>
+                </div>
+                <!-- 漫畫說明卡 -->
+                <div class="flex-1 bg-white manga-bubble rounded-2xl p-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md">起點・免轉車</span>
+                        <span class="text-xs text-stone-500 font-bold">約 09:30</span>
+                    </div>
+                    <h3 class="text-base font-black text-[#2e261f] mt-1">上野站 ➔ 直達鎌倉站</h3>
+                    <p class="text-xs font-bold text-stone-600 mt-0.5 leading-relaxed">
+                        搭乘 JR 上野東京線/橫須賀線直達車，坐著看田園風景直達古都，大電梯出「東口」。
+                    </p>
+                </div>
+            </div>
+
+            <!-- ================= STEP 2: 段葛平坦神道 ================= -->
+            <div class="relative z-10 flex items-start gap-3.5 mb-5">
+                <div class="w-12 h-12 rounded-full bg-[#e95438] text-white font-black flex items-center justify-center text-xl border-3 border-[#2e261f] shadow-md shrink-0">
+                    🌸
+                </div>
+                <div class="flex-1 bg-[#fffdf9] manga-bubble rounded-2xl p-3 border-l-8 border-l-pink-400">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-pink-700 bg-pink-50 px-2 py-0.5 rounded-md">無障礙首選・平地</span>
+                        <span class="text-xs text-stone-500 font-bold">步行 8 分鐘</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-1">
+                        <h3 class="text-base font-black text-[#2e261f]">若宮大路「段葛」神道</h3>
+                        <a href="https://maps.google.com/?cid=12134858005477865141&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-xs bg-blue-600 text-white font-black px-2 py-1 rounded-lg">導航</a>
+                    </div>
+                    <p class="text-xs font-bold text-stone-600 mt-1 leading-relaxed">
+                        整條架高的防滑石板林蔭櫻花步道，完全無階梯起伏、遠離車潮，兩側設有長椅可隨時坐下吹風！
+                    </p>
+                    <div class="mt-2 bg-pink-50/80 p-2 rounded-xl border border-pink-200 text-[11px] font-bold text-pink-900 flex items-center gap-1.5">
+                        <span>💡</span>
+                        <span>推推車或拐杖極好走，一路平順通往八幡宮大鳥居。</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= STEP 3: 鶴岡八幡宮 ================= -->
+            <div class="relative z-10 flex items-start gap-3.5 mb-5">
+                <div class="w-12 h-12 rounded-full bg-red-700 text-white font-black flex items-center justify-center text-xl border-3 border-[#2e261f] shadow-md shrink-0">
+                    ⛩️
+                </div>
+                <div class="flex-1 bg-white manga-bubble rounded-2xl p-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-red-700 bg-red-50 px-2 py-0.5 rounded-md">日本三大八幡</span>
+                        <span class="text-xs text-stone-500 font-bold">停留 40 分</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-1">
+                        <h3 class="text-base font-black text-[#2e261f]">鶴岡八幡宮 (舞殿參拜)</h3>
+                        <a href="https://maps.google.com/?cid=12134858005477865141&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-xs bg-blue-600 text-white font-black px-2 py-1 rounded-lg">導航</a>
+                    </div>
+                    <p class="text-xs font-bold text-stone-600 mt-1 leading-relaxed">
+                        境內綠意盎然。長輩請在平坦的「舞殿」前參拜祈福，<b>不需攀爬本宮陡峭石梯</b>，旁邊有錦鯉池與洗手間。
+                    </p>
+                </div>
+            </div>
+
+            <!-- ================= STEP 4: 小町通老街與午餐 ================= -->
+            <div class="relative z-10 flex items-start gap-3.5 mb-5">
+                <div class="w-12 h-12 rounded-full bg-amber-500 text-white font-black flex items-center justify-center text-xl border-3 border-[#2e261f] shadow-md shrink-0">
+                    🥢
+                </div>
+                <div class="flex-1 bg-[#fffefb] manga-bubble rounded-2xl p-3 border-2 border-amber-300">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-amber-900 bg-amber-100 px-2 py-0.5 rounded-md">老街散策＋午餐</span>
+                        <span class="text-xs text-stone-500 font-bold">11:30 - 13:00</span>
+                    </div>
+                    
+                    <!-- 小町通商店街與豐島屋 -->
+                    <div class="mt-2 pb-2 border-b border-dashed border-stone-200">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-sm font-black text-[#2e261f]">🛍️ 小町通 ＆ 豐島屋本店</h4>
+                            <a href="https://maps.google.com/?cid=6126750285060375089&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-[11px] text-blue-600 underline font-black">地圖</a>
+                        </div>
+                        <p class="text-xs font-bold text-stone-600 mt-0.5">
+                            平坦步道，入內品嚐百年名物「鴿子奶油酥餅（鳩サブレー）」，口感鬆化香醇，茶房有座可歇腳。
+                        </p>
+                    </div>
+
+                    <!-- 午餐推薦秋本 -->
+                    <div class="mt-2">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-sm font-black text-[#b45309]">🍲 食事處 秋本 (大電梯3F)</h4>
+                            <a href="https://maps.google.com/?cid=7030196313155034192&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-[11px] bg-amber-700 text-white font-black px-1.5 py-0.5 rounded">導航</a>
+                        </div>
+                        <p class="text-xs font-bold text-stone-700 mt-0.5 leading-relaxed">
+                            位於站前。電梯直達、桌椅寬敞！招牌「溫熱釜揚吻仔魚丼」與清甜蔬菜天婦羅，軟嫩鮮美極易消化。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= 轉乘亮點：計程車直達大佛 ================= -->
+            <div class="relative z-10 flex items-center gap-3 my-4 bg-amber-100/90 manga-bubble rounded-xl p-2.5 ml-3">
+                <span class="text-2xl">🚕</span>
+                <div class="flex-1">
+                    <span class="text-xs font-black text-amber-950 block">⚡ 長輩專屬護膝祕技：搭計程車</span>
+                    <span class="text-[11px] font-bold text-stone-700">鎌倉站前搭車 ➔ 10分鐘直達大佛山門（車資約 ¥1,400，省去轉擠江之電）</span>
+                </div>
+            </div>
+
+            <!-- ================= STEP 5: 鎌倉大佛高德院 ================= -->
+            <div class="relative z-10 flex items-start gap-3.5 mb-5">
+                <div class="w-12 h-12 rounded-full bg-emerald-700 text-white font-black flex items-center justify-center text-xl border-3 border-[#2e261f] shadow-md shrink-0">
+                    🙏
+                </div>
+                <div class="flex-1 bg-white manga-bubble rounded-2xl p-3 border-l-8 border-l-emerald-600">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md">國寶・全區平路</span>
+                        <span class="text-xs text-stone-500 font-bold">13:30 - 14:30</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-1">
+                        <h3 class="text-base font-black text-[#2e261f]">國寶 鎌倉大佛 (高德院)</h3>
+                        <a href="https://maps.google.com/?cid=2216777826481991500&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-xs bg-blue-600 text-white font-black px-2 py-1 rounded-lg">導航</a>
+                    </div>
+                    <p class="text-xs font-bold text-stone-600 mt-1 leading-relaxed">
+                        高 11.3 公尺莊嚴青銅大佛。全境庭園皆是平坦步道，兩側有無障礙緩坡與樹蔭長椅，仰望拍照極為舒心放鬆。
+                    </p>
+                    <div class="mt-2 bg-emerald-50 p-2 rounded-xl text-[11px] font-bold text-emerald-900 flex items-center justify-between">
+                        <span>門票：大人 ¥300</span>
+                        <span>無階梯平路率 100%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= STEP 6: 返回上野採買 ================= -->
+            <div class="relative z-10 flex items-start gap-3.5">
+                <div class="w-12 h-12 rounded-full bg-stone-800 text-white font-black flex items-center justify-center text-lg border-3 border-[#2e261f] shadow-md shrink-0">
+                    🛍️
+                </div>
+                <div class="flex-1 bg-[#fffdf9] manga-bubble rounded-2xl p-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-stone-800 bg-stone-100 px-2 py-0.5 rounded-md">賦歸休息</span>
+                        <span class="text-xs text-stone-500 font-bold">約 15:30 後</span>
+                    </div>
+                    <h3 class="text-base font-black text-[#2e261f] mt-1">鎌倉站 ➔ JR直達上野飯店</h3>
+                    <p class="text-xs font-bold text-stone-600 mt-0.5 leading-relaxed">
+                        在大佛門口搭計程車回鎌倉站，搭 JR 一路坐回上野（約 55 分）。傍晚於上野多慶屋採買常備藥妝後回房打包行李。
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 漫畫風底欄小備忘錄 -->
+        <div class="mt-6 pt-3 border-t-3 border-dashed border-stone-300">
+            <div class="bg-amber-50 manga-bubble rounded-2xl p-3.5 space-y-1.5">
+                <div class="flex items-center gap-1.5 font-black text-xs text-amber-950">
+                    <span class="text-base">📌</span>
+                    <span>長輩散步隨行小叮嚀：</span>
+                </div>
+                <ul class="text-[11px] font-bold text-stone-700 space-y-1 pl-4 list-disc leading-tight">
+                    <li>鎌倉全線以「段葛石板道」與「平坦大佛庭園」為主，避開了所有陡峭山路。</li>
+                    <li>前往大佛強烈建議搭計程車，省去江之電人擠人與站立疲累。</li>
+                    <li>沿途隨處皆有日式甜點店，隨時可坐下來喝杯熱煎茶潤喉。</li>
+                </ul>
+            </div>
+            
+            <div class="text-center mt-3 text-[10px] font-black text-stone-400 tracking-wider">
+                2026 TOKYO & KAMAKURA TRIP • SPECIALLY PREPARED FOR DEAR PARENTS
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 底部操作提示浮動條 -->
+    <div class="mt-3 text-center">
+        <p class="text-xs font-bold text-stone-600">
+            💡 點擊「存為手機圖片」可將上方地圖保存為照片，出門無網路也能在相簿隨時看！
+        </p>
+    </div>
+
+    <!-- 儲存中載入提示彈窗 -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black/75 z-50 flex flex-col items-center justify-center text-white hidden">
+        <div class="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin mb-3"></div>
+        <div class="text-base font-black">正在為您產生高畫質手機地圖圖檔...</div>
+        <div class="text-xs text-stone-300 mt-1">完成後請長按圖片儲存至相簿</div>
+    </div>
+
+    <script>
+        function downloadMapImage() {
+            const overlay = document.getElementById('loading-overlay');
+            const target = document.getElementById('manga-map-canvas');
+            
+            if (overlay) overlay.classList.remove('hidden');
+
+            // 使用 html2canvas 將地圖轉為清晰手機長圖
+            setTimeout(() => {
+                html2canvas(target, {
+                    scale: 2.5, // 高解析度
+                    useCORS: true,
+                    backgroundColor: '#faf6ee',
+                    logging: false
+                }).then(canvas => {
+                    if (overlay) overlay.classList.add('hidden');
+                    
+                    // 建立圖片下載連結
+                    const imgData = canvas.toDataURL('image/png');
+                    const link = document.createElement('a');
+                    link.download = '2026_鎌倉慢活散步地圖.png';
+                    link.href = imgData;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }).catch(err => {
+                    if (overlay) overlay.classList.add('hidden');
+                    console.error('產生圖片失敗:', err);
+                });
+            }, 300);
+        }
+    </script>
+</body>
+</html>

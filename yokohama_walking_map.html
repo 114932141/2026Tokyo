@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>橫濱港灣悠活散步地圖 - 漫畫風手繪指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Yuji+Boku&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Zen Maru Gothic', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f2f5f8;
+            color: #1a2a3a;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .brush-font {
+            font-family: 'Yuji Boku', serif;
+        }
+        /* 港灣手繪紙感網點 */
+        .paper-pattern {
+            background-color: #fcfbfa;
+            background-image: radial-gradient(#b8c9d9 1px, transparent 1px);
+            background-size: 16px 16px;
+        }
+        /* 漫畫框陰影與粗邊框 */
+        .manga-panel {
+            border: 3.5px solid #1c2b38;
+            box-shadow: 4px 5px 0px #1c2b38;
+            border-radius: 20px;
+        }
+        .manga-bubble {
+            border: 2.5px solid #1c2b38;
+            box-shadow: 2px 3px 0px #1c2b38;
+        }
+        /* 晴天/雨天分流卡框 */
+        .weather-panel-sun {
+            background: linear-gradient(135deg, #fffcf5 0%, #fff6e5 100%);
+            border: 2.5px solid #d97706;
+            box-shadow: 3px 3px 0px #b45309;
+        }
+        .weather-panel-rain {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e0f0fe 100%);
+            border: 2.5px solid #0284c7;
+            box-shadow: 3px 3px 0px #0369a1;
+        }
+    </style>
+</head>
+<body class="p-2 sm:p-4 max-w-md mx-auto min-h-screen">
+
+    <!-- 頂部操作列（返回主行程與下載圖片） -->
+    <header class="flex items-center justify-between gap-2 mb-3 px-1">
+        <a href="index.html" class="bg-slate-700 hover:bg-slate-800 text-white font-black text-sm px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-md border border-slate-900">
+            <span>🔙</span>
+            <span>返回行程</span>
+        </a>
+        <div class="flex items-center gap-2">
+            <button onclick="downloadMapImage()" id="btn-download" class="bg-sky-700 hover:bg-sky-800 text-white font-black text-sm px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-md border border-sky-950 transition-all">
+                <span>📸</span>
+                <span>存為手機圖片</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 地圖主畫布容器（符合直式手機閱讀比例） -->
+    <div id="manga-map-canvas" class="paper-pattern manga-panel p-4 pb-6 relative overflow-hidden bg-[#fcfbfa]">
+        
+        <!-- 背景日式海港印章與文字 -->
+        <div class="absolute top-2 right-3 opacity-20 pointer-events-none select-none text-right">
+            <div class="brush-font text-5xl text-blue-900">橫濱</div>
+            <div class="font-black text-xs tracking-widest text-slate-700">YOKOHAMA</div>
+        </div>
+
+        <!-- 地圖大標題區塊 -->
+        <div class="border-b-4 border-dashed border-[#1c2b38]/40 pb-3 mb-4 text-center">
+            <div class="inline-flex items-center gap-1.5 bg-[#0284c7] text-white px-3 py-1 rounded-full text-xs font-black tracking-wider uppercase shadow-sm border border-[#1c2b38]">
+                <span>⚓</span> 9/18 (五) DAY 2 港灣慢遊
+            </div>
+            <h1 class="text-3xl font-black mt-2 text-[#1c2b38] tracking-tight flex items-center justify-center gap-2">
+                <span>橫濱悠遊散步地圖</span>
+                <span class="text-2xl">🌊</span>
+            </h1>
+            <p class="text-xs font-black text-[#475569] mt-1 bg-sky-100/90 inline-block px-3 py-0.5 rounded-lg border border-sky-300">
+                ✨ 雙天氣備案・空中纜車・面海沙發・計程車直達
+            </p>
+        </div>
+
+        <!-- 漫畫路徑主軸線（貫穿整張直式地圖） -->
+        <div class="relative">
+            <!-- 虛線路徑軌道 -->
+            <div class="absolute left-7 top-6 bottom-8 w-1.5 border-l-4 border-dashed border-sky-600/50 z-0"></div>
+
+            <!-- ================= STEP 1: 上野出發直達櫻木町 ================= -->
+            <div class="relative z-10 flex items-start gap-3.5 mb-5">
+                <div class="w-12 h-12 rounded-full bg-blue-700 text-white font-black flex flex-col items-center justify-center border-3 border-[#1c2b38] shadow-md shrink-0">
+                    <span class="text-xs leading-none">JR</span>
+                    <span class="text-[10px] font-bold">35分</span>
+                </div>
+                <div class="flex-1 bg-white manga-bubble rounded-2xl p-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md">起點・一車直達</span>
+                        <span class="text-xs text-slate-500 font-bold">約 09:30 出發</span>
+                    </div>
+                    <h3 class="text-base font-black text-[#1c2b38] mt-1">上野站 ➔ 直達櫻木町站</h3>
+                    <p class="text-xs font-bold text-slate-600 mt-0.5 leading-relaxed">
+                        搭乘 JR 上野東京線/京濱東北線直通班次，坐著直達櫻木町。大電梯至 1 樓出「東口」，即可見到開闊港灣。
+                    </p>
+                </div>
+            </div>
+
+            <!-- ================= STEP 2: 當天天氣雙備案切換分鏡 ================= -->
+            <div class="relative z-10 my-3 ml-2">
+                <div class="bg-amber-100/95 border-2 border-amber-500 rounded-xl p-2 text-center text-xs font-black text-amber-950 mb-3 shadow-sm">
+                    🧭 當日依天氣與體力自由二選一（皆為平路無障礙）
+                </div>
+
+                <!-- 備案 A: 晴天景觀線 -->
+                <div class="weather-panel-sun rounded-2xl p-3 mb-3 relative">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-amber-900 bg-amber-200/90 px-2 py-0.5 rounded-md">☀️ 晴天首選 A 線</span>
+                        <span class="text-[11px] font-bold text-amber-800">坐看 360° 海港</span>
+                    </div>
+                    
+                    <!-- 空中纜車 -->
+                    <div class="mt-2 pb-2 border-b border-dashed border-amber-300">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-sm font-black text-[#1c2b38]">🚡 YOKOHAMA AIR CABIN 空中纜車</h4>
+                            <a href="https://maps.google.com/?cid=9225832996649389793&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-[11px] bg-sky-700 text-white font-black px-1.5 py-0.5 rounded">導航</a>
+                        </div>
+                        <p class="text-xs font-bold text-slate-700 mt-0.5">
+                            櫻木町站前搭乘，車廂無障礙平推、冷氣舒適，5 分鐘凌空飛越運河直達新港公園（單程 ¥1,000）。
+                        </p>
+                    </div>
+
+                    <!-- 紅磚倉庫 ＆ Hammerhead -->
+                    <div class="mt-2">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-sm font-black text-[#1c2b38]">🧱 紅磚倉庫 ＆ Hammerhead (海景露台)</h4>
+                            <a href="https://maps.google.com/?cid=5675781008429257512&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-[11px] text-blue-700 underline font-black">地圖</a>
+                        </div>
+                        <p class="text-xs font-bold text-slate-700 mt-0.5 leading-relaxed">
+                            下纜車全平路散步。Hammerhead 備有大電梯直達面海露台與沙發，享受現做點心與熱茶，吹海風超舒適！
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 備案 B: 陰雨/酷暑室內舒適線 -->
+                <div class="weather-panel-rain rounded-2xl p-3 relative">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-sky-900 bg-sky-200/90 px-2 py-0.5 rounded-md">🌧️ 陰雨/酷暑備案 B 線</span>
+                        <span class="text-[11px] font-bold text-sky-800">全室內恆溫避雨</span>
+                    </div>
+
+                    <!-- 地標塔 69F 空中花園 -->
+                    <div class="mt-2 pb-2 border-b border-dashed border-sky-300">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-sm font-black text-[#1c2b38]">🏙️ 橫濱地標塔 69F「空中花園」</h4>
+                            <a href="https://maps.google.com/?cid=6607536174985891965&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-[11px] bg-sky-700 text-white font-black px-1.5 py-0.5 rounded">導航</a>
+                        </div>
+                        <p class="text-xs font-bold text-slate-700 mt-0.5">
+                            櫻木町東口走遮雨電動平步道 3 分鐘即達！日本最速平穩直梯（40秒上69F），滿布面窗高背沙發，坐著眺望港灣與富士山。
+                        </p>
+                    </div>
+
+                    <!-- 合味道杯麵博物館 -->
+                    <div class="mt-2">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-sm font-black text-[#1c2b38]">🍜 合味道紀念館 橫濱 (杯麵博物館)</h4>
+                            <a href="https://maps.google.com/?cid=8316009374312643262&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-[11px] text-blue-700 underline font-black">地圖</a>
+                        </div>
+                        <p class="text-xs font-bold text-slate-700 mt-0.5 leading-relaxed">
+                            全館世界級無障礙電梯。長輩可坐著親手彩繪杯身、自選配料，客製專屬杯麵帶回台灣作紀念（約 30 分鐘）。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= 轉乘亮點：計程車直送中華街 ================= -->
+            <div class="relative z-10 flex items-center gap-3 my-4 bg-emerald-100/90 manga-bubble rounded-xl p-2.5 ml-3 border-emerald-500">
+                <span class="text-2xl">🚕</span>
+                <div class="flex-1">
+                    <span class="text-xs font-black text-emerald-950 block">⚡ 長輩護膝接駁：搭計程車</span>
+                    <span class="text-[11px] font-bold text-slate-700">新港/紅磚門口搭車 ➔ 4-5分鐘直達中華街菜香新館門口（約 ¥1,000，免走路）</span>
+                </div>
+            </div>
+
+            <!-- ================= STEP 3: 橫濱中華街 菜香新館午餐 ================= -->
+            <div class="relative z-10 flex items-start gap-3.5 mb-5">
+                <div class="w-12 h-12 rounded-full bg-red-700 text-white font-black flex items-center justify-center text-xl border-3 border-[#1c2b38] shadow-md shrink-0">
+                    🥟
+                </div>
+                <div class="flex-1 bg-white manga-bubble rounded-2xl p-3 border-l-8 border-l-red-600">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-red-800 bg-red-50 px-2 py-0.5 rounded-md">午餐首選・大電梯</span>
+                        <span class="text-xs text-slate-500 font-bold">12:30 - 14:00</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-1">
+                        <h3 class="text-base font-black text-[#1c2b38]">橫濱中華街 菜香新館</h3>
+                        <a href="https://maps.google.com/?cid=12091748071798608198&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-xs bg-red-700 text-white font-black px-2 py-1 rounded-lg">導航</a>
+                    </div>
+                    <p class="text-xs font-bold text-slate-600 mt-1 leading-relaxed">
+                        中華街頂級代表茶樓！大電梯直達各樓層，全店沙發舒適座椅。滑嫩鮮蝦腸粉、蘿蔔糕與瑤柱熱清粥，極度牙口友善易消化。
+                    </p>
+                    <div class="mt-2 bg-red-50 p-2 rounded-xl text-[11px] font-bold text-red-950 flex items-center justify-between border border-red-200">
+                        <span>預算：每人約 ¥2,000 - ¥3,500</span>
+                        <span>高腳椅與大電梯 100%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= STEP 4: 中華街關帝廟散步 ================= -->
+            <div class="relative z-10 flex items-start gap-3.5 mb-5">
+                <div class="w-12 h-12 rounded-full bg-amber-600 text-white font-black flex items-center justify-center text-xl border-3 border-[#1c2b38] shadow-md shrink-0">
+                    🏮
+                </div>
+                <div class="flex-1 bg-[#fffdf9] manga-bubble rounded-2xl p-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-amber-900 bg-amber-100 px-2 py-0.5 rounded-md">平路漫步</span>
+                        <span class="text-xs text-slate-500 font-bold">14:00 - 15:00</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-1">
+                        <h3 class="text-base font-black text-[#1c2b38]">中華街散策 ＆ 關帝廟參拜</h3>
+                        <a href="https://maps.google.com/?cid=10424689788304133941&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-[11px] text-blue-700 underline font-black">地圖</a>
+                    </div>
+                    <p class="text-xs font-bold text-slate-600 mt-0.5 leading-relaxed">
+                        街區平坦寬闊，色彩繽紛的牌樓與熱鬧店面極富異國風情。至香火鼎盛的關帝廟祈求全家旅途平安健康。
+                    </p>
+                </div>
+            </div>
+
+            <!-- ================= STEP 5: 輕鬆賦歸返回上野 ================= -->
+            <div class="relative z-10 flex items-start gap-3.5">
+                <div class="w-12 h-12 rounded-full bg-slate-800 text-white font-black flex items-center justify-center text-lg border-3 border-[#1c2b38] shadow-md shrink-0">
+                    🏨
+                </div>
+                <div class="flex-1 bg-white manga-bubble rounded-2xl p-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md">一車直達休息</span>
+                        <span class="text-xs text-slate-500 font-bold">約 15:30</span>
+                    </div>
+                    <h3 class="text-base font-black text-[#1c2b38] mt-1">元町中華街站 / 石川町 ➔ 上野</h3>
+                    <p class="text-xs font-bold text-slate-600 mt-0.5 leading-relaxed">
+                        自元町・中華街站搭乘港未來線直通副都心線，或石川町站搭 JR 京濱東北線，約 38 分鐘一車直達上野，回 20 樓客房小憩。
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 漫畫風底欄小備忘錄 -->
+        <div class="mt-6 pt-3 border-t-3 border-dashed border-slate-300">
+            <div class="bg-sky-50 manga-bubble rounded-2xl p-3.5 space-y-1.5 border-sky-300">
+                <div class="flex items-center gap-1.5 font-black text-xs text-sky-950">
+                    <span class="text-base">📌</span>
+                    <span>橫濱港灣隨行貼心叮嚀：</span>
+                </div>
+                <ul class="text-[11px] font-bold text-slate-700 space-y-1 pl-4 list-disc leading-tight">
+                    <li>晴天搭「AIR CABIN」纜車可直接坐看海景，省去長距離徒步。</li>
+                    <li>若遇下雨或炎熱，走遮雨步道進「地標塔 69F」躺沙發看海景最為舒適愜意。</li>
+                    <li>景點至中華街推薦直接搭計程車，5 分鐘直達餐廳門口，把體力留在輕鬆漫步。</li>
+                </ul>
+            </div>
+            
+            <div class="text-center mt-3 text-[10px] font-black text-slate-400 tracking-wider">
+                2026 TOKYO & YOKOHAMA TRIP • SPECIALLY PREPARED FOR DEAR PARENTS
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 底部操作提示浮動條 -->
+    <div class="mt-3 text-center">
+        <p class="text-xs font-bold text-slate-600">
+            💡 點擊「存為手機圖片」可將上方地圖保存為照片，出門無網路也能在相簿隨時看！
+        </p>
+    </div>
+
+    <!-- 儲存中載入提示彈窗 -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black/75 z-50 flex flex-col items-center justify-center text-white hidden">
+        <div class="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin mb-3"></div>
+        <div class="text-base font-black">正在為您產生高畫質手機地圖圖檔...</div>
+        <div class="text-xs text-slate-300 mt-1">完成後請長按圖片儲存至相簿</div>
+    </div>
+
+    <script>
+        function downloadMapImage() {
+            const overlay = document.getElementById('loading-overlay');
+            const target = document.getElementById('manga-map-canvas');
+            
+            if (overlay) overlay.classList.remove('hidden');
+
+            setTimeout(() => {
+                html2canvas(target, {
+                    scale: 2.5,
+                    useCORS: true,
+                    backgroundColor: '#fcfbfa',
+                    logging: false
+                }).then(canvas => {
+                    if (overlay) overlay.classList.add('hidden');
+                    
+                    const imgData = canvas.toDataURL('image/png');
+                    const link = document.createElement('a');
+                    link.download = '2026_橫濱悠活散步地圖.png';
+                    link.href = imgData;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }).catch(err => {
+                    if (overlay) overlay.classList.add('hidden');
+                    console.error('產生圖片失敗:', err);
+                });
+            }, 300);
+        }
+    </script>
+</body>
+</html>
