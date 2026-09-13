@@ -187,7 +187,7 @@
                 </div>
                 <div class="flex-1 bg-[#fffefb] manga-bubble rounded-2xl p-3 border-2 border-amber-300">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-black text-amber-900 bg-amber-100 px-2 py-0.5 rounded-md">老街散策＋午餐</span>
+                        <span class="text-xs font-black text-amber-900 bg-amber-100 px-2 py-0.5 rounded-md">老街散策＋三大午餐精選</span>
                         <span class="text-xs text-stone-500 font-bold">11:30 - 13:00</span>
                     </div>
                     
@@ -203,13 +203,35 @@
                     </div>
 
                     <!-- 午餐推薦秋本 -->
-                    <div class="mt-2">
+                    <div class="mt-2 pb-2 border-b border-dashed border-stone-200">
                         <div class="flex items-center justify-between">
-                            <h4 class="text-sm font-black text-[#b45309]">🍲 食事處 秋本 (大電梯3F)</h4>
+                            <h4 class="text-sm font-black text-[#b45309]">🍲 首選：食事處 秋本 (大電梯3F)</h4>
                             <a href="https://maps.google.com/?cid=7030196313155034192&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-[11px] bg-amber-700 text-white font-black px-1.5 py-0.5 rounded">導航</a>
                         </div>
                         <p class="text-xs font-bold text-stone-700 mt-0.5 leading-relaxed">
-                            位於站前。電梯直達、桌椅寬敞！招牌「溫熱釜揚吻仔魚丼」與清甜蔬菜天婦羅，軟嫩鮮美極易消化。
+                            站前2分鐘大電梯。招牌「溫熱釜揚吻仔魚丼」與清甜蔬菜天婦羅，軟嫩鮮美極易消化。
+                        </p>
+                    </div>
+
+                    <!-- 午餐推薦二：峰本 -->
+                    <div class="mt-2 pb-2 border-b border-dashed border-stone-200">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-sm font-black text-[#b45309]">🍲 推薦二：鎌倉 峰本 (八幡前本店)</h4>
+                            <a href="https://maps.google.com/?cid=15645708491802752726&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-[11px] bg-amber-700 text-white font-black px-1.5 py-0.5 rounded">導航</a>
+                        </div>
+                        <p class="text-xs font-bold text-stone-700 mt-0.5 leading-relaxed">
+                            八幡宮前百年老舖。備大電梯、全店高腳椅（免跪坐），溫熱高湯烏龍麵與柔嫩蒸蛋超暖胃。
+                        </p>
+                    </div>
+
+                    <!-- 午餐推薦三：かまかま -->
+                    <div class="mt-2">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-sm font-black text-[#b45309]">🍚 推薦三：鎌倉釜飯 かまかま 本店</h4>
+                            <a href="https://maps.google.com/?cid=11566499208637792363&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-[11px] bg-amber-700 text-white font-black px-1.5 py-0.5 rounded">導航</a>
+                        </div>
+                        <p class="text-xs font-bold text-stone-700 mt-0.5 leading-relaxed">
+                            小町通平路無階梯店面。現炊軟濕熱釜飯，吻仔魚與鮭魚鮮美，最後沖入昆布熱高湯變茶泡飯！
                         </p>
                     </div>
                 </div>
@@ -219,7 +241,13 @@
             <div class="relative z-10 flex items-center gap-3 my-4 bg-amber-100/90 manga-bubble rounded-xl p-2.5 ml-3">
                 <span class="text-2xl">🚕</span>
                 <div class="flex-1">
-                    <span class="text-xs font-black text-amber-950 block">⚡ 長輩專屬護膝祕技：搭計程車</span>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-amber-950 block">⚡ 長輩專屬護膝祕技：搭計程車</span>
+                        <button onclick="openTaxiModal('daibutsu')" class="bg-amber-800 hover:bg-amber-900 text-white text-[11px] font-black px-2.5 py-1 rounded-lg shadow flex items-center gap-1 border border-amber-950">
+                            <span>📢</span>
+                            <span>出示司機日語卡</span>
+                        </button>
+                    </div>
                     <span class="text-[11px] font-bold text-stone-700">鎌倉站前搭車 ➔ 10分鐘直達大佛山門（車資約 ¥1,400，省去轉擠江之電）</span>
                 </div>
             </div>
@@ -248,6 +276,46 @@
                 </div>
             </div>
 
+            <!-- ================= STEP 5-ALT: 彈性備用景點（計程車直達） ================= -->
+            <div class="relative z-10 flex items-start gap-3.5 mb-5">
+                <div class="w-12 h-12 rounded-full bg-teal-700 text-white font-black flex items-center justify-center text-xl border-3 border-[#2e261f] shadow-md shrink-0">
+                    🍵
+                </div>
+                <div class="flex-1 bg-[#f2fbf9] manga-bubble rounded-2xl p-3 border-2 border-teal-500">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-teal-900 bg-teal-100 px-2 py-0.5 rounded-md">彈性備用・體力充裕可加遊</span>
+                        <span class="text-xs text-teal-700 font-bold">車程 2-8 分鐘</span>
+                    </div>
+
+                    <!-- 備用 A: 長谷寺 -->
+                    <div class="mt-2 pb-2 border-b border-dashed border-teal-200">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-sm font-black text-[#2e261f]">🌊 備用 A：長谷寺 (海景茶座「海光庵」)</h4>
+                            <a href="https://maps.google.com/?cid=6335264300188806609&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-[11px] bg-teal-700 text-white font-black px-1.5 py-0.5 rounded">導航</a>
+                        </div>
+                        <p class="text-xs font-bold text-stone-600 mt-0.5 leading-relaxed">
+                            大佛旁步行4分鐘或計程車2分鐘。下境內全平坦錦鯉池；「海光庵」景觀茶座可坐著吹冷氣吃軟糰子、遠眺由比濱蔚藍海灣。
+                        </p>
+                    </div>
+
+                    <!-- 備用 B: 報國寺 -->
+                    <div class="mt-2">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-sm font-black text-[#2e261f]">🎋 備用 B：報國寺 (竹之寺 ＆ 休耕庵茶席)</h4>
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="openTaxiModal('hokokuji')" class="text-[11px] bg-amber-700 text-white font-black px-2 py-0.5 rounded shadow">
+                                    🚕 車資日語卡
+                                </button>
+                                <a href="https://maps.google.com/?cid=8247336738641620727&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" target="_blank" class="text-[11px] bg-teal-700 text-white font-black px-1.5 py-0.5 rounded">導航</a>
+                            </div>
+                        </div>
+                        <p class="text-xs font-bold text-stone-600 mt-0.5 leading-relaxed">
+                            若想找清幽處，鎌倉站搭計程車8分鐘直達。2000株幽靜孟宗竹林平整陰涼，茶席坐著品嚐熱抹茶與乾菓子，靜聽風吹竹葉聲。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             <!-- ================= STEP 6: 返回搭車車站與上野 ================= -->
             <div class="relative z-10 flex items-start gap-3.5">
                 <div class="w-12 h-12 rounded-full bg-amber-700 text-white font-black flex items-center justify-center text-lg border-3 border-[#2e261f] shadow-md shrink-0">
@@ -258,7 +326,13 @@
                         <span class="text-xs font-black text-amber-900 bg-amber-200/90 px-2 py-0.5 rounded-md">回程交通・直達上野</span>
                         <span class="text-xs text-amber-800 font-bold">約 15:30</span>
                     </div>
-                    <h3 class="text-base font-black text-amber-950 mt-1">鎌倉大佛 ➔ JR 鎌倉站 東口</h3>
+                    <div class="flex items-center justify-between mt-1">
+                        <h3 class="text-base font-black text-amber-950">鎌倉大佛 ➔ JR 鎌倉站 東口</h3>
+                        <button onclick="openTaxiModal('kamakuraStation')" class="bg-amber-800 hover:bg-amber-900 text-white text-[11px] font-black px-2 py-1 rounded-lg shadow flex items-center gap-1 border border-amber-950">
+                            <span>📢</span>
+                            <span>回程叫車日語卡</span>
+                        </button>
+                    </div>
                     
                     <div class="mt-2 space-y-1.5 bg-white/90 p-2.5 rounded-xl border border-amber-300 text-xs text-stone-800 font-bold">
                         <div class="flex items-start gap-1.5">
@@ -304,6 +378,43 @@
 
     </div>
 
+    <!-- 🚕 計程車司機專用手指大字彈窗 -->
+    <div id="taxi-modal" class="fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl border-4 border-amber-600 text-center relative">
+            <button onclick="closeTaxiModal()" class="absolute top-3 right-3 text-stone-400 hover:text-black w-8 h-8 flex items-center justify-center bg-stone-100 rounded-full text-lg font-bold">
+                ✕
+            </button>
+            <div class="inline-block bg-amber-100 text-amber-900 px-3 py-1 rounded-full text-xs font-black">
+                🚕 請將手機直接拿給司機看
+            </div>
+            <div>
+                <span class="text-xs font-bold text-stone-500 block">中文目的地</span>
+                <h4 id="taxi-modal-dest" class="text-lg font-black text-stone-900"></h4>
+            </div>
+            <div class="bg-amber-50 p-4 rounded-2xl border-2 border-amber-300 text-left space-y-2">
+                <span class="text-[11px] font-black text-amber-800 block">🗣️ 日文出示文句：</span>
+                <p id="taxi-modal-jp" class="text-2xl font-black text-stone-900 leading-snug"></p>
+                <div class="border-t border-amber-200 pt-2">
+                    <span class="text-[11px] font-bold text-stone-500 block">📍 地址 / 地標註記：</span>
+                    <p id="taxi-modal-address" class="text-xs font-bold text-stone-700"></p>
+                </div>
+                <div class="border-t border-amber-200 pt-1.5">
+                    <span class="text-[11px] font-bold text-stone-500 block">🗣️ 發音讀法：</span>
+                    <p id="taxi-modal-kana" class="text-xs font-bold text-stone-600"></p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button id="btn-taxi-speech" onclick="speakTaxiPhrase()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 px-3 rounded-xl text-sm shadow flex items-center justify-center gap-1.5 transition-all">
+                    <span>🔊</span>
+                    <span id="btn-taxi-speech-text">播放日語給司機聽</span>
+                </button>
+                <button onclick="closeTaxiModal()" class="bg-stone-200 hover:bg-stone-300 text-stone-800 font-black py-3 px-4 rounded-xl text-sm">
+                    關閉
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- 底部操作提示浮動條 -->
     <div class="mt-3 text-center">
         <p class="text-xs font-bold text-stone-600">
@@ -319,6 +430,69 @@
     </div>
 
     <script>
+        // 計程車日語資料庫
+        const taxiPhrases = {
+            daibutsu: {
+                dest: "鎌倉大佛殿 高德院",
+                jp: "運転手さん、高徳院（鎌倉大仏）までお願いします。",
+                kana: "うんてんしゅさん、こうとくいん（かまくら だいぶつ）まで おねがいします。",
+                address: "神奈川県鎌倉市長谷4-2-28（山門・入口付近）"
+            },
+            kamakuraStation: {
+                dest: "JR 鎌倉站 東口",
+                jp: "運転手さん、JR鎌倉駅の東口までお願いします。",
+                kana: "うんてんしゅさん、じぇいあーる かまくらえき の ひがしぐち まで おねがいします。",
+                address: "神奈川県鎌倉市小町1丁目（JR鎌倉駅東口改札付近）"
+            },
+            hokokuji: {
+                dest: "報國寺（竹之寺）",
+                jp: "運転手さん、報国寺（竹の寺）までお願いします。",
+                kana: "うんてんしゅさん、ほうこくじ（たけのてら）まで おねがいします。",
+                address: "神奈川県鎌倉市浄明寺2-7-4"
+            }
+        };
+
+        let currentTaxiKey = null;
+
+        function openTaxiModal(key) {
+            const data = taxiPhrases[key];
+            if (!data) return;
+            currentTaxiKey = key;
+            document.getElementById('taxi-modal-dest').textContent = data.dest;
+            document.getElementById('taxi-modal-jp').textContent = data.jp;
+            document.getElementById('taxi-modal-kana').textContent = data.kana;
+            document.getElementById('taxi-modal-address').textContent = data.address;
+            document.getElementById('taxi-modal').classList.remove('hidden');
+        }
+
+        function closeTaxiModal() {
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            document.getElementById('taxi-modal').classList.add('hidden');
+        }
+
+        function speakTaxiPhrase() {
+            if (!currentTaxiKey || !('speechSynthesis' in window)) return;
+            const data = taxiPhrases[currentTaxiKey];
+            window.speechSynthesis.cancel();
+
+            const btnText = document.getElementById('btn-taxi-speech-text');
+            if (btnText) btnText.textContent = "播放中...";
+
+            const utterance = new SpeechSynthesisUtterance(data.jp);
+            utterance.lang = 'ja-JP';
+            utterance.rate = 0.85;
+
+            const voices = window.speechSynthesis.getVoices();
+            const jpVoice = voices.find(v => v.lang === 'ja-JP' || v.lang.startsWith('ja'));
+            if (jpVoice) utterance.voice = jpVoice;
+
+            utterance.onend = utterance.onerror = () => {
+                if (btnText) btnText.textContent = "再次播放日語";
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
         function downloadMapImage() {
             const overlay = document.getElementById('loading-overlay');
             const target = document.getElementById('manga-map-canvas');
