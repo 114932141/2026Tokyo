@@ -488,33 +488,38 @@
     </main>
 
     <!-- Large Japanese Phrase Modal Popup -->
-    <div id="phrase-modal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white w-full max-w-2xl rounded-3xl p-6 space-y-5 shadow-2xl relative border-4 border-brand-600 text-center">
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full text-xl font-bold">
-                ✕
-            </button>
-            <div class="bg-brand-50 py-2.5 px-4 rounded-xl inline-block border border-brand-100">
-                <span class="text-xs text-brand-600 font-black block">中文意思</span>
-                <h5 id="modal-intent" class="text-2xl font-black text-black"></h5>
-            </div>
-            <div class="bg-gray-50 py-6 px-4 rounded-2xl border-2 border-gray-200">
-                <p id="modal-japanese" class="text-3xl sm:text-4xl font-black text-brand-700 leading-normal select-all"></p>
-            </div>
-            <div class="space-y-1">
-                <span class="text-xs text-gray-600 font-black block">🗣️ 日文發音助讀 (平假名拼音)</span>
-                <p id="modal-hiragana" class="text-lg font-bold text-gray-800 bg-gray-100 py-2 px-3 rounded-lg inline-block"></p>
-            </div>
-
-            <!-- Modal Voice Pronounce Button -->
-            <div class="pt-2">
-                <button id="modal-speech-btn" onclick="speakCurrentModalPhrase()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 px-4 rounded-xl text-lg shadow-md flex items-center justify-center gap-2 transition-all">
-                    <span class="text-2xl">🔊</span>
-                    <span id="modal-speech-text">播放日語發音給店員看/聽</span>
+    <div id="phrase-modal" onclick="handlePhraseModalBackdrop(event)" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto hidden">
+        <div class="bg-white w-full max-w-2xl rounded-3xl p-4 sm:p-5 shadow-2xl relative border-4 border-brand-600 text-center flex flex-col max-h-[90vh] overflow-hidden" onclick="event.stopPropagation()">
+            <!-- Modal Header: Sticky Close button & Intent -->
+            <div class="flex items-center justify-between border-b pb-2.5 gap-2 shrink-0">
+                <div class="bg-brand-50 py-1 px-3 rounded-lg border border-brand-100 text-left flex-1 min-w-0">
+                    <span class="text-[11px] text-brand-600 font-black block leading-none">中文意思</span>
+                    <h5 id="modal-intent" class="text-base sm:text-xl font-black text-black truncate"></h5>
+                </div>
+                <button onclick="closeModal()" class="shrink-0 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-black px-3 py-1.5 rounded-xl text-sm font-black flex items-center gap-1 border border-gray-300 transition-all" title="關閉字卡">
+                    <span class="text-base font-bold">✕</span>
+                    <span>關閉</span>
                 </button>
             </div>
 
-            <div class="pt-2 border-t border-gray-100">
-                <button onclick="closeModal()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-black py-3 rounded-xl text-lg shadow">
+            <!-- Scrollable Middle Content Area -->
+            <div id="modal-scroll-body" class="overflow-y-auto flex-1 py-3 space-y-3 pr-1">
+                <div class="bg-gray-50 py-4 px-3 sm:px-4 rounded-2xl border-2 border-gray-200">
+                    <p id="modal-japanese" class="text-2xl sm:text-3xl font-black text-brand-700 leading-relaxed select-all break-words"></p>
+                </div>
+                <div class="space-y-1">
+                    <span class="text-xs text-gray-600 font-black block">🗣️ 日文發音助讀 (平假名拼音)</span>
+                    <p id="modal-hiragana" class="text-base sm:text-lg font-bold text-gray-800 bg-gray-100 py-2 px-3 rounded-lg inline-block break-words max-w-full"></p>
+                </div>
+            </div>
+
+            <!-- Modal Footer: Fixed Voice & Close Buttons -->
+            <div class="pt-2.5 border-t border-gray-100 space-y-2 shrink-0">
+                <button id="modal-speech-btn" onclick="speakCurrentModalPhrase()" class="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-black py-2.5 px-4 rounded-xl text-base sm:text-lg shadow flex items-center justify-center gap-2 transition-all">
+                    <span class="text-xl">🔊</span>
+                    <span id="modal-speech-text">播放日語發音給店員聽</span>
+                </button>
+                <button onclick="closeModal()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-black py-2.5 px-4 rounded-xl text-base shadow">
                     我知道了，關閉字卡
                 </button>
             </div>
@@ -1946,18 +1951,30 @@
             document.getElementById("modal-hiragana").textContent = phrase.hiragana;
             
             const textSpan = document.getElementById('modal-speech-text');
-            if (textSpan) textSpan.textContent = "播放日語發音給店員看/聽";
+            if (textSpan) textSpan.textContent = "播放日語發音給店員聽";
             
+            const modalScrollBody = document.getElementById("modal-scroll-body");
+            if (modalScrollBody) modalScrollBody.scrollTop = 0;
+
             document.getElementById("phrase-modal").classList.remove("hidden");
             document.body.classList.add("overflow-hidden");
         }
 
         function closeModal() {
-            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
             document.getElementById("phrase-modal").classList.add("hidden");
             document.body.classList.remove("overflow-hidden");
         }
 
+        function handlePhraseModalBackdrop(event) {
+            if (event.target.id === 'phrase-modal') {
+                closeModal();
+            }
+        }
+
+        // Checklist logic
         function initChecklist() {
             const savedDaily = localStorage.getItem("tokyo2026_daily");
             const savedBefore = localStorage.getItem("tokyo2026_before");
