@@ -86,9 +86,30 @@
             from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        #offline-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #d97706;
+            color: white;
+            text-align: center;
+            padding: 6px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            z-index: 999;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+        #offline-indicator.show {
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body class="text-brand-900 antialiased selection:bg-brand-100">
+
+    <div id="offline-indicator">⚠️ 目前處於離線狀態 — 已載入安全離線快取，可正常查閱</div>
 
     <header class="sticky top-0 z-40 bg-brand-600 text-white shadow-md transition-all duration-300">
         <!-- 頂部精簡列：標題 + 核心操作 + 收合切換鈕 -->
@@ -284,10 +305,12 @@
                     <!-- Filled by JavaScript -->
                 </div>
             </div>
+
         </div>
 
         <!-- ================= PAGE 2: 每天行程 ================= -->
         <div id="page-itinerary" class="tab-page hidden space-y-6">
+            
             <!-- Subway line helper -->
             <div class="bg-white rounded-2xl p-4 border border-gray-200 shadow-sm">
                 <span class="text-base font-black text-brand-600 block mb-2">💡 車站認路口訣：請對準站內指示牌上的底色與字母</span>
@@ -315,16 +338,17 @@
             <div id="day-content" class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-6">
                 <!-- Dynamically populated by renderDayContent() -->
             </div>
+
         </div>
 
         <!-- ================= PAGE 3: 手指日語 ================= -->
         <div id="page-japanese" class="tab-page hidden space-y-6">
             <div class="bg-brand-50 p-4 rounded-xl border-l-4 border-brand-600 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <p class="text-lg font-black text-brand-700">
-                    💡 點選任一卡片可放大為 <b>【全螢幕超大字】</b>；或點擊 <b>「🔊 朗讀」</b> 直接播放標準日語給店員聽！
+                    💡 點選任一卡片可放大為 <b>【全螢幕超大字】</b>；或點擊 <b>「🔊 朗讀」</b> 直接播放標準日語給店員看/聽！
                 </p>
                 <div class="shrink-0 flex items-center gap-1.5 text-xs font-black bg-white px-3 py-1.5 rounded-lg border border-brand-100 text-brand-800">
-                    <span>📢</span> 內建日語慢速朗讀
+                    <span>📢</span> 內建標準慢速朗讀
                 </div>
             </div>
 
@@ -334,7 +358,12 @@
                 <button onclick="filterJapanese('hotel')" id="btn-jp-hotel" class="jp-filter-btn px-4 py-2 bg-white text-gray-800 border font-bold rounded-xl text-base shadow">🛎️ 飯店設施</button>
                 <button onclick="filterJapanese('restaurant')" id="btn-jp-restaurant" class="jp-filter-btn px-4 py-2 bg-white text-gray-800 border font-bold rounded-xl text-base shadow">🥢 餐廳用餐</button>
                 <button onclick="filterJapanese('shopping')" id="btn-jp-shopping" class="jp-filter-btn px-4 py-2 bg-white text-gray-800 border font-bold rounded-xl text-base shadow">🛍️ 購物免稅</button>
-                <button onclick="filterJapanese('emergency')" id="btn-jp-emergency" class="jp-filter-btn px-4 py-2 bg-white text-gray-800 border font-bold rounded-xl text-base shadow">🚨 緊急求助</button>
+                <button onclick="filterJapanese('emergency')" id="btn-jp-emergency" class="jp-filter-btn px-4 py-2 bg-white text-gray-800 border font-bold rounded-xl text-base shadow">🚨 緊急迷路</button>
+            </div>
+
+            <!-- ⚡ 互動升級：動態即時切換 / 勾選組合卡區塊 -->
+            <div id="dynamic-cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- 由 renderDynamicCards() 動態生成 -->
             </div>
 
             <div id="japanese-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -455,6 +484,7 @@
                 </div>
             </div>
         </div>
+
     </main>
 
     <!-- Large Japanese Phrase Modal Popup -->
@@ -479,7 +509,7 @@
             <div class="pt-2">
                 <button id="modal-speech-btn" onclick="speakCurrentModalPhrase()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 px-4 rounded-xl text-lg shadow-md flex items-center justify-center gap-2 transition-all">
                     <span class="text-2xl">🔊</span>
-                    <span id="modal-speech-text">播放日語發音給店員聽</span>
+                    <span id="modal-speech-text">播放日語發音給店員看/聽</span>
                 </button>
             </div>
 
@@ -547,9 +577,7 @@
                         link: "https://www.google.com/maps/search/?api=1&query=Nadai+Unatoto+Ueno"
                     }
                 ],
-                returnStationName: "上野皇冠山丘高級酒店 (步行返抵)",
-                returnStationDesc: "從吉池食堂出大樓後，沿著平坦的昭和通人行道走斑馬線直行約 4-5 分鐘即可悠閒走回飯店客房休息，完全無需搭乘電車或走階梯天橋。",
-                returnStationMapUrl: "https://maps.google.com/?cid=3776151992955148480&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ"
+                returnTrans: "從吉池食堂出大樓後，沿著平坦的昭和通人行道直走，步行約 4-5 分鐘即可悠閒走回飯店，完全不需要搭乘電車。"
             },
             2: {
                 dayNum: 2,
@@ -629,9 +657,7 @@
                         link: "https://www.google.com/maps/search/?api=1&query=Hachinoki+Ueno"
                     }
                 ],
-                returnStationName: "元町・中華街站 (港未來線) 或 JR 石川町站",
-                returnStationDesc: "從中華街朝陽門出發走平坦人行道 3-4 分鐘抵達「元町・中華街站」搭大電梯進站；或搭計程車 3 分鐘直送「JR 石川町站」。搭乘直通車約 38 分鐘一車直達上野站，出站平地走 4 分鐘回客房休息。",
-                returnStationMapUrl: "https://maps.google.com/?cid=10825676746460394080&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ"
+                returnTrans: "自橫濱中華街（元町・中華街站）搭乘港未來線直通副都心線，或由石川町站搭 JR 京濱東北線，約 38 分鐘一車直達上野站，廣小路口出站平地走 4 分鐘回飯店休息。"
             },
             3: {
                 dayNum: 3,
@@ -697,9 +723,7 @@
                         link: "https://www.google.com/maps/search/?api=1&query=Ginza+Tenryu+Solamachi"
                     }
                 ],
-                returnStationName: "押上站 (晴空塔地下直通入口) / 晴空塔計程車招呼站",
-                returnStationDesc: "從晴空塔 6F 搭東館大電梯直降 B3 即可無階梯進入「押上站」，搭半藏門線 1 站至三越前同月台轉銀座線直達上野；或直接在 4 樓門口搭計程車 15 分鐘直送上野飯店客房（車資約 ¥2,000，最舒服）。",
-                returnStationMapUrl: "https://maps.google.com/?cid=11632191348918607801&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ"
+                returnTrans: "由晴空塔地下 B1 押上站搭乘地鐵半藏門線 1 站至「三越前」，同月台走 5 步轉乘銀座線 3 站直達上野；或直接在 4 樓排班處搭計程車直達上野飯店（約 15 分鐘，車資約 ¥2,000，最舒適）。"
             },
             4: {
                 dayNum: 4,
@@ -768,9 +792,7 @@
                         link: "https://www.google.com/maps/search/?api=1&query=Minokichi+Shinjuku+Sumitomo"
                     }
                 ],
-                returnStationName: "JR 新宿站 (西口大電梯入口)",
-                returnStationDesc: "晚餐自新宿第一生命大樓門口直接搭計程車 3 分鐘（或走地下遮雨電動步道 8 分鐘）送至「JR 新宿站西口」，搭乘 JR 山手線（外環方向）約 26 分鐘直達上野站，出站走 4 分鐘回飯店休息。",
-                returnStationMapUrl: "https://maps.google.com/?cid=6042249950202167455&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ"
+                returnTrans: "晚餐後由新宿西口進入車站，搭乘 JR 山手線（外環方向）約 26 分鐘直達「上野站」，由廣小路口出站走平面斑馬線 4-5 分鐘即可回到飯店休息。"
             },
             5: {
                 dayNum: 5,
@@ -849,9 +871,7 @@
                         link: "https://www.google.com/maps/search/?api=1&query=Izuei+Matsuzakaya+Ueno"
                     }
                 ],
-                returnStationName: "三越前站 (地鐵銀座線直通入口)",
-                returnStationDesc: "從日本橋三越本店或 COREDO 室町搭電梯直達地下 B1 即可直接進「三越前站」，搭乘黃色地鐵銀座線僅 3 站（5分鐘）直達上野站，出站走 4 分鐘回飯店休息。",
-                returnStationMapUrl: "https://maps.google.com/?cid=9766707380764620119&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ"
+                returnTrans: "自日本橋三越前站搭乘地鐵銀座線，坐 3 站（5分鐘）直達上野站，從廣小路口出站走平面斑馬線 4-5 分鐘即可回到飯店休息。"
             },
             6: {
                 dayNum: 6,
@@ -863,7 +883,7 @@
                         badge: "JY",
                         badgeColor: "bg-blue-700",
                         badgeName: "JR 上野東京線 / 橫須賀線直通",
-                        desc: "上野站搭乘 JR 上野東京線（東海道線直通）直達班次約 55 分鐘抵達古都鎌倉站。",
+                        desc: "上野站搭乘 JR 上野東京線（東海道線直通）於戶塚站同月台轉橫須賀線，或直達班次約 55 分鐘抵達古都鎌倉站。",
                         oneSentenceNav: "在上野搭乘 JR 南下列車直達鎌倉站，下車後搭電梯出東口即是小町通與八幡宮參道。"
                     },
                     {
@@ -900,18 +920,18 @@
                         link: "https://maps.google.com/?cid=5872107590832844102&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ"
                     },
                     {
-                        name: "午餐推薦：食事處 秋本 (Akimoto 鎌倉站東口)",
+                        name: "午餐首選：食事處 秋本 (Akimoto 鎌倉站東口)",
                         desc: "鎌倉站步行 2 分鐘（大電梯直達 3 樓）。招牌溫熱釜揚吻仔魚丼與當季鎌倉軟嫩野菜天婦羅，清淡鮮甜好消化。（每人約 ¥1,800 - ¥3,000）",
                         link: "https://maps.google.com/?cid=7030196313155034192&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ"
                     },
                     {
-                        name: "午餐備選一：鎌倉 峰本 (八幡前本店)",
-                        desc: "八幡宮正對面百年名店。設有大電梯、全店高腳椅（免跪坐）。招牌溫熱高湯烏龍麵、柔嫩茶碗蒸與親子丼，極度好消化。（每人約 ¥1,600 - ¥2,800）",
+                        name: "午餐推薦二：鎌倉 峰本 (八幡前本店)",
+                        desc: "八幡宮正對面百年和食老舖。備有無障礙大電梯、全店高腳椅（免跪坐），溫熱湯烏龍麵、柔嫩蒸蛋與親子丼極易消化。（每人約 ¥2,000 - ¥3,500）",
                         link: "https://maps.google.com/?cid=15645708491802752726&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ"
                     },
                     {
-                        name: "午餐備選二：鎌倉釜飯 かまかま 本店",
-                        desc: "小町通平路無門檻店面。現點現炊溫熱鐵釜飯，吻仔魚與鮭魚鮮美軟濡，最後還能沖入昆布高湯變茶泡飯，暖胃又好吞嚥。（每人約 ¥1,600 - ¥2,500）",
+                        name: "午餐推薦三：鎌倉釜飯 かまかま 本店",
+                        desc: "小町通平路無門檻店面。現炊軟濕熱釜飯，滿滿軟嫩吻仔魚與鮭魚，最後沖入清甜熱高湯作茶泡飯，暖胃舒暢。（每人約 ¥1,800 - ¥2,800）",
                         link: "https://maps.google.com/?cid=11566499208637792363&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ"
                     },
                     {
@@ -920,13 +940,13 @@
                         link: "https://maps.google.com/?cid=2216777826481991500&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ"
                     },
                     {
-                        name: "備用景點 A：長谷寺 (海景茶座「海光庵」)",
-                        desc: "大佛旁步行4分鐘或計程車2分鐘。下境內全平坦錦鯉池；「海光庵」景觀茶座可坐著吹冷氣吃軟糰子、遠眺由比濱蔚藍海灣。",
+                        name: "備用景點 A：長谷寺 (觀景茶座海光庵)",
+                        desc: "大佛旁步行 4 分鐘或計程車 2 分鐘。下境內全平坦錦鯉池；海光庵茶座可吹冷氣、坐著吃軟嫩糰子遠眺海灣。",
                         link: "https://maps.google.com/?cid=6335264300188806609&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ"
                     },
                     {
-                        name: "備用景點 B：報國寺 (竹之寺 ＆ 休耕庵茶席)",
-                        desc: "若想找清幽處，鎌倉站搭計程車8分鐘直達。2000株幽靜孟宗竹林平整陰涼，茶席坐著品嚐熱抹茶與乾菓子，靜聽風吹竹葉聲。",
+                        name: "備用景點 B：報國寺 (竹之寺 ＆ 休耕庵竹林茶席)",
+                        desc: "鎌倉站搭計程車 8 分鐘直達。2000 株清幽孟宗竹林平整陰涼，茶席坐著品嚐熱抹茶與和菓子，靜聽竹葉清音。",
                         link: "https://maps.google.com/?cid=8247336738641620727&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ"
                     },
                     {
@@ -935,9 +955,7 @@
                         link: "https://www.google.com/maps/search/?api=1&query=Takeya+Ueno"
                     }
                 ],
-                returnStationName: "JR 鎌倉站 (東口大電梯入口)",
-                returnStationDesc: "在大佛正門口搭排班計程車 10 分鐘直達「JR 鎌倉站東口」（車資約 ¥1,400，避開江之電人潮與台階），搭乘 JR 橫須賀線或上野東京線約 55 分鐘一路坐回上野站，出站平地走 4 分鐘回飯店休息。",
-                returnStationMapUrl: "https://maps.google.com/?cid=14405108923314671118&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ"
+                returnTrans: "由鎌倉搭乘 JR 直達電車返回「上野站」，由廣小路口出站平地步行 4 分鐘回飯店，傍晚輕鬆整理行李箱，將免稅戰利品裝箱打包。"
             },
             7: {
                 dayNum: 7,
@@ -975,9 +993,7 @@
                         link: "https://www.google.com/maps/search/?api=1&query=Narita+International+Airport+Terminal+2"
                     }
                 ],
-                returnStationName: "京成上野站 (Skyliner 月台)",
-                returnStationDesc: "午餐後回飯店 20 樓取大行李，搭電梯下樓平地步行 4 分鐘進入「京成上野站」，搭乘 13:00 或 13:20 的 Skyliner 直達成田機場第二航廈，下午 14:00 前抵達辦理報到，順利返抵國門！",
-                returnStationMapUrl: "https://www.google.com/maps/search/?api=1&query=Keisei+Ueno+Station"
+                returnTrans: "享用完美味鰻魚午餐後，回飯店大樓 20 樓取大行李，下樓平地步行 4 分鐘進入「京成上野站」，搭乘 13:00 或 13:20 的 Skyliner 直達成田機場第二航廈，下午 14:00 前抵達辦理報到，順利返抵國門！"
             }
         };
 
@@ -993,43 +1009,29 @@
             { name: "橫濱Hammerhead (鎚頭碼頭客輪商場)", desc: "面海大露台、點心甜品工坊與室內休閒沙發", cat: "d2", url: "https://maps.google.com/?cid=5675781008429257512&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
             { name: "橫濱地標塔 69F 空中花園", desc: "最速平穩電梯40秒直達，全區地毯沙發觀景台", cat: "d2", url: "https://maps.google.com/?cid=6607536174985891965&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
             { name: "合味道紀念館 橫濱 (杯麵博物館)", desc: "世界級無障礙展館，坐著親手自製紀念杯麵", cat: "d2", url: "https://maps.google.com/?cid=8316009374312643262&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
-            { name: "山下公園 (面海平坦長廊)", desc: "橫濱海濱林蔭長椅步道，遠眺冰川丸與港灣", cat: "d2", url: "https://maps.google.com/?cid=16409509493365421932&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
             { name: "橫濱中華街與關帝廟", desc: "平坦熱鬧街道，日本最大唐人街祈福", cat: "d2", url: "https://maps.google.com/?cid=10424689788304133941&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
             { name: "橫濱中華街 菜香新館 (Saikou Shinkan)", desc: "頂級茶樓大電梯直達，軟嫩港點、瑤柱清粥 (¥2,000-¥3,500)", cat: "d2", url: "https://maps.google.com/?cid=12091748071798608198&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
             { name: "勝烈庵 馬車道總本店", desc: "橫濱百年炸豬排，特選腰內肉筷子輕夾即斷 (¥1,800-¥3,000)", cat: "d2", url: "https://maps.google.com/?cid=13104703082191187994&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
-            { name: "壽喜燒 鉢之木 上野店", desc: "黑毛和牛壽喜燒極度軟嫩，沙發雅座 (¥3,500-¥6,000)", cat: "d2", url: "https://www.google.com/maps/search/?api=1&query=Hachinoki+Ueno" },
             { name: "淺草寺雷門與本堂", desc: "本堂右側備有無障礙大電梯直達主殿", cat: "d3", url: "https://www.google.com/maps/search/?api=1&query=Sensoji+Temple+Tokyo" },
             { name: "隅田公園 (親水林蔭步道)", desc: "平坦綠蔭長椅步道，合影晴空塔絕佳角度", cat: "d3", url: "https://www.google.com/maps/search/?api=1&query=Sumida+Park" },
             { name: "東京晴空塔 (Tokyo Skytree)", desc: "高空展望台平坦寬闊，6F為美食街", cat: "d3", url: "https://www.google.com/maps/search/?api=1&query=Tokyo+Skytree" },
-            { name: "淺草今半 國際通本店", desc: "百年壽喜燒老店，極嫩和牛大電梯包廂 (¥4,000-¥6,000)", cat: "d3", url: "https://www.google.com/maps/search/?api=1&query=Asakusa+Imahan+Main+Shop" },
-            { name: "尾張屋 本店", desc: "淺草160年蕎麥麵老店，巨大炸蝦軟嫩 (¥1,600-¥2,800)", cat: "d3", url: "https://www.google.com/maps/search/?api=1&query=Owariya+Main+Shop" },
-            { name: "ひつまぶし名古屋備長 晴空塔店 (6F)", desc: "商場內無障礙大電梯直達，香嫩鰻魚三吃 (¥3,800-¥5,800)", cat: "d3", url: "https://www.google.com/maps/search/?api=1&query=Hitsumabushi+Nagoya+Bincho+Tokyo+Solamachi" },
-            { name: "銀座天龍 晴空塔店 (6F)", desc: "多汁巨餃與清淡中式豆腐料理 (¥1,500-¥2,500)", cat: "d3", url: "https://www.google.com/maps/search/?api=1&query=Ginza+Tenryu+Solamachi" },
             { name: "明治神宮", desc: "都心森林浴，平坦兩側邊道避開碎石", cat: "d4", url: "https://www.google.com/maps/search/?api=1&query=Meiji+Jingu+Shrine+Tokyo" },
             { name: "新宿御苑 (大型溫室與日式庭園)", desc: "平緩無門檻溫室，四季恆溫遮風避雨", cat: "d4", url: "https://www.google.com/maps/search/?api=1&query=Shinjuku+Gyoen+National+Garden" },
-            { name: "おもてなしとりよし 青山店", desc: "表參道軟嫩土雞親子丼御膳 (¥1,200-¥1,800)", cat: "d4", url: "https://www.google.com/maps/search/?api=1&query=Omotenashi+Toriyoshi+Aoyama" },
-            { name: "舞泉豬排 (Maisen) 青山本店", desc: "特選腰內肉極軟，筷子輕易夾斷 (¥2,000-¥3,500)", cat: "d4", url: "https://www.google.com/maps/search/?api=1&query=Tonkatsu+Maisen+Aoyama" },
-            { name: "敘敘苑 新宿小田急第一生命大樓店", desc: "高空美景極嫩燒肉包廂 (¥5,000-¥9,000)", cat: "d4", url: "https://www.google.com/maps/search/?api=1&query=Jojoen+Shinjuku+Odakyu" },
-            { name: "美濃吉 新宿住友店", desc: "京都百年料亭京懷石，高背雅座免跪坐 (¥4,000-¥7,000)", cat: "d4", url: "https://www.google.com/maps/search/?api=1&query=Minokichi+Shinjuku+Sumitomo" },
             { name: "東京車站丸之內站前廣場", desc: "百年紅磚文藝復興車站，全平坦石板廣場", cat: "d5", url: "https://www.google.com/maps/search/?api=1&query=Tokyo+Station+Marunouchi" },
-            { name: "皇居外苑與二重橋", desc: "走護城河水泥步道避碎石，飽覽黑松古橋", cat: "d5", url: "https://www.google.com/maps/search/?api=1&query=Nijubashi+Bridge+Tokyo" },
             { name: "日本橋 (青銅麒麟之翼與道路元標)", desc: "日本道路網起點，石造名橋與東野圭吾經典地標", cat: "d5", url: "https://maps.google.com/?cid=13120727435463147929&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
-            { name: "日本橋三越本店 (本館)", desc: "重要文化財百年百貨，大理石雕刻挑高中庭沙發 (10:00-19:00)", cat: "d5", url: "https://maps.google.com/?cid=13201924496648685011&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
-            { name: "日本橋三越 特別食堂 (本館7F)", desc: "大正古典名店，和食與鰻魚飯，大電梯高背沙發 (¥2,800-¥4,500)", cat: "d5", url: "https://maps.google.com/?cid=13201924496648685011&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
-            { name: "天ぷら 新宿つな八 上野店 (松坂屋 7F)", desc: "百貨大電梯直達，清爽軟嫩天婦羅定食 (¥2,500-¥4,500)", cat: "d5", url: "https://www.google.com/maps/search/?api=1&query=Tsunahachi+Matsuzakaya+Ueno" },
+            { name: "日本橋三越本店 (本館)", desc: "重要文化財百年百貨，大理石雕刻挑高中庭沙發", cat: "d5", url: "https://maps.google.com/?cid=13201924496648685011&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
             { name: "鶴岡八幡宮 (段葛步道)", desc: "全平坦櫻樹中央林蔭神道，參拜無起伏階梯負擔", cat: "d6", url: "https://maps.google.com/?cid=12134858005477865141&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
             { name: "小町通商店街", desc: "鎌倉平坦好逛老街，各式和菓子與日式手作店", cat: "d6", url: "https://maps.google.com/?cid=5872107590832844102&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
             { name: "豐島屋 鎌倉本店", desc: "百年名物「鳩サブレー」鴿子餅乾，附設茶房雅座", cat: "d6", url: "https://maps.google.com/?cid=6126750285060375089&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
             { name: "食事處 秋本 (Akimoto 鎌倉站前)", desc: "大電梯直達3F，釜揚吻仔魚丼與野菜天婦羅 (¥1,800-¥3,000)", cat: "d6", url: "https://maps.google.com/?cid=7030196313155034192&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
-            { name: "鎌倉 峰本 (八幡前本店)", desc: "八幡宮正對面百年名店，大電梯全椅子席，熱烏龍與茶碗蒸", cat: "d6", url: "https://maps.google.com/?cid=15645708491802752726&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
-            { name: "鎌倉釜飯 かまかま 本店", desc: "現炊軟熱釜飯與高湯茶泡飯，無門檻店面", cat: "d6", url: "https://maps.google.com/?cid=11566499208637792363&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
-            { name: "國寶 鎌倉大佛殿高德院", desc: "11.3M青銅大佛，境內全平路無階梯無障礙 (08:00-16:45)", cat: "d6", url: "https://maps.google.com/?cid=2216777826481991500&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
-            { name: "長谷寺 (海景茶座海光庵)", desc: "大佛旁步行4分，平坦下境內與遠眺由比濱茶座", cat: "d6", url: "https://maps.google.com/?cid=6335264300188806609&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
-            { name: "報國寺 (竹之寺 ＆ 休耕庵茶席)", desc: "計程車8分鐘直達，幽靜竹林坐著品熱抹茶", cat: "d6", url: "https://maps.google.com/?cid=8247336738641620727&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
+            { name: "鎌倉 峰本 (八幡前本店)", desc: "百年老舖高腳餐椅，溫熱湯烏龍麵與茶碗蒸 (¥2,000-¥3,500)", cat: "d6", url: "https://maps.google.com/?cid=15645708491802752726&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
+            { name: "鎌倉釜飯 かまかま 本店", desc: "平路無門檻，現炊軟吻仔魚釜飯與高湯茶泡飯 (¥1,800-¥2,800)", cat: "d6", url: "https://maps.google.com/?cid=11566499208637792363&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
+            { name: "國寶 鎌倉大佛殿高德院", desc: "11.3M青銅大佛，境內全平路無階梯無障礙", cat: "d6", url: "https://maps.google.com/?cid=2216777826481991500&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
+            { name: "長谷寺 (海光庵景觀茶座)", desc: "大佛旁步行4分鐘，平坦庭園與觀海茶座吃軟糰子", cat: "d6", url: "https://maps.google.com/?cid=6335264300188806609&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
+            { name: "報國寺 (竹之寺)", desc: "計程車8分鐘直達，幽靜孟宗竹林與休耕庵熱抹茶", cat: "d6", url: "https://maps.google.com/?cid=8247336738641620727&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ" },
             { name: "多慶屋 (TAKEYA) 上野免稅大樓", desc: "常備藥妝、保健品一站式直接免稅", cat: "d6", url: "https://www.google.com/maps/search/?api=1&query=Takeya+Ueno" },
             { name: "上野恩賜公園與噴泉廣場", desc: "寬闊平坦綠蔭，露天星巴克茶座散心", cat: "d7", url: "https://www.google.com/maps/search/?api=1&query=Ueno+Park" },
-            { name: "鰻割烹 伊豆榮 本店 (Izuei)", desc: "200年鰻魚老舖，大電梯直達且設有高腳椅沙發座 (¥4,000-¥6,500)", cat: "d7", url: "https://www.google.com/maps/search/?api=1&query=Izuei+Honten+Ueno" },
-            { name: "成田國際機場 第二航廈 (NRT)", desc: "Skyliner 41分鐘直達，3F出境大廳長者禮遇 (16:20起飛)", cat: "d7", url: "https://www.google.com/maps/search/?api=1&query=Narita+International+Airport+Terminal+2" }
+            { name: "鰻割烹 伊豆榮 本店 (Izuei)", desc: "200年鰻魚老舖，大電梯直達且設有高腳椅沙發座", cat: "d7", url: "https://www.google.com/maps/search/?api=1&query=Izuei+Honten+Ueno" }
         ];
 
         const japanesePhrases = [
@@ -1038,43 +1040,41 @@
             { id: 2, category: "transport", title: "🚾 多功能洗手間卡", intent: "請問多功能（無障礙）洗手間在哪裡？", jp: "すみません、多目的トイレはどこですか？", hiragana: "すみません、たもくてき といれ は どこですか？" },
             { id: 3, category: "transport", title: "♿ 避開樓梯路線卡", intent: "請問這裡有沒有「不需要爬樓梯」的平路或電梯？", jp: "すみません、階段のないルートはどちらですか？", hiragana: "すみません、かいだんの ない るーと は どちらですか？" },
             { id: 4, category: "transport", title: "🚇 確認乘車方向卡", intent: "請問這班車（電車或巴士）會到上野嗎？", jp: "すみません、この電車（バス）は上野に行きますか？", hiragana: "すみません、この でんしゃ（ばす）は うえの に いきますか？" },
-            { id: 5, category: "transport", title: "🚕 搭計程車到上野飯店卡", intent: "請載我到「上野皇冠山丘高級酒店」（東京都台東区東上野2-16-1）", jp: "「ホテルクラウンヒルズ上野プレミア」までお願いします。住所：東京都台東区東上野2-16-1", hiragana: "「ほてる くらうん ひるず うえの ぷれみあ」まで おねがいします。" },
-            { id: 6, category: "transport", title: "🚕 橫濱紅磚倉庫計程車卡", intent: "請載我到「橫濱紅磚倉庫」", jp: "横浜の「赤レンガ倉庫」までお願いします。", hiragana: "よこはま の 「あかれんが そうこ」まで おねがいします。" },
-            { id: 7, category: "transport", title: "🚕 鎌倉大佛高德院計程車卡", intent: "請載我到「鎌倉大佛殿高德院」", jp: "鎌倉の「高徳院（大仏）」までお願いします。", hiragana: "かまくら の 「こうとくいん（だいぶつ）」まで おねがいします。" },
             { id: 8, category: "transport", title: "🎫 車票補票/感應卡問題卡", intent: "不好意思，我的西瓜卡（車票）感應有問題，請幫忙處理一下。", jp: "すみません、ICカード（切符）が改札で通れませんでした。精算をお願いします。", hiragana: "すみません、あいしーかーど が かいさつ で とおりませんでした。せいさん を おねがいします。" },
             { id: 9, category: "transport", title: "🚌 下公車動作慢請等一下卡", intent: "不好意思，長輩動作較慢，請等我們一下再關門開車，謝謝！", jp: "すみません、足が悪いので、ゆっくり降ります。少し待っていただけますか？", hiragana: "すみません、あしが わるいので、ゆっくり おります。すこし まって いただけますか？" },
 
-            // 🛎️ 飯店住宿
+            // 🛎️ 飯店住宿與備品
             { id: 10, category: "hotel", title: "🛎️ 行李寄存卡", intent: "請問可以先寄放行李嗎？", jp: "荷物を預かっていただけますか？", hiragana: "にもつ を あずかって いただけますか？" },
-            { id: 11, category: "hotel", title: "🧳 退房後行李寄放卡", intent: "今天已經辦理退房，請問行李可以寄放到傍晚嗎？", jp: "チェックアウト後ですが、夕方まで荷物を預かっていただけますか？", hiragana: "ちぇっくあうと ご ですが、ゆうがた まで にもつ を あずかって いただけますか？" },
-            { id: 12, category: "hotel", title: "🛏️ 索取毛毯/加枕頭卡", intent: "房間稍微有點涼，請問可以借一條毛毯和一個枕頭嗎？", jp: "毛布と枕をもう一つお借りできますか？", hiragana: "もうふ と まくら を もう ひとつ おかり できますか？" },
-            { id: 13, category: "hotel", title: "🚕 請櫃台代叫計程車卡", intent: "不好意思，可以麻煩幫我們叫一輛計程車到飯店大門嗎？", jp: "すみません、タクシーを一台呼んでいただけますか？", hiragana: "すみません、たくしー を いちだい よんで いただけますか？" },
+            { id: 11, category: "hotel", title: "🧳 退房後行李寄放卡 (下午兩點)", intent: "今天已經辦理退房，請問行李可以寄放到下午兩點嗎？", jp: "チェックアウト後ですが、午後2時（14時）まで荷物を預かっていただけますか？", hiragana: "ちぇっくあうと ご ですが、ごご にじ（じゅうよじ）まで にもつ を あずかって いただけますか？" },
+            { id: 12, category: "hotel", title: "🛏️ 索取毛毯/被子卡", intent: "房間稍微有點涼，請問可以借一條毛毯（厚被子）嗎？", jp: "部屋が少し寒いので、毛布をもう一枚お借りできますか？", hiragana: "へや が すこし さむいので、もうふ を もう いちまい おかり できますか？" },
+            { id: 13, category: "hotel", title: "😴 索取多一個枕頭卡", intent: "請問可以再借我們一個枕頭嗎？謝謝。", jp: "枕をもう一つお借りできますか？", hiragana: "まくら を もう ひとつ おかり できますか？" },
+            { id: 14, category: "hotel", title: "🪥 索取牙刷備品卡", intent: "不好意思，請問可以多給我們兩套牙刷牙膏備品嗎？", jp: "すみません、歯ブラシのセットを二ついただけますか？", hiragana: "すみません、はぶらし の せっと を ふたつ いただけますか？" },
+            { id: 15, category: "hotel", title: "🚿 索取大浴巾/毛巾卡", intent: "請問可以多給我們兩條乾淨的大浴巾和毛巾嗎？", jp: "バスタオルとフェイスタオルをもう二枚いただけますか？", hiragana: "ばすたおる と ふぇいすたおる を もう にまい いただけますか？" },
+            { id: 16, category: "hotel", title: "🩴 索取室內拖鞋卡", intent: "不好意思，請問可以給我們室內拖鞋嗎？", jp: "使い捨てのスリッパをいただけますか？", hiragana: "つかいすて の すりっぱ を いただけますか？" },
+            { id: 17, category: "hotel", title: "🚕 請櫃台代叫計程車卡", intent: "不好意思，可以麻煩幫我們叫一輛計程車到飯店大門嗎？", jp: "すみません、タクシーを一台呼んでいただけますか？", hiragana: "すみません、たくしー を いちだい よんで いただけますか？" },
+            { id: 18, category: "hotel", title: "🌡️ 房間冷暖氣調節卡", intent: "不好意思，房間溫度有點涼（熱），請問空調如何調高（低）？", jp: "すみません、エアコンの温度調整はどうすればいいですか？少し寒いです（暑いです）。", hiragana: "すみません、えあこん の おんど ちょうせい は どう すれば いいですか？すこし さむいです。" },
 
             // 🥢 餐廳用餐
-            { id: 14, category: "restaurant", title: "👥 兩位用餐卡", intent: "你好，我們一共兩位用餐。", jp: "すみません、二人です。席は空いていますか？", hiragana: "すみません、ふたり です。せき は あいていますか？" },
-            { id: 15, category: "restaurant", title: "👍 推薦招牌餐點卡", intent: "請問這家店最推薦的招牌料理是什麼？", jp: "おすすめのメニューは何ですか？", hiragana: "おすすめ の めにゅー は なん ですか？" },
-            { id: 16, category: "restaurant", title: "🪑 要求椅子座位卡", intent: "不好意思，因為膝蓋不便，請問有沒有提供「椅子」的座位（免跪坐）？", jp: "すみません、膝が痛いので、畳ではなく椅子の席はありますか？", hiragana: "すみません、ひざが いたいので、たたみ ではなく いすのせき は ありますか？" },
-            { id: 17, category: "restaurant", title: "📖 中文菜單卡", intent: "請問有中文或附圖片的菜單嗎？", jp: "中国語（写真付き）のメニューはありますか？", hiragana: "ちゅうごくご（しゃしん つき）の めにゅー は ありますか？" },
-            { id: 18, category: "restaurant", title: "🍵 要溫開水卡", intent: "請問可以給我們兩杯溫開水（熱水）嗎？謝謝。", jp: "温かいお湯をいただけますか？", hiragana: "あたたかい おゆ を いただけますか？" },
-            { id: 19, category: "restaurant", title: "🧊 飲料去冰卡", intent: "飲料請幫我去冰，謝謝！", jp: "氷なしでお願いします。", hiragana: "こおり なし で おねがいします。" },
-            { id: 20, category: "restaurant", title: "👉 手指點餐卡", intent: "不好意思，我要點這個。（手指菜單圖片）", jp: "これをお願いします。", hiragana: "これ を おねがいします。" },
-            { id: 21, category: "restaurant", title: "🧂 口味少鹽清淡卡", intent: "長者飲食清淡，料理可以幫我們做少鹽（清淡）一點嗎？", jp: "高齢者のため、味付けを薄め（塩分控えめ）にしていただけますか？", hiragana: "こうれいしゃ の ため、あじつけ を うすめ に していただけますか？" },
-            { id: 22, category: "restaurant", title: "📸 麻煩幫忙拍合照卡", intent: "不好意思，可以麻煩幫我們兩位拍一張合照嗎？謝謝！", jp: "すみません、シャッターを押していただけますか？二人の写真を撮りたいです。", hiragana: "すみません、しゃったー を おして いただけますか？ふたり の しゃしん を とりたい です。" },
-            { id: 23, category: "restaurant", title: "💴 結帳卡", intent: "不好意思，我們要買單結帳。", jp: "お会計をお願いします。", hiragana: "おかいけい を おねがいします。" },
+            { id: 19, category: "restaurant", title: "👍 推薦招牌餐點卡", intent: "請問這家店最推薦的招牌料理是什麼？", jp: "おすすめのメニューは何ですか？", hiragana: "おすすめ の めにゅー は なん ですか？" },
+            { id: 20, category: "restaurant", title: "🪑 要求椅子座位卡", intent: "不好意思，因為膝蓋不便，請問有沒有提供「椅子」的座位（免跪坐）？", jp: "すみません、膝が痛いので、畳ではなく椅子の席はありますか？", hiragana: "すみません、ひざが いたいので、たたみ ではなく いすのせき は ありますか？" },
+            { id: 21, category: "restaurant", title: "📖 中文菜單卡", intent: "請問有中文或附圖片的菜單嗎？", jp: "中国語（写真付き）のメニューはありますか？", hiragana: "ちゅうごくご（しゃしん つき）の めにゅー は ありますか？" },
+            { id: 22, category: "restaurant", title: "🍵 要溫開水卡", intent: "請問可以給我們兩杯溫開水（熱水）嗎？謝謝。", jp: "温かいお湯をいただけますか？", hiragana: "あたたかい おゆ を いただけますか？" },
+            { id: 23, category: "restaurant", title: "👉 手指點餐卡", intent: "不好意思，我要點這個。（手指菜單圖片）", jp: "これをお願いします。", hiragana: "これ を おねがいします。" },
+            { id: 24, category: "restaurant", title: "📸 麻煩幫忙拍合照卡", intent: "不好意思，可以麻煩幫我們兩位拍一張合照嗎？謝謝！", jp: "すみません、シャッターを押していただけますか？二人の写真を撮りたいです。", hiragana: "すみません、しゃったー を おして いただけますか？ふたり の しゃしん を とりたい です。" },
+            { id: 25, category: "restaurant", title: "💴 結帳卡", intent: "不好意思，我們要買單結帳。", jp: "お会計をお願いします。", hiragana: "おかいけい を おねがいします。" },
 
             // 🛍️ 購物採買
-            { id: 24, category: "shopping", title: "🛍️ 我要買這個卡", intent: "你好，我想買這個，請給我一個新的。", jp: "これを買いたいです。新しい在庫はありますか？一つください。", hiragana: "これ を かいたい です。あたらしい ざいこ は ありますか？ひとつ ください。" },
-            { id: 25, category: "shopping", title: "📍 詢問商品位置卡", intent: "不好意思，請問這個東西放在哪裡？（可搭配手機照片出示）", jp: "すみません、この商品はどこにありますか？", hiragana: "すみません、この しょうひん は どこ に ありますか？" },
-            { id: 26, category: "shopping", title: "📦 分開個別包裝卡", intent: "這是要送人的禮物，請問可以幫我分開個別包裝（附小紙袋）嗎？", jp: "お土産用なので、小分けの袋をいただけますか？", hiragana: "おみやげ よう なので、こわけ の ふくろ を いただけますか？" },
-            { id: 27, category: "shopping", title: "🏷️ 詢問價格卡", intent: "請問這個多少錢？", jp: "これはいくらですか？", hiragana: "これ は いくら ですか？" },
-            { id: 28, category: "shopping", title: "🛍️ 辦理免稅卡", intent: "請問這裡可以辦理外國人退稅 (Tax Free) 嗎？", jp: "免税（Tax Free）の手続きはできますか？", hiragana: "めんぜい の てつづき は できますか？" },
-            { id: 29, category: "shopping", title: "💳 刷卡付款卡", intent: "請問可以使用信用卡付款嗎？", jp: "クレジットカードは使えますか？", hiragana: "くれじっとかーど は つかえますか？" },
+            { id: 26, category: "shopping", title: "🛍️ 我要買這個卡", intent: "你好，我想買這個，請給我一個新的。", jp: "これを買いたいです。新しい在庫はありますか？一つください。", hiragana: "これ を かいたい です。あたらしい ざいこ は ありますか？ひとつ ください。" },
+            { id: 27, category: "shopping", title: "📍 詢問商品位置卡", intent: "不好意思，請問這個東西放在哪裡？（可搭配手機照片出示）", jp: "すみません、この商品はどこにありますか？", hiragana: "すみません、この しょうひん は どこ に ありますか？" },
+            { id: 28, category: "shopping", title: "📦 分開個別包裝卡", intent: "這是要送人的禮物，請問可以幫我分開個別包裝（附小紙袋）嗎？", jp: "お土産用なので、小分けの袋をいただけますか？", hiragana: "おみやげ よう なので、こわけ の ふくろ を いただけますか？" },
+            { id: 29, category: "shopping", title: "🏷️ 詢問價格卡", intent: "請問這個多少錢？", jp: "これはいくらですか？", hiragana: "これ は いくら ですか？" },
+            { id: 30, category: "shopping", title: "🛍️ 辦理免稅卡", intent: "請問這裡可以辦理外國人退稅 (Tax Free) 嗎？", jp: "免税（Tax Free）の手続きはできますか？", hiragana: "めんぜい の てつづき は できますか？" },
 
             // 🚨 緊急與醫療求助
-            { id: 30, category: "emergency", title: "💊 感冒常備藥卡", intent: "喉嚨痛且微咳，請推薦長者適用的溫和感冒藥。", jp: "高齢者向けの体に優しい風邪薬はありますか？喉の痛みと咳があります。", hiragana: "こうれいしゃ むけ の からだに やさしい かぜぐすり は ありますか？のど の いたみ と せき が あります。" },
-            { id: 31, category: "emergency", title: "🩹 痠痛貼布推薦卡", intent: "膝蓋和腰走得有點痠，請推薦效果好的痠痛貼布。", jp: "膝と腰が痛いので、よく効く湿布薬（シップ）を教えてください。", hiragana: "ひざ と こし が いたいので、よく きく しっぷやく を おしえて ください。" },
-            { id: 32, category: "emergency", title: "🆘 身體不適求助卡", intent: "我感覺有點頭暈不舒服，可以讓我坐著休息喝口水嗎？", jp: "少し気分が悪くなりました。座って休める場所はありますか？", hiragana: "すこし きぶん が わるくなりました。すわって やすめる ばしょ は ありますか？" },
-            { id: 33, category: "emergency", title: "👨‍👩‍👧 與家人走散求助卡", intent: "不好意思，我和家人走散了，可以幫我借打電話聯絡嗎？", jp: "連れとはぐれてしまいました。電話をお借りすることはできますか？", hiragana: "つれ と はぐれて しまいました。でんわ を おかりする ことは できますか？" }
+            { id: 31, category: "emergency", title: "💊 感冒常備藥卡", intent: "喉嚨痛且微咳，請推薦長者適用的溫和感冒藥。", jp: "高齢者向けの体に優しい風邪薬はありますか？喉の痛みと咳があります。", hiragana: "こうれいしゃ むけ の からだに やさしい かぜぐすり は ありますか？のど の いたみ と せき が あります。" },
+            { id: 32, category: "emergency", title: "🩹 痠痛貼布推薦卡", intent: "膝蓋和腰走得有點痠，請推薦效果好的痠痛貼布。", jp: "膝と腰が痛いので、よく効く湿布薬（シップ）を教えてください。", hiragana: "ひざ と こし が いたいので、よく きく しっぷやく を おしえて ください。" },
+            { id: 33, category: "emergency", title: "🆘 身體不適求助卡", intent: "我感覺有點頭暈不舒服，可以讓我坐著休息喝口水嗎？", jp: "少し気分が悪くなりました。座って休める場所はありますか？", hiragana: "すこし きぶん が わるくなりました。すわって やすめる ばしょ は ありますか？" },
+            { id: 34, category: "emergency", title: "👨‍👩‍👧 與家人走散求助卡", intent: "不好意思，我和家人走散了，可以幫我借打電話聯絡嗎？", jp: "連れとはぐれてしまいました。電話をお借りすることはできますか？", hiragana: "つれ と はぐれて しまいました。でんわ を おかりする ことは できますか？" }
         ];
 
         const defaultDailyList = [
@@ -1132,9 +1132,7 @@
                 }).catch(e => console.warn(e));
             }
             if ('caches' in window) {
-                caches.keys().then(keys => {
-                    return Promise.all(keys.map(key => caches.delete(key)));
-                }).catch(e => console.warn(e));
+                caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))).catch(e => console.warn(e));
             }
         }
 
@@ -1146,6 +1144,7 @@
 
         window.onload = function() {
             purgeStaleServiceWorkersAndCaches();
+
             const savedScale = localStorage.getItem("ueno_font_scale_pref") || "large";
             setFontScale(savedScale);
 
@@ -1153,6 +1152,7 @@
             initShopping();
             renderMapGuide();
             renderDayContent(1);
+            renderDynamicCards();
             renderJapaneseCards();
         };
 
@@ -1283,21 +1283,9 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">${spotsHTML}</div>
                 </div>
 
-                <!-- 回程搭車車站卡片 -->
-                <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-5 border-2 border-amber-400 space-y-3 mt-6 shadow-sm">
-                    <div class="flex items-center justify-between border-b border-amber-300 pb-2">
-                        <h4 class="text-xl font-black text-amber-950 flex items-center gap-2">
-                            <span>🚉</span> 最後一站返回交通指引
-                        </h4>
-                        <span class="text-xs font-black bg-amber-200 text-amber-900 px-2.5 py-1 rounded-md">直達回飯店</span>
-                    </div>
-                    <div>
-                        <div class="text-lg font-black text-brand-900">🎯 目標車站：${data.returnStationName}</div>
-                        <p class="text-sm sm:text-base font-bold text-gray-800 mt-1 leading-relaxed">${data.returnStationDesc}</p>
-                    </div>
-                    <a href="${data.returnStationMapUrl}" target="_blank" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-black py-3 px-4 rounded-xl text-center text-base shadow transition-all flex items-center justify-center gap-2">
-                        🧭 👉【開啟 Google Maps 導航至 ${data.returnStationName}】
-                    </a>
+                <div class="bg-amber-50 rounded-2xl p-4 border border-amber-300 space-y-2 mt-4">
+                    <h4 class="text-lg font-black flex items-center gap-2 text-amber-900"><span>🏠</span> 貼心指引：如何安全返回飯店</h4>
+                    <p class="text-base font-black text-gray-900 leading-relaxed">${data.returnTrans}</p>
                 </div>
             `;
         }
@@ -1349,7 +1337,522 @@
                 activeBtn.classList.add("bg-brand-600", "text-white");
                 activeBtn.classList.remove("bg-white", "text-gray-800");
             }
+            renderDynamicCards();
             renderJapaneseCards();
+        }
+
+        // ==========================================
+        // ⚡ 動態即時切換卡狀態與資料模型
+        // ==========================================
+        let dynTaxiDest = 'hotel';  // 預設目的地：上野飯店
+        let dynDineCount = 2;       // 預設 2 位長輩用餐
+        let dynBuyQty = 1;          // 預設購買 1 個
+        let dynPayMethod = 'credit';// 預設信用卡
+        let dynDietOptions = {
+            ice: false,    // 去冰
+            salt: true,    // 少鹽清淡 (長輩預設勾選)
+            well: false,   // 肉全熟/無生食
+            chair: false,  // 椅子席
+            bowl: false    // 小分食碗
+        };
+        // 🛎️ 飯店備品索取選項 (可勾選組合)
+        let dynHotelAmenities = {
+            blanket: true,  // 毛毯/厚被子 (預設勾選)
+            pillow: false,  // 枕頭
+            towel: false,   // 大浴巾/毛巾
+            brush: false,   // 牙刷備品
+            slippers: false,// 室內拖鞋
+            water: false    // 瓶裝水
+        };
+
+        // 🚕 計程車常用目的地選單資料庫
+        const DYN_TAXI_MAP = {
+            hotel: {
+                name: "🏨 上野飯店",
+                zh: "請載我到「上野皇冠山丘高級酒店」大門口",
+                jp: "運転手さん、「ホテルクラウンヒルズ上野プレミア」までお願いします。",
+                address: "住所：東京都台東区東上野2-16-1（昭和通り沿い）",
+                kana: "うんてんしゅさん、「ほてる くらうん ひるず うえの ぷれみあ」まで おねがいします。"
+            },
+            yokohama_saikou: {
+                name: "🥟 橫濱菜香新館",
+                zh: "請載我到橫濱中華街「菜香新館」大樓門口",
+                jp: "運転手さん、横浜中華街の「菜香新館」までお願いします。",
+                address: "住所：神奈川県横浜市中区山下町192（中華街大通り）",
+                kana: "うんてんしゅさん、よこはま ちゅうかがい の「さいこうしんかん」まで おねがいします。"
+            },
+            yokohama_ishikawacho: {
+                name: "⚓ 橫濱石川町站",
+                zh: "請載我到「JR 石川町站」北口改札口（搭車回上野）",
+                jp: "運転手さん、JR石川町駅の「北口」までお願いします。",
+                address: "住所：神奈川県横浜市中区石川町2丁目（北口改札付近）",
+                kana: "うんてんしゅさん、じぇいあーる いしかわちょうえき の きたぐち まで おねがいします。"
+            },
+            kamakura_daibutsu: {
+                name: "🙏 鎌倉大佛(高德院)",
+                zh: "請載我到「鎌倉大佛殿 高德院」正門山門口",
+                jp: "運転手さん、高徳院（鎌倉大仏）の山門までお願いします。",
+                address: "住所：神奈川県鎌倉市長谷4-2-28（山門・入口付近）",
+                kana: "うんてんしゅさん、こうとくいん（かまくら だいぶつ）の さんもん まで おねがいします。"
+            },
+            kamakura_hokokuji: {
+                name: "🎋 鎌倉報國寺",
+                zh: "請載我到「報國寺（竹之寺）」山門口",
+                jp: "運転手さん、報国寺（竹の寺）までお願いします。",
+                address: "住所：神奈川県鎌倉市浄明寺2-7-4",
+                kana: "うんてんしゅさん、ほうこくじ（たけのてら）まで おねがいします。"
+            },
+            kamakura_station: {
+                name: "🚉 JR鎌倉站東口",
+                zh: "請載我到「JR 鎌倉站」東口（搭車回上野）",
+                jp: "運転手さん、JR鎌倉駅の「東口」までお願いします。",
+                address: "住所：神奈川県鎌倉市小町1丁目（JR鎌倉駅東口改札付近）",
+                kana: "うんてんしゅさん、じぇいあーる かまくらえき の ひがしぐち まで おねがいします。"
+            },
+            shinjuku_gyoen: {
+                name: "🌳 新宿御苑",
+                zh: "請載我到「新宿御苑」大木戶門（溫室入口）",
+                jp: "運転手さん、新宿御苑の「大木戸門」までお願いします。",
+                address: "住所：東京都新宿区内藤町11（大木戸門付近）",
+                kana: "うんてんしゅさん、しんじゅく ぎょえん の おおきどもん まで おねがいします。"
+            },
+            ueno_station: {
+                name: "🚊 上野車站",
+                zh: "請載我到「JR 上野站」廣小路口 / 京成上野站",
+                jp: "運転手さん、上野駅の「広小路口」までお願いします。",
+                address: "住所：東京都台東区上野7丁目（上野駅広小路口）",
+                kana: "うんてんしゅさん、うえのえき の ひろこうじぐち まで おねがいします。"
+            }
+        };
+
+        function setDynTaxi(destKey) {
+            dynTaxiDest = destKey;
+            renderDynamicCards();
+        }
+
+        const DYN_DINE_MAP = {
+            1: { zh: "一位用餐", jp: "一人です。席は空いていますか？", kana: "ひとり です。せき は あいていますか？" },
+            2: { zh: "兩位用餐", jp: "二人です。席は空いていますか？", kana: "ふたり です。せき は あいていますか？" },
+            3: { zh: "三位用餐", jp: "三人です。席は空いていますか？", kana: "さんにん です。せき は あいていますか？" },
+            4: { zh: "四位用餐", jp: "四人です。席は空いていますか？", kana: "よにん です。せき は あいていますか？" }
+        };
+
+        const DYN_QTY_MAP = {
+            1: { zh: "我要買 1 個", jp: "これを一つください。", kana: "これ を ひとつ ください。" },
+            2: { zh: "我要買 2 個", jp: "これを二つください。", kana: "これ を ふたつ ください。" },
+            3: { zh: "我要買 3 個", jp: "これを三つください。", kana: "これ を みっつ ください。" },
+            4: { zh: "我要買 4 個", jp: "これを四つください。", kana: "これ を よっつ ください。" },
+            5: { zh: "我要買 5 個", jp: "これを五つください。", kana: "これ を いつつ ください。" }
+        };
+
+        const DYN_PAY_MAP = {
+            credit: { name: "信用卡", jp: "クレジットカードは使えますか？", kana: "くれじっとかーど は つかえますか？" },
+            suica: { name: "Suica/IC卡", jp: "Suica（交通系ICカード）は使えますか？", kana: "すいか（こうつうけい あいしーかーど）は つかえますか？" },
+            touch: { name: "感應/條碼", jp: "タッチ決済（QRコード決済）は使えますか？", kana: "たっち けっさい は つかえますか？" },
+            cash: { name: "現金", jp: "現金で支払えますか？", kana: "げんきん で しはらえますか？" }
+        };
+
+        function setDynDine(n) {
+            dynDineCount = n;
+            renderDynamicCards();
+        }
+
+        function setDynQty(n) {
+            dynBuyQty = n;
+            renderDynamicCards();
+        }
+
+        function setDynPay(method) {
+            dynPayMethod = method;
+            renderDynamicCards();
+        }
+
+        function toggleDynDiet(key) {
+            dynDietOptions[key] = !dynDietOptions[key];
+            renderDynamicCards();
+        }
+
+        function toggleDynAmenity(key) {
+            dynHotelAmenities[key] = !dynHotelAmenities[key];
+            renderDynamicCards();
+        }
+
+        function getSynthesizedDiet() {
+            const partsZh = [];
+            const partsJp = [];
+            const partsKana = [];
+
+            if (dynDietOptions.salt) {
+                partsZh.push("少鹽清淡");
+                partsJp.push("味付けを薄め（塩分控えめ）に");
+                partsKana.push("あじつけ を うすめ に");
+            }
+            if (dynDietOptions.ice) {
+                partsZh.push("去冰");
+                partsJp.push("飲み物は氷なしで");
+                partsKana.push("のみもの は こおり なし で");
+            }
+            if (dynDietOptions.well) {
+                partsZh.push("肉全熟/不吃生食");
+                partsJp.push("生ものは控えて、お肉はよく焼いて");
+                partsKana.push("なまもの は ひかえて、おにく は よく やいて");
+            }
+            if (dynDietOptions.chair) {
+                partsZh.push("椅子座位(免跪坐)");
+                partsJp.push("畳ではなく椅子の席で");
+                partsKana.push("たたみ ではなく いす の せき で");
+            }
+            if (dynDietOptions.bowl) {
+                partsZh.push("分食小碗與湯匙");
+                partsJp.push("取り分け用の小皿とスプーンを");
+                partsKana.push("とりわけよう の こざら と すぷーん を");
+            }
+
+            if (partsJp.length === 0) {
+                return {
+                    zh: "（請點選上方標籤勾選飲食需求）",
+                    jp: "すみません、注文をお願いします。",
+                    kana: "すみません、ちゅうもん を おねがいします。"
+                };
+            }
+
+            return {
+                zh: partsZh.join("、") + "，謝謝！",
+                jp: "すみません、" + partsJp.join("、") + "お願いします。",
+                kana: "すみません、" + partsKana.join("、") + "おねがいします。"
+            };
+        }
+
+        function getSynthesizedAmenity() {
+            const partsZh = [];
+            const partsJp = [];
+            const partsKana = [];
+
+            if (dynHotelAmenities.blanket) {
+                partsZh.push("毛毯/厚被子");
+                partsJp.push("毛布（もうふ）");
+                partsKana.push("もうふ");
+            }
+            if (dynHotelAmenities.pillow) {
+                partsZh.push("枕頭");
+                partsJp.push("枕（まくら）");
+                partsKana.push("まくら");
+            }
+            if (dynHotelAmenities.towel) {
+                partsZh.push("大浴巾/毛巾");
+                partsJp.push("タオル");
+                partsKana.push("たおる");
+            }
+            if (dynHotelAmenities.brush) {
+                partsZh.push("牙刷備品");
+                partsJp.push("歯ブラシセット");
+                partsKana.push("はぶらし せっと");
+            }
+            if (dynHotelAmenities.slippers) {
+                partsZh.push("室內拖鞋");
+                partsJp.push("スリッパ");
+                partsKana.push("すりっぱ");
+            }
+            if (dynHotelAmenities.water) {
+                partsZh.push("瓶裝水");
+                partsJp.push("お水（ボトル）");
+                partsKana.push("おみず");
+            }
+
+            if (partsJp.length === 0) {
+                return {
+                    zh: "（請點選上方備品標籤勾選）",
+                    jp: "すみません、アメニティをいただけますか？",
+                    kana: "すみません、あめてぃ を いただけますか？"
+                };
+            }
+
+            return {
+                zh: "請問可以借/提供：" + partsZh.join("、") + "嗎？謝謝！",
+                jp: "すみません、" + partsJp.join("と") + "をいただけますか？",
+                kana: "すみません、" + partsKana.join(" と ") + " を いただけますか？"
+            };
+        }
+
+        function renderDynamicCards() {
+            const container = document.getElementById("dynamic-cards-container");
+            if (!container) return;
+            container.innerHTML = "";
+
+            const showTransport = (jpFilter === 'all' || jpFilter === 'transport');
+            const showRestaurant = (jpFilter === 'all' || jpFilter === 'restaurant');
+            const showHotel = (jpFilter === 'all' || jpFilter === 'hotel');
+            const showShopping = (jpFilter === 'all' || jpFilter === 'shopping');
+
+            // 0. 🚕 計程車目的地選單切換卡 (Transport - NEW!)
+            if (showTransport) {
+                const taxiData = DYN_TAXI_MAP[dynTaxiDest] || DYN_TAXI_MAP.hotel;
+                const cardTaxi = document.createElement("div");
+                cardTaxi.className = "bg-gradient-to-br from-yellow-50/95 to-amber-50/95 border-2 border-amber-500 rounded-2xl p-4 shadow-sm flex flex-col justify-between gap-3";
+                cardTaxi.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between border-b border-amber-300 pb-2">
+                            <span class="text-base font-black text-amber-950 flex items-center gap-1.5">
+                                <span>🚕</span> <b>計程車目的地選單切換卡</b>
+                            </span>
+                            <span class="text-xs bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full font-black">點地點即時出示</span>
+                        </div>
+                        <div class="mt-2.5">
+                            <span class="text-xs font-black text-amber-900 block mb-1.5">選擇目的地：</span>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                                ${Object.keys(DYN_TAXI_MAP).map(key => `
+                                    <button onclick="setDynTaxi('${key}')" class="py-1.5 px-2 rounded-xl text-xs font-black transition-all ${dynTaxiDest === key ? 'bg-amber-600 text-white shadow-md scale-105 border-amber-700' : 'bg-white text-gray-800 border border-amber-300 hover:bg-amber-100'}">
+                                        ${DYN_TAXI_MAP[key].name}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="mt-3 bg-white/95 p-3.5 rounded-xl border border-amber-300 space-y-1.5 shadow-sm">
+                            <div class="flex items-center justify-between border-b border-gray-100 pb-1">
+                                <span class="text-xs font-bold text-gray-600">中文：${taxiData.zh}</span>
+                                <span class="text-[10px] bg-amber-100 text-amber-900 font-bold px-1.5 py-0.5 rounded">手機直接給司機看</span>
+                            </div>
+                            <p class="text-lg sm:text-xl font-black text-amber-950 mt-1 leading-snug select-all">${taxiData.jp}</p>
+                            <p class="text-xs font-bold text-gray-700 bg-amber-50/70 p-1.5 rounded border border-amber-200">${taxiData.address}</p>
+                            <span class="text-xs text-amber-800 font-bold block">🗣️ 讀音：${taxiData.kana}</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 pt-1">
+                        <button onclick="speakJapanese('${taxiData.jp.replace(/'/g, "\\'")}', this)" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 px-3 rounded-xl text-sm flex items-center justify-center gap-1.5 shadow transition-all">
+                            <span>🔊</span>
+                            <span>播放給司機聽</span>
+                        </button>
+                        <button onclick="openModal({ intent: '${taxiData.zh}', jp: '${taxiData.jp}\\n\\n${taxiData.address}', hiragana: '${taxiData.kana}' })" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-400 font-black py-2.5 px-3 rounded-xl text-sm shadow-sm transition-all">
+                            🔍 放大
+                        </button>
+                    </div>
+                `;
+                container.appendChild(cardTaxi);
+            }
+
+            // 1. 👥 用餐人數切換卡 (Restaurant)
+            if (showRestaurant) {
+                const dineData = DYN_DINE_MAP[dynDineCount];
+                const cardDine = document.createElement("div");
+                cardDine.className = "bg-gradient-to-br from-amber-50/90 to-orange-50/90 border-2 border-amber-500 rounded-2xl p-4 shadow-sm flex flex-col justify-between gap-3";
+                cardDine.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between border-b border-amber-300 pb-2">
+                            <span class="text-base font-black text-amber-950 flex items-center gap-1.5">
+                                <span>👥</span> <b>用餐人數切換卡</b>
+                            </span>
+                            <span class="text-xs bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full font-black">點人數即時切換</span>
+                        </div>
+                        <div class="flex items-center gap-2 mt-2.5">
+                            <span class="text-xs font-black text-amber-900 shrink-0">人數：</span>
+                            <div class="grid grid-cols-4 gap-1.5 flex-1">
+                                ${[1, 2, 3, 4].map(n => `
+                                    <button onclick="setDynDine(${n})" class="py-1.5 px-2 rounded-xl text-sm font-black transition-all ${dynDineCount === n ? 'bg-amber-600 text-white shadow-md scale-105' : 'bg-white text-gray-800 border border-amber-300 hover:bg-amber-100'}">
+                                        ${n}位${n === 2 ? ' ⭐' : ''}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="mt-3 bg-white/90 p-3 rounded-xl border border-amber-300">
+                            <span class="text-xs text-gray-600 font-bold block">中文：${dineData.zh}</span>
+                            <p class="text-xl font-black text-amber-900 mt-1 leading-snug select-all">${dineData.jp}</p>
+                            <span class="text-xs text-amber-700 font-bold block mt-1">🗣️ 讀音：${dineData.kana}</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 pt-1">
+                        <button onclick="speakJapanese('${dineData.jp.replace(/'/g, "\\'")}', this)" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 px-3 rounded-xl text-sm flex items-center justify-center gap-1.5 shadow transition-all">
+                            <span>🔊</span>
+                            <span>聽發音</span>
+                        </button>
+                        <button onclick="openModal({ intent: '你好，我們一共 ${dynDineCount} 位用餐。', jp: '${dineData.jp}', hiragana: '${dineData.kana}' })" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-400 font-black py-2.5 px-3 rounded-xl text-sm shadow-sm transition-all">
+                            🔍 放大
+                        </button>
+                    </div>
+                `;
+                container.appendChild(cardDine);
+            }
+
+            // 2. 🥢 飲食偏好與忌口組合卡 (Restaurant)
+            if (showRestaurant) {
+                const dietData = getSynthesizedDiet();
+                const cardDiet = document.createElement("div");
+                cardDiet.className = "bg-gradient-to-br from-emerald-50/90 to-teal-50/90 border-2 border-emerald-500 rounded-2xl p-4 shadow-sm flex flex-col justify-between gap-3";
+                cardDiet.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between border-b border-emerald-300 pb-2">
+                            <span class="text-base font-black text-emerald-950 flex items-center gap-1.5">
+                                <span>🥢</span> <b>飲食偏好與忌口組合卡</b>
+                            </span>
+                            <span class="text-xs bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full font-black">可複選組合</span>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5 mt-2.5">
+                            <button onclick="toggleDynDiet('salt')" class="py-1 px-2.5 rounded-lg text-xs font-black transition-all ${dynDietOptions.salt ? 'bg-emerald-700 text-white shadow' : 'bg-white text-gray-700 border border-emerald-300'}">
+                                ${dynDietOptions.salt ? '✓ ' : '+ '}🧂 少鹽清淡
+                            </button>
+                            <button onclick="toggleDynDiet('ice')" class="py-1 px-2.5 rounded-lg text-xs font-black transition-all ${dynDietOptions.ice ? 'bg-emerald-700 text-white shadow' : 'bg-white text-gray-700 border border-emerald-300'}">
+                                ${dynDietOptions.ice ? '✓ ' : '+ '}🧊 飲料去冰
+                            </button>
+                            <button onclick="toggleDynDiet('well')" class="py-1 px-2.5 rounded-lg text-xs font-black transition-all ${dynDietOptions.well ? 'bg-emerald-700 text-white shadow' : 'bg-white text-gray-700 border border-emerald-300'}">
+                                ${dynDietOptions.well ? '✓ ' : '+ '}🥩 肉全熟/無生食
+                            </button>
+                            <button onclick="toggleDynDiet('chair')" class="py-1 px-2.5 rounded-lg text-xs font-black transition-all ${dynDietOptions.chair ? 'bg-emerald-700 text-white shadow' : 'bg-white text-gray-700 border border-emerald-300'}">
+                                ${dynDietOptions.chair ? '✓ ' : '+ '}🪑 椅子席(免跪坐)
+                            </button>
+                            <button onclick="toggleDynDiet('bowl')" class="py-1 px-2.5 rounded-lg text-xs font-black transition-all ${dynDietOptions.bowl ? 'bg-emerald-700 text-white shadow' : 'bg-white text-gray-700 border border-emerald-300'}">
+                                ${dynDietOptions.bowl ? '✓ ' : '+ '}🥣 索取分食小碗
+                            </button>
+                        </div>
+                        <div class="mt-3 bg-white/90 p-3 rounded-xl border border-emerald-300">
+                            <span class="text-xs text-gray-600 font-bold block">需求內容：${dietData.zh}</span>
+                            <p class="text-lg font-black text-emerald-950 mt-1 leading-snug select-all">${dietData.jp}</p>
+                            <span class="text-xs text-emerald-800 font-bold block mt-1">🗣️ 讀音：${dietData.kana}</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 pt-1">
+                        <button onclick="speakJapanese('${dietData.jp.replace(/'/g, "\\'")}', this)" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 px-3 rounded-xl text-sm flex items-center justify-center gap-1.5 shadow transition-all">
+                            <span>🔊</span>
+                            <span>聽發音</span>
+                        </button>
+                        <button onclick="openModal({ intent: '${dietData.zh}', jp: '${dietData.jp}', hiragana: '${dietData.kana}' })" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-400 font-black py-2.5 px-3 rounded-xl text-sm shadow-sm transition-all">
+                            🔍 放大
+                        </button>
+                    </div>
+                `;
+                container.appendChild(cardDiet);
+            }
+
+            // 3. 🛎️ 飯店備品索取組合卡 (Hotel - NEW!)
+            if (showHotel) {
+                const amenityData = getSynthesizedAmenity();
+                const cardAmenity = document.createElement("div");
+                cardAmenity.className = "bg-gradient-to-br from-purple-50/90 to-indigo-50/90 border-2 border-purple-500 rounded-2xl p-4 shadow-sm flex flex-col justify-between gap-3";
+                cardAmenity.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between border-b border-purple-300 pb-2">
+                            <span class="text-base font-black text-purple-950 flex items-center gap-1.5">
+                                <span>🛎️</span> <b>飯店備品索取組合卡</b>
+                            </span>
+                            <span class="text-xs bg-purple-200 text-purple-900 px-2 py-0.5 rounded-full font-black">點選備品即時出示</span>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5 mt-2.5">
+                            <button onclick="toggleDynAmenity('blanket')" class="py-1 px-2.5 rounded-lg text-xs font-black transition-all ${dynHotelAmenities.blanket ? 'bg-purple-700 text-white shadow' : 'bg-white text-gray-700 border border-purple-300'}">
+                                ${dynHotelAmenities.blanket ? '✓ ' : '+ '}🛏️ 毛毯/被子
+                            </button>
+                            <button onclick="toggleDynAmenity('pillow')" class="py-1 px-2.5 rounded-lg text-xs font-black transition-all ${dynHotelAmenities.pillow ? 'bg-purple-700 text-white shadow' : 'bg-white text-gray-700 border border-purple-300'}">
+                                ${dynHotelAmenities.pillow ? '✓ ' : '+ '}😴 加枕頭
+                            </button>
+                            <button onclick="toggleDynAmenity('towel')" class="py-1 px-2.5 rounded-lg text-xs font-black transition-all ${dynHotelAmenities.towel ? 'bg-purple-700 text-white shadow' : 'bg-white text-gray-700 border border-purple-300'}">
+                                ${dynHotelAmenities.towel ? '✓ ' : '+ '}🚿 大浴巾/毛巾
+                            </button>
+                            <button onclick="toggleDynAmenity('brush')" class="py-1 px-2.5 rounded-lg text-xs font-black transition-all ${dynHotelAmenities.brush ? 'bg-purple-700 text-white shadow' : 'bg-white text-gray-700 border border-purple-300'}">
+                                ${dynHotelAmenities.brush ? '✓ ' : '+ '}🪥 牙刷備品
+                            </button>
+                            <button onclick="toggleDynAmenity('slippers')" class="py-1 px-2.5 rounded-lg text-xs font-black transition-all ${dynHotelAmenities.slippers ? 'bg-purple-700 text-white shadow' : 'bg-white text-gray-700 border border-purple-300'}">
+                                ${dynHotelAmenities.slippers ? '✓ ' : '+ '}🩴 室內拖鞋
+                            </button>
+                            <button onclick="toggleDynAmenity('water')" class="py-1 px-2.5 rounded-lg text-xs font-black transition-all ${dynHotelAmenities.water ? 'bg-purple-700 text-white shadow' : 'bg-white text-gray-700 border border-purple-300'}">
+                                ${dynHotelAmenities.water ? '✓ ' : '+ '}💧 瓶裝水
+                            </button>
+                        </div>
+                        <div class="mt-3 bg-white/90 p-3 rounded-xl border border-purple-300">
+                            <span class="text-xs text-gray-600 font-bold block">需求內容：${amenityData.zh}</span>
+                            <p class="text-lg font-black text-purple-950 mt-1 leading-snug select-all">${amenityData.jp}</p>
+                            <span class="text-xs text-purple-800 font-bold block mt-1">🗣️ 讀音：${amenityData.kana}</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 pt-1">
+                        <button onclick="speakJapanese('${amenityData.jp.replace(/'/g, "\\'")}', this)" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 px-3 rounded-xl text-sm flex items-center justify-center gap-1.5 shadow transition-all">
+                            <span>🔊</span>
+                            <span>聽發音</span>
+                        </button>
+                        <button onclick="openModal({ intent: '${amenityData.zh}', jp: '${amenityData.jp}', hiragana: '${amenityData.kana}' })" class="bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-400 font-black py-2.5 px-3 rounded-xl text-sm shadow-sm transition-all">
+                            🔍 放大
+                        </button>
+                    </div>
+                `;
+                container.appendChild(cardAmenity);
+            }
+
+            // 4. 🛍️ 購買數量切換卡 (Shopping)
+            if (showShopping) {
+                const qtyData = DYN_QTY_MAP[dynBuyQty];
+                const cardQty = document.createElement("div");
+                cardQty.className = "bg-gradient-to-br from-sky-50/90 to-blue-50/90 border-2 border-sky-500 rounded-2xl p-4 shadow-sm flex flex-col justify-between gap-3";
+                cardQty.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between border-b border-sky-300 pb-2">
+                            <span class="text-base font-black text-sky-950 flex items-center gap-1.5">
+                                <span>🛍️</span> <b>商品購買數量切換卡</b>
+                            </span>
+                            <span class="text-xs bg-sky-200 text-sky-900 px-2 py-0.5 rounded-full font-black">固有日語量詞</span>
+                        </div>
+                        <div class="flex items-center gap-2 mt-2.5">
+                            <span class="text-xs font-black text-sky-900 shrink-0">數量：</span>
+                            <div class="grid grid-cols-5 gap-1.5 flex-1">
+                                ${[1, 2, 3, 4, 5].map(n => `
+                                    <button onclick="setDynQty(${n})" class="py-1.5 px-1 rounded-xl text-sm font-black transition-all ${dynBuyQty === n ? 'bg-sky-600 text-white shadow-md scale-105' : 'bg-white text-gray-800 border border-sky-300 hover:bg-sky-100'}">
+                                        ${n}個
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="mt-3 bg-white/90 p-3 rounded-xl border border-sky-300">
+                            <span class="text-xs text-gray-600 font-bold block">中文：${qtyData.zh}（可指給店員看）</span>
+                            <p class="text-xl font-black text-sky-950 mt-1 leading-snug select-all">${qtyData.jp}</p>
+                            <span class="text-xs text-sky-800 font-bold block mt-1">🗣️ 讀音：${qtyData.kana}</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 pt-1">
+                        <button onclick="speakJapanese('${qtyData.jp.replace(/'/g, "\\'")}', this)" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 px-3 rounded-xl text-sm flex items-center justify-center gap-1.5 shadow transition-all">
+                            <span>🔊</span>
+                            <span>聽發音</span>
+                        </button>
+                        <button onclick="openModal({ intent: '${qtyData.zh}', jp: '${qtyData.jp}', hiragana: '${qtyData.kana}' })" class="bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-400 font-black py-2.5 px-3 rounded-xl text-sm shadow-sm transition-all">
+                            🔍 放大
+                        </button>
+                    </div>
+                `;
+                container.appendChild(cardQty);
+            }
+
+            // 5. 💳 付款方式切換卡 (Shopping)
+            if (showShopping) {
+                const payData = DYN_PAY_MAP[dynPayMethod];
+                const cardPay = document.createElement("div");
+                cardPay.className = "bg-gradient-to-br from-indigo-50/90 to-purple-50/90 border-2 border-indigo-500 rounded-2xl p-4 shadow-sm flex flex-col justify-between gap-3";
+                cardPay.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between border-b border-indigo-300 pb-2">
+                            <span class="text-base font-black text-indigo-950 flex items-center gap-1.5">
+                                <span>💳</span> <b>結帳付款方式切換卡</b>
+                            </span>
+                            <span class="text-xs bg-indigo-200 text-indigo-900 px-2 py-0.5 rounded-full font-black">一鍵詢問</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mt-2.5">
+                            ${Object.keys(DYN_PAY_MAP).map(k => `
+                                <button onclick="setDynPay('${k}')" class="py-1.5 px-2 rounded-xl text-xs font-black transition-all ${dynPayMethod === k ? 'bg-indigo-600 text-white shadow-md scale-105' : 'bg-white text-gray-800 border border-indigo-300 hover:bg-indigo-100'}">
+                                    ${DYN_PAY_MAP[k].name}
+                                </button>
+                            `).join('')}
+                        </div>
+                        <div class="mt-3 bg-white/90 p-3 rounded-xl border border-indigo-300">
+                            <span class="text-xs text-gray-600 font-bold block">中文：請問可以使用「${payData.name}」付款嗎？</span>
+                            <p class="text-xl font-black text-indigo-950 mt-1 leading-snug select-all">${payData.jp}</p>
+                            <span class="text-xs text-indigo-800 font-bold block mt-1">🗣️ 讀音：${payData.kana}</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 pt-1">
+                        <button onclick="speakJapanese('${payData.jp.replace(/'/g, "\\'")}', this)" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 px-3 rounded-xl text-sm flex items-center justify-center gap-1.5 shadow transition-all">
+                            <span>🔊</span>
+                            <span>聽發音</span>
+                        </button>
+                        <button onclick="openModal({ intent: '請問可以使用「${payData.name}」付款嗎？', jp: '${payData.jp}', hiragana: '${payData.kana}' })" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-900 border border-indigo-400 font-black py-2.5 px-3 rounded-xl text-sm shadow-sm transition-all">
+                            🔍 放大
+                        </button>
+                    </div>
+                `;
+                container.appendChild(cardPay);
+            }
         }
 
         let currentModalJapaneseText = "";
@@ -1371,13 +1874,7 @@
                 const originalHTML = btnElement.innerHTML;
                 btnElement.disabled = true;
                 btnElement.classList.add('opacity-75', 'scale-95');
-                
-                utterance.onend = () => {
-                    btnElement.disabled = false;
-                    btnElement.classList.remove('opacity-75', 'scale-95');
-                    btnElement.innerHTML = originalHTML;
-                };
-                utterance.onerror = () => {
+                utterance.onend = utterance.onerror = () => {
                     btnElement.disabled = false;
                     btnElement.classList.remove('opacity-75', 'scale-95');
                     btnElement.innerHTML = originalHTML;
@@ -1389,10 +1886,9 @@
 
         function speakCurrentModalPhrase() {
             if (!currentModalJapaneseText) return;
-            const btn = document.getElementById('modal-speech-btn');
             const textSpan = document.getElementById('modal-speech-text');
             if (textSpan) textSpan.textContent = "正在朗讀發音中...";
-            speakJapanese(currentModalJapaneseText, btn);
+            speakJapanese(currentModalJapaneseText, document.getElementById('modal-speech-btn'));
             setTimeout(() => {
                 if (textSpan) textSpan.textContent = "再次播放日語發音";
             }, 1800);
@@ -1450,7 +1946,7 @@
             document.getElementById("modal-hiragana").textContent = phrase.hiragana;
             
             const textSpan = document.getElementById('modal-speech-text');
-            if (textSpan) textSpan.textContent = "播放日語發音給店員聽";
+            if (textSpan) textSpan.textContent = "播放日語發音給店員看/聽";
             
             document.getElementById("phrase-modal").classList.remove("hidden");
             document.body.classList.add("overflow-hidden");
@@ -1655,32 +2151,19 @@
         }
 
         // ==========================================
-        // 🤖 AI 伴遊助理模組 (支援 Android App 直接喚醒)
+        // 🤖 AI 伴遊助理模組 (Android 原生 App 智慧喚醒)
         // ==========================================
-        const ELDER_COUPLE_PROMPT_TEXT = "你好！我們是兩位來自台灣 70歲的夫妻，目前在東京自助旅行，住在「上野皇冠山丘高級酒店（Hotel Crown Hills Ueno Premier）」。我們行動自如但走太久會疲勞，希望能以平坦無障礙、有電梯、餐飲軟嫩好咀嚼、交通手段以公共運輸及步行為原則。請問：";
+        const ELDER_COUPLE_PROMPT_TEXT = "你好！我們是兩位來自台灣 70歲的夫妻，第一次在東京自助旅行，住在「上野皇冠山丘高級酒店（Hotel Crown Hills Ueno Premier）」。我們行動自如但走太久會疲勞，希望能以平坦無障礙、有電梯、餐飲軟嫩好咀嚼、交通手段以公共運輸及步行為原則。請問：";
 
         function openHeaderAiAssistant() {
-            const prompt = ELDER_COUPLE_PROMPT_TEXT;
-            const promptEncoded = encodeURIComponent(prompt);
+            const promptEncoded = encodeURIComponent(ELDER_COUPLE_PROMPT_TEXT);
             const webUrl = `https://chatgpt.com/?q=${promptEncoded}`;
+            const isAndroid = /Android/i.test(navigator.userAgent);
 
-            try {
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(prompt);
-                } else {
-                    const tempInput = document.createElement("textarea");
-                    tempInput.value = prompt;
-                    document.body.appendChild(tempInput);
-                    tempInput.select();
-                    document.execCommand("copy");
-                    document.body.removeChild(tempInput);
-                }
-            } catch (err) {
-                console.warn("Clipboard copy skipped", err);
+            // 複製提示詞到剪貼簿備用
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(ELDER_COUPLE_PROMPT_TEXT).catch(() => {});
             }
-
-            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-            const isAndroid = /android/i.test(userAgent);
 
             if (isAndroid) {
                 const intentUrl = `intent://chatgpt.com/?q=${promptEncoded}#Intent;scheme=https;package=com.openai.chatgpt;S.browser_fallback_url=${encodeURIComponent(webUrl)};end`;
