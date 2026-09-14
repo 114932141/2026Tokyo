@@ -188,75 +188,52 @@
         <!-- ================= PAGE 1: 行程總覽 ================= -->
         <div id="page-overview" class="tab-page space-y-6">
             
-            <!-- 🌤️ 東京都即時與今日天氣速報卡 (點擊直接開啟 tenki.jp) -->
-            <div class="bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-700 rounded-2xl p-4 sm:p-5 text-white shadow-lg border-2 border-white/20 relative overflow-hidden">
-                <!-- 裝飾背景光暈 -->
-                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
-                
+            <!-- 🌤️ 東京都即時天氣速報 (依據邏輯定義自適應動態變化看板) -->
+            <div id="weather-banner-card" class="bg-gradient-to-r from-sky-600 to-blue-700 rounded-2xl p-3.5 sm:p-4 text-white shadow-md border border-white/20 transition-all duration-300">
                 <a href="https://tenki.jp/forecast/3/16/" target="_blank" class="block group" title="點擊前往 tenki.jp 查閱東京都詳細天氣預報與雨雲雷達">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/20 pb-3">
-                        <div class="flex items-center gap-2.5">
-                            <span class="text-3xl sm:text-4xl">🌤️</span>
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <h3 class="text-xl sm:text-2xl font-black tracking-tight text-white group-hover:underline">
-                                        東京都 即時天氣資訊
-                                    </h3>
-                                    <span class="bg-amber-400 text-amber-950 font-black text-xs px-2 py-0.5 rounded-full shadow-sm">
-                                        tenki.jp 官方連線
-                                    </span>
-                                </div>
-                                <p class="text-xs sm:text-sm text-sky-100 font-bold mt-0.5">
-                                    📍 觀測點：東京都上野・台東區 ｜ 點擊查看日本氣象協會詳細預報與雨雲雷達 ➔
-                                </p>
+                    <!-- 上半部：地點 + 即時氣溫 + tenki.jp 外連標籤 -->
+                    <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-white/15">
+                        <div class="flex items-center gap-2">
+                            <span id="weather-icon" class="text-2xl sm:text-3xl">⛅</span>
+                            <div class="flex items-baseline gap-2">
+                                <span class="font-black text-sm sm:text-base text-white">東京天氣</span>
+                                <span id="weather-temp-now" class="text-2xl sm:text-3xl font-black text-amber-300">--°C</span>
+                                <span id="weather-condition-text" class="text-xs sm:text-sm font-bold text-sky-100">即時連線中...</span>
                             </div>
                         </div>
-                        <div class="flex items-center gap-1 text-xs font-black bg-white/15 px-2.5 py-1 rounded-lg self-start sm:self-auto border border-white/20">
-                            <span id="weather-update-time">⏳ 正在連線氣象台...</span>
+                        <div class="flex items-center gap-1 bg-white/20 group-hover:bg-white/30 text-white font-black text-xs px-2.5 py-1 rounded-lg shrink-0 border border-white/20 transition-all shadow-sm">
+                            <span>tenki.jp ↗</span>
                         </div>
                     </div>
 
-                    <!-- 即時氣溫與當日預報指標 -->
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-3 text-center">
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-2.5 border border-white/10">
-                            <span class="text-xs text-sky-100 font-bold block">現在氣溫</span>
-                            <div class="flex items-center justify-center gap-1 mt-0.5">
-                                <span id="weather-icon" class="text-2xl sm:text-3xl">⛅</span>
-                                <span id="weather-temp-now" class="text-2xl sm:text-3xl font-black">24°C</span>
-                            </div>
-                            <span id="weather-condition-text" class="text-xs font-black text-sky-200 block mt-0.5">多雲時晴</span>
+                    <!-- 下半部：重要指標水平排開（體感、溫差、降雨機率） -->
+                    <div class="flex items-center justify-between gap-1 py-2 text-xs sm:text-sm font-bold text-sky-100">
+                        <div class="flex items-center gap-1">
+                            <span class="text-sky-200">體感</span>
+                            <span id="weather-apparent-temp" class="font-black text-white text-sm sm:text-base">--°C</span>
                         </div>
-
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-2.5 border border-white/10">
-                            <span class="text-xs text-sky-100 font-bold block">體感溫度</span>
-                            <span id="weather-apparent-temp" class="text-2xl sm:text-3xl font-black block mt-0.5">25°C</span>
-                            <span class="text-xs font-bold text-sky-200 block mt-0.5">舒適宜人</span>
+                        <span class="text-white/30">•</span>
+                        <div class="flex items-center gap-1">
+                            <span class="text-sky-200">溫差</span>
+                            <span class="font-black text-white text-sm sm:text-base"><span id="weather-temp-max" class="text-amber-300">--°</span>/<span id="weather-temp-min" class="text-cyan-200">--°</span></span>
                         </div>
-
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-2.5 border border-white/10">
-                            <span class="text-xs text-sky-100 font-bold block">今日最高 / 最低</span>
-                            <div class="text-lg sm:text-xl font-black mt-1">
-                                <span id="weather-temp-max" class="text-amber-300">28°</span>
-                                <span class="text-white/60 mx-0.5">/</span>
-                                <span id="weather-temp-min" class="text-cyan-200">20°</span>
-                            </div>
-                            <span class="text-xs font-bold text-sky-200 block mt-0.5">早晚有溫差</span>
-                        </div>
-
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-2.5 border border-white/10">
-                            <span class="text-xs text-sky-100 font-bold block">降雨機率</span>
-                            <span id="weather-rain-prob" class="text-2xl sm:text-3xl font-black block mt-0.5 text-sky-200">20%</span>
-                            <span id="weather-rain-hint" class="text-xs font-bold text-sky-200 block mt-0.5">降雨機會低</span>
+                        <span class="text-white/30">•</span>
+                        <div class="flex items-center gap-1">
+                            <span class="text-sky-200">降雨機率</span>
+                            <span id="weather-rain-prob" class="font-black text-cyan-200 text-sm sm:text-base">--%</span>
                         </div>
                     </div>
 
-                    <!-- 長輩貼心出門穿衣與防護建議 (由氣溫與降雨自動計算) -->
-                    <div id="weather-advice-box" class="mt-3 bg-white/20 backdrop-blur-sm rounded-xl p-2.5 px-3 border border-white/20 flex items-center justify-between text-xs sm:text-sm font-black">
-                        <div class="flex items-center gap-1.5 text-amber-200">
-                            <span>🧣</span>
-                            <span id="weather-advice-text">長輩出行建議：氣溫舒適，早晚微涼建議隨身攜帶薄外套與晴雨傘。</span>
+                    <!-- 完整出門叮嚀 (嚴格依照定義規則動態合成：穿衣指引 + 天候情境) -->
+                    <div class="mt-1 pt-2 border-t border-white/15 flex items-start gap-2 text-xs sm:text-sm text-amber-100 font-bold bg-black/15 p-2.5 rounded-xl">
+                        <span id="weather-advice-icon" class="text-base shrink-0 mt-0.5">🧥</span>
+                        <div class="flex-1 leading-relaxed">
+                            <span id="weather-advice-text" class="block text-amber-200 font-black">長輩出行叮嚀：氣溫舒適宜人，早晚微涼建議隨身攜帶薄外套。 天候晴朗，散步極為舒適</span>
+                            <div class="flex items-center justify-between gap-2 mt-1 text-[11px] text-sky-200/90 font-medium">
+                                <span id="weather-rain-hint">降雨機會低 (舒適宜人)</span>
+                                <span id="weather-update-time">🟢 正在同步東京都氣象廳數據...</span>
+                            </div>
                         </div>
-                        <span class="text-xs text-sky-100 underline shrink-0 hidden sm:inline">開啟 tenki.jp 查即時雷達 ↗</span>
                     </div>
                 </a>
             </div>
@@ -384,18 +361,16 @@
         </div>
 
         <!-- ================= PAGE 2: 每天行程 ================= -->
-        <div id="page-itinerary" class="tab-page hidden space-y-6">
+        <div id="page-itinerary" class="tab-page hidden space-y-4 sm:space-y-6">
             
-            <!-- Subway line helper -->
-            <div class="bg-white rounded-2xl p-4 border border-gray-200 shadow-sm">
-                <span class="text-base font-black text-brand-600 block mb-2">💡 車站認路口訣：請對準站內指示牌上的底色與字母</span>
-                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
-                    <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border"><span class="w-8 h-8 rounded-full bg-subway-yamanote text-white font-black flex items-center justify-center text-sm">JY</span><span class="font-bold text-sm">JR 山手線</span></div>
-                    <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border"><span class="w-8 h-8 rounded-full bg-subway-ginza text-white font-black flex items-center justify-center text-sm">G</span><span class="font-bold text-sm">地鐵銀座線</span></div>
-                    <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border"><span class="w-8 h-8 rounded-full bg-subway-marunouchi text-white font-black flex items-center justify-center text-sm">M</span><span class="font-bold text-sm">地鐵丸之內</span></div>
-                    <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border"><span class="w-8 h-8 rounded-full bg-subway-keisei text-white font-black flex items-center justify-center text-sm">KS</span><span class="font-bold text-sm">京成電鐵</span></div>
-                    <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border"><span class="w-8 h-8 rounded-full bg-subway-hibiya text-white font-black flex items-center justify-center text-sm">H</span><span class="font-bold text-sm">地鐵日比谷</span></div>
-                </div>
+            <!-- Subway line helper (精簡單行緊湊版，不佔垂直版面) -->
+            <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs font-bold text-gray-700 bg-white p-2 rounded-xl border border-gray-200">
+                <span class="shrink-0 font-black text-brand-700">🚇 車站代號：</span>
+                <span class="inline-flex items-center gap-1 bg-gray-50 px-2 py-0.5 rounded-lg border shrink-0"><span class="w-5 h-5 rounded-full bg-subway-yamanote text-white font-black text-[10px] flex items-center justify-center">JY</span>山手線</span>
+                <span class="inline-flex items-center gap-1 bg-gray-50 px-2 py-0.5 rounded-lg border shrink-0"><span class="w-5 h-5 rounded-full bg-subway-ginza text-white font-black text-[10px] flex items-center justify-center">G</span>銀座線</span>
+                <span class="inline-flex items-center gap-1 bg-gray-50 px-2 py-0.5 rounded-lg border shrink-0"><span class="w-5 h-5 rounded-full bg-subway-keisei text-white font-black text-[10px] flex items-center justify-center">KS</span>京成電鐵</span>
+                <span class="inline-flex items-center gap-1 bg-gray-50 px-2 py-0.5 rounded-lg border shrink-0"><span class="w-5 h-5 rounded-full bg-subway-marunouchi text-white font-black text-[10px] flex items-center justify-center">M</span>丸之內</span>
+                <span class="inline-flex items-center gap-1 bg-gray-50 px-2 py-0.5 rounded-lg border shrink-0"><span class="w-5 h-5 rounded-full bg-subway-hibiya text-white font-black text-[10px] flex items-center justify-center">H</span>日比谷</span>
             </div>
 
             <!-- Day Selector -->
@@ -417,17 +392,27 @@
         </div>
 
         <!-- ================= PAGE 3: 手指日語 ================= -->
-        <div id="page-japanese" class="tab-page hidden space-y-6">
-            <div class="bg-brand-50 p-4 rounded-xl border-l-4 border-brand-600 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <p class="text-lg font-black text-brand-700">
-                    💡 點選任一卡片可放大為 <b>【全螢幕超大字】</b>；或點擊 <b>「🔊 朗讀」</b> 直接播放標準日語給店員看/聽！
-                </p>
-                <div class="shrink-0 flex items-center gap-1.5 text-xs font-black bg-white px-3 py-1.5 rounded-lg border border-brand-100 text-brand-800">
-                    <span>📢</span> 內建標準慢速朗讀
+        <div id="page-japanese" class="tab-page hidden space-y-3 sm:space-y-4">
+            <!-- 頂部操作說明極簡緊湊橫幅 (高度大幅壓縮，完整保留兩項) -->
+            <div class="bg-brand-50/90 py-1.5 px-2.5 rounded-xl border border-brand-200/80 shadow-xs flex flex-wrap items-center justify-between gap-1 text-xs text-brand-900">
+                <div class="flex items-center gap-1 font-black shrink-0 text-brand-700">
+                    <span>💡</span>
+                    <span class="text-[11px] sm:text-xs">使用教學：</span>
+                </div>
+                <div class="flex items-center gap-3 sm:gap-4 font-bold text-[11px] sm:text-xs">
+                    <span class="flex items-center gap-1">
+                        <span>🔍</span>
+                        <span><b>點卡片</b>：放大為【全螢幕超大字】</span>
+                    </span>
+                    <span class="text-brand-300 hidden sm:inline">|</span>
+                    <span class="flex items-center gap-1">
+                        <span>🔊</span>
+                        <span><b>按「聽發音」</b>：播放標準給店員聽</span>
+                    </span>
                 </div>
             </div>
 
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap gap-1.5 sm:gap-2">
                 <button onclick="filterJapanese('all')" id="btn-jp-all" class="jp-filter-btn px-4 py-2 bg-brand-600 text-white font-bold rounded-xl text-base shadow">全部</button>
                 <button onclick="filterJapanese('transport')" id="btn-jp-transport" class="jp-filter-btn px-4 py-2 bg-white text-gray-800 border font-bold rounded-xl text-base shadow">🚇 交通問路</button>
                 <button onclick="filterJapanese('hotel')" id="btn-jp-hotel" class="jp-filter-btn px-4 py-2 bg-white text-gray-800 border font-bold rounded-xl text-base shadow">🛎️ 飯店設施</button>
@@ -1013,7 +998,7 @@
                 accessibility: [
                     "【1. 東京車站無階梯路徑】：下車後搭電梯至 B1 丸之內地下中央口，轉直梯直達 1 樓出站，面對平坦開闊的丸之內廣場。",
                     "【2. 皇居避碎石平路指引】：皇居外苑中央碎石厚，請緊貼護城河邊緣的「水泥人行步道」散步，風景相同且推車步行最省力。",
-                    "【3. 日本橋無障礙典範】：日本橋三越本店為國家重要文化財，內部配有無障礙高速直達電梯、各大樓層休憩沙發，逛街尊榮又省力。"
+                    "【3. 日本橋無障礙典範】：日本橋三越本店為國家重要文化財，內部配有無障礙高速直達電梯、各大樓層休憩沙發，逛街尊榮又省力。",
                 ],
                 spots: [
                     {
@@ -1343,26 +1328,86 @@
             fetchTokyoWeather();
         };
 
-        // ==========================================
-        // 🌤️ 東京都即時天氣串接模組 (Open-Meteo API)
-        // ==========================================
+        // =========================================================
+        // 🌤️ 東京都即時天氣串接與長輩出門叮嚀自適應動態合成演算法
+        // =========================================================
         const WMO_WEATHER_MAP = {
             0: { desc: "晴空萬里", icon: "☀️", hint: "陽光充沛，出門注意遮陽防曬" },
             1: { desc: "晴時多雲", icon: "🌤️", hint: "天氣晴朗，散步極為舒適" },
             2: { desc: "多雲時晴", icon: "⛅", hint: "氣候涼爽宜人，適合戶外慢遊" },
             3: { desc: "陰天陰涼", icon: "☁️", hint: "天空陰沉，長輩可加件薄風衣" },
             45: { desc: "晨間有霧", icon: "🌫️", hint: "視線微霧，走路請踏穩慢行" },
-            48: { desc: "薄霧瀰漫", icon: "🌫️", hint: "空氣濕涼，注意保暖潤喉" },
-            51: { desc: "綿綿微雨", icon: "🌦️", hint: "飄毛毛細雨，出門記得帶折疊傘" },
+            48: { desc: "薄霧瀰漫", icon: "🌫️", hint: "視線微霧，走路請踏穩慢行" },
+            51: { desc: "綿綿細雨", icon: "🌦️", hint: "路面微濕，健走鞋防滑注意" },
             53: { desc: "毛毛雨", icon: "🌦️", hint: "路面微濕，健走鞋防滑注意" },
-            55: { desc: "密降細雨", icon: "🌧️", hint: "建議隨身攜帶晴雨傘或走遮雨騎樓" },
-            61: { desc: "短暫小雨", icon: "🌧️", hint: "有短暫陣雨，可走地下街或搭車" },
-            63: { desc: "中度陣雨", icon: "🌧️", hint: "雨勢稍顯，推薦多利用大電梯商場" },
-            65: { desc: "持續降雨", icon: "🌧️", hint: "今日雨勢明顯，啟動室內備案最舒服" },
-            80: { desc: "局部短暫雨", icon: "🌦️", hint: "局部零星陣雨，帶把輕便傘備用" },
-            81: { desc: "較大陣雨", icon: "🌧️", hint: "下雨時可至鄰近咖啡茶房稍坐歇息" },
+            55: { desc: "密降細雨", icon: "🌧️", hint: "路面微濕，健走鞋防滑注意" },
+            61: { desc: "短暫小雨", icon: "🌧️", hint: "建議隨身攜帶晴雨傘或走遮雨騎樓" },
+            63: { desc: "中度陣雨", icon: "🌧️", hint: "建議隨身攜帶晴雨傘或走遮雨騎樓" },
+            65: { desc: "持續降雨", icon: "🌧️", hint: "建議隨身攜帶晴雨傘或走遮雨騎樓" },
+            80: { desc: "局部短暫雨", icon: "🌦️", hint: "建議隨身攜帶晴雨傘或走遮雨騎樓" },
+            81: { desc: "較大陣雨", icon: "🌧️", hint: "建議隨身攜帶晴雨傘或走遮雨騎樓" },
+            82: { desc: "豪大雨", icon: "🌧️", hint: "建議隨身攜帶晴雨傘或走遮雨騎樓" },
             95: { desc: "雷雨注意", icon: "⛈️", hint: "天氣不穩定，多在室內景點悠閒活動" }
         };
+
+        // 依據「出門叮嚀邏輯定義與規則」執行純動態雙模組自適應合成
+        function applyWeatherAdviceRules(tempNow, apparentTemp, rainProb, weatherCode) {
+            const weatherInfo = WMO_WEATHER_MAP[weatherCode] || { desc: "多雲時晴", icon: "⛅", hint: "氣候涼爽宜人，適合戶外慢遊" };
+
+            // 1. 模組 1：氣溫與體感溫度分級（穿著指引）
+            let tempAdvice = "";
+            let adviceIcon = "🧥";
+            if (tempNow < 18) {
+                tempAdvice = "氣溫稍涼偏低，建議穿著長袖加防風保暖外套。";
+                adviceIcon = "🧣";
+            } else if (tempNow > 28) {
+                tempAdvice = "氣候偏暖熱，請適時補充水分、進入商場吹冷氣休息。";
+                adviceIcon = "🧢";
+            } else {
+                tempAdvice = "氣溫極為舒適！早晚微涼，隨身攜帶輕便薄外套即可。";
+                adviceIcon = "🧥";
+            }
+
+            // 2. 模組 2：降雨機率與天候狀態分級（降雨高風險門檻 40%）
+            let scenarioAdvice = "";
+            if (rainProb >= 40) {
+                scenarioAdvice = "今日有雨，出門務必備妥折疊傘與防滑健走鞋。";
+                adviceIcon = "☂️";
+            } else {
+                scenarioAdvice = weatherInfo.hint;
+            }
+
+            // 3. 模組 3：降雨風險膠囊標籤分級
+            let rainHintText = "";
+            if (rainProb >= 60) {
+                rainHintText = "降雨機率高 (攜帶晴雨傘)";
+            } else if (rainProb >= 30) {
+                rainHintText = "可能有短暫微雨";
+            } else {
+                rainHintText = "降雨機會低 (舒適宜人)";
+            }
+
+            // 4. 動態更新至 DOM 節點
+            const adviceEl = document.getElementById("weather-advice-text");
+            const iconEl = document.getElementById("weather-advice-icon");
+            const rainHintEl = document.getElementById("weather-rain-hint");
+
+            if (adviceEl) adviceEl.textContent = `長輩出行叮嚀：${tempAdvice} ${scenarioAdvice}`;
+            if (iconEl) iconEl.textContent = adviceIcon;
+            if (rainHintEl) rainHintEl.textContent = rainHintText;
+
+            // 5. 動態自適應看板氛圍色調 (雨天暗青灰 / 豔陽微暖橘 / 宜人天空藍)
+            const bannerCard = document.getElementById("weather-banner-card");
+            if (bannerCard) {
+                if (rainProb >= 40) {
+                    bannerCard.className = "bg-gradient-to-r from-slate-700 via-sky-800 to-indigo-900 rounded-2xl p-3.5 sm:p-4 text-white shadow-md border border-white/20 transition-all duration-300";
+                } else if (tempNow > 28) {
+                    bannerCard.className = "bg-gradient-to-r from-amber-600 via-orange-600 to-sky-700 rounded-2xl p-3.5 sm:p-4 text-white shadow-md border border-white/20 transition-all duration-300";
+                } else {
+                    bannerCard.className = "bg-gradient-to-r from-sky-600 to-blue-700 rounded-2xl p-3.5 sm:p-4 text-white shadow-md border border-white/20 transition-all duration-300";
+                }
+            }
+        }
 
         function fetchTokyoWeather() {
             // 東京都上野/台東區經緯度 (Lat: 35.7126, Lon: 139.7801)
@@ -1379,7 +1424,7 @@
                     const cur = data.current;
                     const daily = data.daily || {};
                     const wCode = cur.weather_code !== undefined ? cur.weather_code : 1;
-                    const weatherInfo = WMO_WEATHER_MAP[wCode] || { desc: "天氣穩定", icon: "⛅", hint: "早晚注意氣溫變化" };
+                    const weatherInfo = WMO_WEATHER_MAP[wCode] || { desc: "多雲時晴", icon: "⛅", hint: "氣候涼爽宜人，適合戶外慢遊" };
 
                     // 填入即時氣溫與體感溫度
                     const tempNow = Math.round(cur.temperature_2m);
@@ -1397,35 +1442,12 @@
                         document.getElementById("weather-temp-min").textContent = `${Math.round(daily.temperature_2m_min[0])}°`;
                     }
 
-                    // 填入降雨機率
+                    // 填入當日最高降雨機率
                     const rainProb = (daily.precipitation_probability_max && daily.precipitation_probability_max.length > 0) ? daily.precipitation_probability_max[0] : 10;
                     document.getElementById("weather-rain-prob").textContent = `${rainProb}%`;
-                    
-                    const rainHintEl = document.getElementById("weather-rain-hint");
-                    if (rainProb >= 60) {
-                        rainHintEl.textContent = "降雨機率高 (攜帶晴雨傘)";
-                    } else if (rainProb >= 30) {
-                        rainHintEl.textContent = "可能有短暫微雨";
-                    } else {
-                        rainHintEl.textContent = "降雨機會低 (舒適宜人)";
-                    }
 
-                    // 依據溫度動態產生長輩貼心出行叮嚀
-                    let adviceText = "";
-                    if (tempNow < 18) {
-                        adviceText = "氣溫稍涼偏低，建議穿著長袖加防風保暖外套。";
-                    } else if (tempNow > 28) {
-                        adviceText = "氣候偏暖熱，請適時補充水分、進入商場吹冷氣休息。";
-                    } else {
-                        adviceText = "氣溫極為舒適！早晚微涼，隨身攜帶輕便薄外套即可。";
-                    }
-                    if (rainProb >= 40) {
-                        adviceText += " 今日有雨，出門務必備妥折疊傘與防滑健走鞋。";
-                    } else {
-                        adviceText += ` ${weatherInfo.hint}`;
-                    }
-
-                    document.getElementById("weather-advice-text").textContent = `長輩出行叮嚀：${adviceText}`;
+                    // 執行動態合成叮嚀
+                    applyWeatherAdviceRules(tempNow, apparentTemp, rainProb, wCode);
 
                     // 標註更新時間
                     const now = new Date();
@@ -1433,8 +1455,17 @@
                     document.getElementById("weather-update-time").textContent = `🟢 今日氣象已即時更新 (${timeStr})`;
                 })
                 .catch(err => {
-                    console.warn("Weather load failed, keeping fallback:", err);
-                    document.getElementById("weather-update-time").textContent = "📡 點擊上方可連線 tenki.jp 查閱最新預報";
+                    console.warn("Weather load failed, applying safety fallback:", err);
+                    // 觸發安全回退機制 (Fallback)
+                    applyWeatherAdviceRules(24, 24, 15, 2);
+                    document.getElementById("weather-temp-now").textContent = "24°C";
+                    document.getElementById("weather-apparent-temp").textContent = "24°C";
+                    document.getElementById("weather-temp-max").textContent = "27°";
+                    document.getElementById("weather-temp-min").textContent = "19°";
+                    document.getElementById("weather-rain-prob").textContent = "15%";
+                    document.getElementById("weather-condition-text").textContent = "多雲時晴";
+                    document.getElementById("weather-icon").textContent = "⛅";
+                    document.getElementById("weather-update-time").textContent = "📡 點擊卡片可連線 tenki.jp 查閱即時預報";
                 });
         }
 
