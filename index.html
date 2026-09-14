@@ -480,30 +480,25 @@
         <div id="page-shopping" class="tab-page hidden space-y-6">
 
             <!-- 🧮 專為長輩設計：日幣換算台幣隨身快算工具 -->
-            <div class="bg-gradient-to-br from-emerald-600 to-teal-800 text-white rounded-2xl p-5 shadow-lg border-2 border-white/20 space-y-4">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/20 pb-3">
+            <div class="bg-gradient-to-br from-emerald-600 to-teal-800 text-white rounded-2xl p-4 sm:p-5 shadow-lg border-2 border-white/20 space-y-3">
+                <div class="flex items-center justify-between gap-2 border-b border-white/20 pb-2.5">
                     <div class="flex items-center gap-2">
-                        <span class="text-3xl">🧮</span>
-                        <div>
-                            <h3 class="text-xl sm:text-2xl font-black tracking-tight">日幣換算台幣（隨身快算）</h3>
-                            <p class="text-xs text-emerald-100 font-bold mt-0.5">
-                                依據臺灣銀行現金賣出匯率即時試算，長輩購物買菜一看就懂！
-                            </p>
-                        </div>
+                        <span class="text-2xl sm:text-3xl">🧮</span>
+                        <h3 class="text-xl sm:text-2xl font-black tracking-tight">隨身換算</h3>
                     </div>
                     
                     <!-- 臺銀即時牌告標籤與重新整理 -->
-                    <div class="flex items-center gap-1.5 self-start sm:self-auto bg-black/20 px-2.5 py-1 rounded-xl border border-white/20 text-xs">
-                        <span id="rate-source-badge">🏦 臺銀現金賣出：</span>
+                    <div class="flex items-center gap-1 bg-black/25 px-2.5 py-1 rounded-xl border border-white/20 text-xs shrink-0">
+                        <span id="rate-source-badge">🏦 臺銀賣出：</span>
                         <span id="rate-display-val" class="font-black text-amber-300">0.215</span>
-                        <a href="https://rate.bot.com.tw/xrt?Lang=zh-TW" target="_blank" class="ml-1 underline text-sky-200 hover:text-white" title="開啟臺灣銀行官方牌告匯率">官網 ↗</a>
+                        <a href="https://rate.bot.com.tw/xrt?Lang=zh-TW" target="_blank" class="ml-1 underline text-sky-200 hover:text-white font-bold" title="開啟臺灣銀行官方牌告匯率">官網 ↗</a>
                     </div>
                 </div>
 
                 <!-- 計算核心區 -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 items-center">
                     <!-- 左側：輸入日圓金額 -->
-                    <div class="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20 space-y-2">
+                    <div class="bg-white/10 backdrop-blur-sm p-3.5 sm:p-4 rounded-xl border border-white/20 space-y-2">
                         <div class="flex items-center justify-between">
                             <label class="text-sm font-black text-emerald-100">輸入日本標價 (¥ 日圓)：</label>
                             <button onclick="clearQuickCalc()" class="text-xs text-amber-200 hover:text-white underline font-bold">歸零清除</button>
@@ -524,7 +519,7 @@
                     </div>
 
                     <!-- 右側：折合新台幣大字結果 -->
-                    <div class="bg-white/95 text-emerald-950 p-4 rounded-xl border-2 border-amber-300 shadow-md text-center space-y-1">
+                    <div class="bg-white/95 text-emerald-950 p-3.5 sm:p-4 rounded-xl border-2 border-amber-300 shadow-md text-center space-y-1">
                         <span class="text-xs font-black text-gray-600 block">約折合新台幣 (NTD)</span>
                         <div class="flex items-baseline justify-center gap-1">
                             <span class="text-lg font-black text-emerald-700">NT$</span>
@@ -538,7 +533,7 @@
                 </div>
 
                 <!-- 匯率自訂與提示底列 -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-emerald-100 pt-1 border-t border-white/10">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs text-emerald-100 pt-1 border-t border-white/10">
                     <div class="flex items-center gap-2">
                         <span class="font-bold">自訂匯率基準：1 JPY =</span>
                         <input type="number" id="quick-rate-input" value="0.215" step="0.001" onchange="updateCustomRate(this.value)" class="w-20 px-2 py-1 rounded-lg font-black text-emerald-950 bg-white text-center">
