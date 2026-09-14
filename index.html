@@ -112,7 +112,7 @@
     <div id="offline-indicator">⚠️ 目前處於離線狀態 — 已載入安全離線快取，可正常查閱</div>
 
     <header class="sticky top-0 z-40 bg-brand-600 text-white shadow-md transition-all duration-300">
-        <!-- 頂部精簡列：標題 + 即時天氣快捷 + 地圖 + AI助理 + 工具按鈕 -->
+        <!-- 頂部精簡列：標題 + 地圖 + AI助理 + 工具按鈕 -->
         <div class="max-w-4xl mx-auto px-3 py-1.5 flex items-center justify-between gap-1.5 sm:gap-3">
             <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
                 <span class="text-xl sm:text-2xl">🗼</span>
@@ -121,12 +121,6 @@
             
             <!-- 核心快捷按鈕群 (水平緊湊排列) -->
             <div class="flex items-center gap-1.5">
-                <!-- 頂部即時天氣常駐按鈕 (點擊直開 tenki.jp 東京都預報) -->
-                <a href="https://tenki.jp/forecast/3/16/" target="_blank" id="header-weather-badge" class="bg-sky-500 hover:bg-sky-600 text-white font-black px-2.5 py-1 rounded-lg text-xs sm:text-sm flex items-center gap-1 shadow border border-white/20 transition-all shrink-0" title="點擊前往 tenki.jp 查閱東京都天氣預報">
-                    <span id="header-weather-icon">🌤️</span>
-                    <span id="header-weather-text">東京 24°C</span>
-                </a>
-
                 <a href="https://www.google.com/maps" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white font-black px-2.5 py-1 rounded-lg text-xs sm:text-sm flex items-center gap-1 shadow border border-white/20 transition-all shrink-0" title="開啟 Google 地圖">
                     <span>🌍</span>
                     <span>地圖</span>
@@ -1288,12 +1282,6 @@
                     document.getElementById("weather-apparent-temp").textContent = `${apparentTemp}°C`;
                     document.getElementById("weather-icon").textContent = weatherInfo.icon;
                     document.getElementById("weather-condition-text").textContent = weatherInfo.desc;
-
-                    // 同步更新頂部導覽列的天氣快捷按鈕
-                    const headerWeatherIcon = document.getElementById("header-weather-icon");
-                    const headerWeatherText = document.getElementById("header-weather-text");
-                    if (headerWeatherIcon) headerWeatherIcon.textContent = weatherInfo.icon;
-                    if (headerWeatherText) headerWeatherText.textContent = `東京 ${tempNow}°C`;
 
                     // 填入今日最高/最低溫
                     if (daily.temperature_2m_max && daily.temperature_2m_max.length > 0) {
