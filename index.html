@@ -447,173 +447,221 @@
         </div>
 
         <!-- ================= PAGE 4: 準備清單 ================= -->
-        <div id="page-checklist" class="tab-page hidden space-y-6">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="text-2xl font-black text-black flex items-center gap-2">
-                    <span>🎒</span> 行李必備準備清單
-                </h3>
-                <button onclick="resetChecklist()" class="text-brand-600 font-black bg-brand-50 px-3 py-1.5 rounded-xl border border-brand-100 shadow-sm">
+        <div id="page-checklist" class="tab-page hidden space-y-4 sm:space-y-6">
+            <!-- 頂部標題與重設按鈕 -->
+            <div class="flex justify-between items-center border-b pb-2 sm:pb-3">
+                <div class="flex items-center gap-1.5 sm:gap-2">
+                    <span class="text-2xl sm:text-3xl">🎒</span>
+                    <h3 class="text-xl sm:text-2xl font-black text-black">必備準備清單</h3>
+                </div>
+                <button onclick="resetChecklist()" class="text-brand-700 hover:text-brand-900 font-black text-xs sm:text-sm bg-brand-50 px-3 py-1.5 rounded-xl border border-brand-200 shadow-sm active:scale-95 transition-all">
                     🔄 重設清單
                 </button>
             </div>
 
-            <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
-                <h4 class="text-xl font-black text-brand-600 flex items-center gap-2 border-b pb-2">
-                    <span>🚶</span> 每天出門隨身必帶檢查卡
-                </h4>
-                <div id="list-daily" class="space-y-3"></div>
+            <!-- 手機專屬直式分頁切換列 (Segmented Control) -->
+            <div class="grid grid-cols-2 gap-1.5 p-1 bg-brand-100/70 rounded-2xl border border-brand-200">
+                <button onclick="switchChecklistTab('daily')" id="cl-tab-daily" class="py-2.5 px-2 rounded-xl font-black text-xs sm:text-sm transition-all text-white bg-brand-600 shadow flex items-center justify-center gap-1.5">
+                    <span>🚶</span>
+                    <span>每天隨身必帶</span>
+                    <span id="cl-badge-daily" class="bg-white/20 text-white text-[11px] px-1.5 py-0.2 rounded-full font-bold">0/8</span>
+                </button>
+                <button onclick="switchChecklistTab('before')" id="cl-tab-before" class="py-2.5 px-2 rounded-xl font-black text-xs sm:text-sm transition-all text-brand-900 hover:bg-white/50 flex items-center justify-center gap-1.5">
+                    <span>✈️</span>
+                    <span>行李箱出發前</span>
+                    <span id="cl-badge-before" class="bg-brand-900/10 text-brand-900 text-[11px] px-1.5 py-0.2 rounded-full font-bold">0/12</span>
+                </button>
             </div>
 
-            <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
-                <h4 class="text-xl font-black text-brand-600 flex items-center gap-2 border-b pb-2">
-                    <span>✈️</span> 行李箱出發前準備物品
-                </h4>
-                <div class="flex gap-2">
-                    <input type="text" id="new-item-input" placeholder="新增自訂物品..." class="flex-1 p-3 border-2 border-gray-300 rounded-xl font-bold text-base">
-                    <button onclick="addCustomItem()" class="bg-brand-600 text-white font-black px-5 py-2 rounded-xl text-base shadow">➕ 新增</button>
+            <!-- 清單完成度進度條 -->
+            <div class="bg-white rounded-2xl p-3 sm:p-4 border border-gray-200 shadow-sm space-y-1.5">
+                <div class="flex items-center justify-between text-xs sm:text-sm font-black">
+                    <span id="cl-progress-title" class="text-gray-700">準備進度</span>
+                    <span id="cl-progress-status" class="text-brand-600 font-bold">已準備 0 項</span>
                 </div>
-                <div id="list-before" class="space-y-3"></div>
+                <div class="w-full bg-gray-100 rounded-full h-3 sm:h-3.5 overflow-hidden p-0.5 border border-gray-200">
+                    <div id="cl-progress-bar" class="bg-brand-600 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- 清單一：每天隨身必帶 -->
+            <div id="section-cl-daily" class="bg-white rounded-2xl p-3.5 sm:p-5 border border-gray-200 shadow-sm space-y-3">
+                <div class="flex items-center justify-between border-b pb-2">
+                    <h4 class="text-base sm:text-lg font-black text-brand-700 flex items-center gap-1.5">
+                        <span>🚶</span> 每天出門前檢查
+                    </h4>
+                    <span class="text-xs font-bold text-gray-500">出門前逐項勾選確保安心</span>
+                </div>
+                <div id="list-daily" class="space-y-2 sm:space-y-2.5"></div>
+            </div>
+
+            <!-- 清單二：行李箱出發前 -->
+            <div id="section-cl-before" class="hidden bg-white rounded-2xl p-3.5 sm:p-5 border border-gray-200 shadow-sm space-y-3">
+                <div class="flex items-center justify-between border-b pb-2">
+                    <h4 class="text-base sm:text-lg font-black text-brand-700 flex items-center gap-1.5">
+                        <span>✈️</span> 行李箱出發前檢查
+                    </h4>
+                    <span class="text-xs font-bold text-gray-500">打包完成後逐項打勾</span>
+                </div>
+                
+                <!-- 手機快捷輸入與標籤 -->
+                <div class="space-y-2 bg-brand-50/60 p-2.5 sm:p-3 rounded-xl border border-brand-100">
+                    <div class="flex gap-1.5">
+                        <input type="text" id="new-item-input" placeholder="輸入自訂物品名稱..." class="flex-1 px-3 py-2 border-2 border-brand-200 rounded-xl font-bold text-sm bg-white focus:outline-none focus:border-brand-600">
+                        <button onclick="addCustomItem()" class="bg-brand-600 hover:bg-brand-700 active:scale-95 text-white font-black px-4 py-2 rounded-xl text-sm shadow shrink-0">➕ 新增</button>
+                    </div>
+                    <!-- 長輩常用快捷標籤 -->
+                    <div class="flex flex-wrap items-center gap-1 text-xs">
+                        <span class="font-black text-brand-800 text-[11px] shrink-0">快速加入：</span>
+                        <button onclick="quickAddChecklistItem('老花眼鏡 👓')" class="bg-white hover:bg-brand-100 text-brand-800 border border-brand-200 px-2 py-0.5 rounded-lg font-bold text-xs">+ 老花眼鏡</button>
+                        <button onclick="quickAddChecklistItem('常備慢性藥品 💊')" class="bg-white hover:bg-brand-100 text-brand-800 border border-brand-200 px-2 py-0.5 rounded-lg font-bold text-xs">+ 常備藥品</button>
+                        <button onclick="quickAddChecklistItem('保溫水瓶 🍵')" class="bg-white hover:bg-brand-100 text-brand-800 border border-brand-200 px-2 py-0.5 rounded-lg font-bold text-xs">+ 保溫水瓶</button>
+                        <button onclick="quickAddChecklistItem('隨身輕便折疊購物袋 🛍️')" class="bg-white hover:bg-brand-100 text-brand-800 border border-brand-200 px-2 py-0.5 rounded-lg font-bold text-xs">+ 購物折疊袋</button>
+                    </div>
+                </div>
+
+                <div id="list-before" class="space-y-2 sm:space-y-2.5"></div>
             </div>
         </div>
 
         <!-- ================= PAGE 5: 購物記帳 ================= -->
-        <div id="page-shopping" class="tab-page hidden space-y-6">
+        <div id="page-shopping" class="tab-page hidden space-y-4 sm:space-y-6">
 
             <!-- 🧮 專為長輩設計：日幣換算台幣隨身快算工具 -->
-            <div class="bg-gradient-to-br from-emerald-600 to-teal-800 text-white rounded-2xl p-4 sm:p-5 shadow-lg border-2 border-white/20 space-y-3">
-                <div class="flex items-center justify-between gap-2 border-b border-white/20 pb-2.5">
+            <div class="bg-gradient-to-br from-emerald-600 to-teal-800 text-white rounded-2xl p-3.5 sm:p-5 shadow-lg border-2 border-white/20 space-y-3">
+                <div class="flex items-center justify-between gap-2 border-b border-white/20 pb-2">
                     <div class="flex items-center gap-2">
                         <span class="text-2xl sm:text-3xl">🧮</span>
                         <h3 class="text-xl sm:text-2xl font-black tracking-tight">隨身換算</h3>
                     </div>
+                    <!-- 快速帶入按鈕 -->
+                    <button onclick="quickAddCurrentCalcToShopping()" class="bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-xs px-2.5 py-1 rounded-lg shadow flex items-center gap-1 active:scale-95 transition-all" title="將上方換算結果直接帶入下方記帳輸入欄">
+                        <span>📥</span>
+                        <span>帶入記帳</span>
+                    </button>
                 </div>
 
-                <!-- 計算核心區 -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 items-center">
-                    <!-- 左側：輸入日圓金額 -->
-                    <div class="bg-white/10 backdrop-blur-sm p-3.5 sm:p-4 rounded-xl border border-white/20 space-y-2">
+                <!-- 計算核心區 (手機直式友善佈局) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4 items-stretch">
+                    <!-- 輸入日圓金額與數量 -->
+                    <div class="bg-white/10 backdrop-blur-sm p-3 sm:p-4 rounded-xl border border-white/20 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <label class="text-sm font-black text-emerald-100">輸入日本標價 (¥ 日圓)：</label>
+                            <label class="text-xs sm:text-sm font-black text-emerald-100">日幣單價 (¥)：</label>
                             <button onclick="clearQuickCalc()" class="text-xs text-amber-200 hover:text-white underline font-bold">歸零清除</button>
                         </div>
                         <div class="relative">
                             <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-2xl font-black text-emerald-800">¥</span>
-                            <input type="text" inputmode="numeric" pattern="[0-9]*" id="quick-calc-jpy" placeholder="例如：1500" oninput="calculateQuickTwd()" class="w-full pl-9 pr-3 py-3 rounded-xl font-black text-2xl text-emerald-950 bg-white border-2 border-emerald-300 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-inner">
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" id="quick-calc-jpy" placeholder="例如：1500" oninput="calculateQuickTwd()" class="w-full pl-9 pr-3 py-2 rounded-xl font-black text-2xl text-emerald-950 bg-white border-2 border-emerald-300 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-inner">
                         </div>
 
-                        <!-- 長輩常用面額快選按鈕 -->
-                        <div class="flex flex-wrap gap-1.5 pt-1">
-                            <button onclick="addQuickCalcAmount(100)" class="px-2 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg text-xs font-black">+100</button>
-                            <button onclick="addQuickCalcAmount(500)" class="px-2 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg text-xs font-black">+500</button>
-                            <button onclick="addQuickCalcAmount(1000)" class="px-2 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg text-xs font-black">+1,000</button>
-                            <button onclick="addQuickCalcAmount(5000)" class="px-2 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg text-xs font-black">+5,000</button>
-                            <button onclick="addQuickCalcAmount(10000)" class="px-2 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg text-xs font-black">+1萬</button>
+                        <!-- 數量輸入項（預設 1，純輸入） -->
+                        <div class="flex items-center justify-between gap-2 pt-0.5">
+                            <label class="text-xs sm:text-sm font-black text-emerald-100 shrink-0">購買數量：</label>
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" id="quick-calc-qty" value="1" placeholder="數量" oninput="calculateQuickTwd()" class="w-28 px-3 py-1.5 rounded-xl font-black text-lg text-emerald-950 bg-white border-2 border-emerald-300 focus:outline-none text-center shadow-inner">
                         </div>
                     </div>
 
-                    <!-- 右側：折合新台幣大字結果 -->
-                    <div class="bg-white/95 text-emerald-950 p-3.5 sm:p-4 rounded-xl border-2 border-amber-300 shadow-md text-center space-y-1">
+                    <!-- 折合新台幣大字結果 -->
+                    <div class="bg-white/95 text-emerald-950 p-3 sm:p-4 rounded-xl border-2 border-amber-300 shadow-md text-center flex flex-col justify-center space-y-1">
                         <span class="text-xs font-black text-gray-600 block">約折合新台幣 (NTD)</span>
                         <div class="flex items-baseline justify-center gap-1">
-                            <span class="text-lg font-black text-emerald-700">NT$</span>
-                            <span id="quick-calc-result" class="text-4xl sm:text-5xl font-black text-emerald-700 tracking-tight">0</span>
-                            <span class="text-base font-black text-gray-600">元</span>
+                            <span class="text-base sm:text-lg font-black text-emerald-700">NT$</span>
+                            <span id="quick-calc-result" class="text-3xl sm:text-5xl font-black text-emerald-700 tracking-tight">0</span>
+                            <span class="text-sm sm:text-base font-black text-gray-600">元</span>
                         </div>
-                        <p id="quick-calc-formula" class="text-xs font-bold text-gray-500 pt-1">
-                            計算公式：¥ 0 × 0.215 = NT$ 0
+                        <p id="quick-calc-formula" class="text-xs font-bold text-gray-500 pt-0.5 truncate">
+                            計算公式：¥ 0 × 1個 × 0.215 = NT$ 0
                         </p>
                     </div>
                 </div>
 
-                <!-- 匯率自訂與提示底列（含即時牌告匯率資訊） -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-emerald-100 pt-1.5 border-t border-white/10">
+                <!-- 匯率自訂與提示底列 -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs text-emerald-100 pt-1 border-t border-white/10">
                     <div class="flex flex-wrap items-center gap-2">
                         <div class="flex items-center gap-1.5">
-                            <span class="font-bold">自訂匯率基準：1 JPY =</span>
-                            <input type="number" id="quick-rate-input" value="0.215" step="0.001" onchange="updateCustomRate(this.value)" class="w-20 px-2 py-1 rounded-lg font-black text-emerald-950 bg-white text-center">
+                            <span class="font-bold">匯率：1 JPY =</span>
+                            <input type="number" id="quick-rate-input" value="0.215" step="0.001" onchange="updateCustomRate(this.value)" class="w-16 px-1.5 py-0.5 rounded-lg font-black text-emerald-950 bg-white text-center text-xs">
                             <span>TWD</span>
                         </div>
-                        <!-- 臺銀即時牌告標籤與連結 -->
-                        <div class="flex items-center gap-1 bg-black/25 px-2.5 py-1 rounded-xl border border-white/20 text-xs shrink-0">
+                        <div class="flex items-center gap-1 bg-black/25 px-2 py-0.5 rounded-lg border border-white/20 text-xs shrink-0">
                             <span id="rate-source-badge">🏦 臺銀賣出：</span>
                             <span id="rate-display-val" class="font-black text-amber-300">0.215</span>
                             <a href="https://rate.bot.com.tw/xrt?Lang=zh-TW" target="_blank" class="ml-1 underline text-sky-200 hover:text-white font-bold" title="開啟臺灣銀行官方牌告匯率">官網 ↗</a>
                         </div>
                     </div>
-                    <span class="text-[11px] text-emerald-200">💡 修改匯率，下方購物記帳表將自動同步換算</span>
+                    <span class="text-[11px] text-emerald-200">💡 換算匯率與下方記帳自動同步</span>
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl p-6 border-2 border-brand-600 shadow-sm space-y-4">
-                <div class="flex items-center gap-3 border-b-2 border-brand-100 pb-3">
-                    <span class="text-4xl">🛍️</span>
-                    <div>
-                        <span class="text-sm font-black uppercase tracking-wider text-brand-600">本機離線記帳</span>
-                        <h2 class="text-2xl font-black text-black">購物明細與記帳本</h2>
+            <!-- 新增購物紀錄卡片 (手機專屬緊湊表單) -->
+            <div class="bg-white rounded-2xl p-4 sm:p-5 border-2 border-brand-600 shadow-sm space-y-3.5" id="shopping-input-card">
+                <div class="flex items-center justify-between border-b border-brand-100 pb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">🛍️</span>
+                        <h4 class="text-lg sm:text-xl font-black text-brand-900">記錄購買物品</h4>
+                    </div>
+                    <span class="text-xs font-bold text-gray-500">本機離線安全保存</span>
+                </div>
+
+                <!-- 物品名稱與快速分類標籤 -->
+                <div class="space-y-1.5">
+                    <label class="block text-xs sm:text-sm font-black text-gray-700">物品名稱</label>
+                    <input type="text" id="shop-item-name" placeholder="例如：合利他命、麝香葡萄..." class="w-full p-2.5 border-2 border-gray-300 rounded-xl font-bold text-sm sm:text-base focus:border-brand-600 focus:outline-none">
+                    <!-- 手機點擊快捷品項 -->
+                    <div class="flex flex-wrap gap-1 pt-0.5">
+                        <button onclick="setShopNameQuick('💊 合利他命 / 藥妝')" class="bg-gray-100 hover:bg-brand-50 text-gray-700 hover:text-brand-900 text-xs px-2 py-0.5 rounded-lg font-bold border border-gray-200">+ 藥妝</button>
+                        <button onclick="setShopNameQuick('🍇 吉池生鮮水果')" class="bg-gray-100 hover:bg-brand-50 text-gray-700 hover:text-brand-900 text-xs px-2 py-0.5 rounded-lg font-bold border border-gray-200">+ 水果</button>
+                        <button onclick="setShopNameQuick('🍪 伴手禮 / 點心')" class="bg-gray-100 hover:bg-brand-50 text-gray-700 hover:text-brand-900 text-xs px-2 py-0.5 rounded-lg font-bold border border-gray-200">+ 伴手禮</button>
+                        <button onclick="setShopNameQuick('🍱 正餐美食 / 便當')" class="bg-gray-100 hover:bg-brand-50 text-gray-700 hover:text-brand-900 text-xs px-2 py-0.5 rounded-lg font-bold border border-gray-200">+ 餐飲</button>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-brand-50 p-4 rounded-xl border border-brand-100">
+                <!-- 數量與日圓金額橫排 (手機不換行) -->
+                <div class="grid grid-cols-2 gap-2.5">
                     <div>
-                        <span class="text-sm font-black text-gray-700 block">已買物品日圓總計：</span>
-                        <span id="shop-total-jpy" class="text-2xl font-black text-brand-700">¥ 0</span>
+                        <label class="block text-xs sm:text-sm font-black text-gray-700 mb-1">數量</label>
+                        <input type="text" inputmode="numeric" pattern="[0-9]*" id="shop-item-qty" value="1" class="w-full p-2.5 border-2 border-gray-300 rounded-xl font-bold text-base text-center">
                     </div>
                     <div>
-                        <span class="text-sm font-black text-gray-700 block">折合台幣 (NT$) 總額：</span>
-                        <span id="shop-total-twd" class="text-2xl font-black text-blue-700">NT$ 0</span>
+                        <label class="block text-xs sm:text-sm font-black text-gray-700 mb-1">購入總額 (¥)</label>
+                        <input type="text" inputmode="numeric" pattern="[0-9]*" id="shop-item-price" placeholder="日幣金額" class="w-full p-2.5 border-2 border-gray-300 rounded-xl font-bold text-base">
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
-                    <div class="sm:col-span-2">
-                        <label class="block text-sm font-black text-gray-700 mb-1">購買物品名稱</label>
-                        <input type="text" id="shop-item-name" placeholder="例如：合利他命、綠茶仙貝..." class="w-full p-3 border-2 border-gray-300 rounded-xl font-bold">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-black text-gray-700 mb-1">數量</label>
-                        <input type="text" inputmode="numeric" pattern="[0-9]*" id="shop-item-qty" value="1" class="w-full p-3 border-2 border-gray-300 rounded-xl font-bold">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-black text-gray-700 mb-1">購入總金額 (¥)</label>
-                        <input type="text" inputmode="numeric" pattern="[0-9]*" id="shop-item-price" placeholder="日圓金額" class="w-full p-3 border-2 border-gray-300 rounded-xl font-bold">
-                    </div>
-                </div>
-
-                <button onclick="addShoppingRecord()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-black py-3 rounded-xl text-lg shadow">
-                    ➕ 加入購物清單
+                <button onclick="addShoppingRecord()" class="w-full bg-brand-600 hover:bg-brand-700 active:scale-98 text-white font-black py-3 rounded-xl text-base sm:text-lg shadow flex items-center justify-center gap-1.5 transition-all">
+                    <span>➕</span>
+                    <span>加入記帳清單</span>
                 </button>
             </div>
 
-            <!-- Shopping Table -->
-            <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
-                <div class="flex justify-between items-center border-b pb-3">
-                    <h4 class="text-xl font-black text-brand-600 flex items-center gap-2">
-                        <span>📋</span> 購物明細紀錄
-                    </h4>
-                    <button onclick="resetShoppingList()" class="text-red-600 hover:text-red-700 font-black text-sm bg-red-50 px-3 py-1.5 rounded-xl border border-red-200 shadow-sm">
+            <!-- 購物總額統計卡片 -->
+            <div class="grid grid-cols-2 gap-2.5 bg-brand-50 p-3 sm:p-4 rounded-2xl border border-brand-200 shadow-sm">
+                <div class="bg-white p-2.5 rounded-xl border border-brand-100">
+                    <span class="text-xs font-black text-gray-600 block">日圓總花費 (JPY)</span>
+                    <span id="shop-total-jpy" class="text-xl sm:text-2xl font-black text-brand-700 block mt-0.5">¥ 0</span>
+                </div>
+                <div class="bg-white p-2.5 rounded-xl border border-brand-100">
+                    <span class="text-xs font-black text-gray-600 block">約折合台幣 (NTD)</span>
+                    <span id="shop-total-twd" class="text-xl sm:text-2xl font-black text-blue-700 block mt-0.5">NT$ 0</span>
+                </div>
+            </div>
+
+            <!-- 購物明細清單 (手機直式專屬卡片流，徹底免除水平滾動) -->
+            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-gray-200 shadow-sm space-y-3">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-lg">📋</span>
+                        <h4 class="text-base sm:text-lg font-black text-brand-700">購物明細項目</h4>
+                        <span id="shop-count-badge" class="bg-brand-100 text-brand-900 text-xs font-black px-2 py-0.5 rounded-full">0 項</span>
+                    </div>
+                    <button onclick="resetShoppingList()" class="text-red-600 hover:text-red-700 font-black text-xs bg-red-50 px-2.5 py-1 rounded-lg border border-red-200 active:scale-95 transition-all">
                         🗑️ 全部清除
                     </button>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse" id="shopping-table">
-                        <thead>
-                            <tr class="bg-brand-50 border-b-2 border-brand-100 text-sm sm:text-base font-black text-brand-900">
-                                <th class="p-3">物品名稱</th>
-                                <th class="p-3 text-center">數量</th>
-                                <th class="p-3 text-right">日圓單價</th>
-                                <th class="p-3 text-right">購入總額</th>
-                                <th class="p-3 text-right">約合台幣</th>
-                                <th class="p-3 text-center">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="shopping-table-body" class="divide-y divide-gray-100 font-bold text-sm sm:text-base">
-                            <!-- Filled by JavaScript -->
-                        </tbody>
-                        <tfoot id="shopping-table-foot" class="border-t-2 border-brand-600 bg-brand-50/50 font-black text-sm sm:text-base">
-                            <!-- Filled by JavaScript -->
-                        </tfoot>
-                    </table>
+                <!-- 手機卡片列表容器 -->
+                <div id="shopping-cards-container" class="space-y-2.5">
+                    <!-- 由 JavaScript renderShoppingTable() 動態生成 -->
                 </div>
             </div>
         </div>
@@ -2202,12 +2250,83 @@
         }
 
         // Checklist logic
+        let activeChecklistTab = "daily";
+
+        function switchChecklistTab(tab) {
+            activeChecklistTab = tab;
+            const secDaily = document.getElementById("section-cl-daily");
+            const secBefore = document.getElementById("section-cl-before");
+            const tabDailyBtn = document.getElementById("cl-tab-daily");
+            const tabBeforeBtn = document.getElementById("cl-tab-before");
+
+            if (tab === 'daily') {
+                if (secDaily) secDaily.classList.remove("hidden");
+                if (secBefore) secBefore.classList.add("hidden");
+                if (tabDailyBtn) {
+                    tabDailyBtn.className = "py-2.5 px-2 rounded-xl font-black text-xs sm:text-sm transition-all text-white bg-brand-600 shadow flex items-center justify-center gap-1.5";
+                }
+                if (tabBeforeBtn) {
+                    tabBeforeBtn.className = "py-2.5 px-2 rounded-xl font-black text-xs sm:text-sm transition-all text-brand-900 hover:bg-white/50 flex items-center justify-center gap-1.5";
+                }
+            } else {
+                if (secDaily) secDaily.classList.add("hidden");
+                if (secBefore) secBefore.classList.remove("hidden");
+                if (tabDailyBtn) {
+                    tabDailyBtn.className = "py-2.5 px-2 rounded-xl font-black text-xs sm:text-sm transition-all text-brand-900 hover:bg-white/50 flex items-center justify-center gap-1.5";
+                }
+                if (tabBeforeBtn) {
+                    tabBeforeBtn.className = "py-2.5 px-2 rounded-xl font-black text-xs sm:text-sm transition-all text-white bg-brand-600 shadow flex items-center justify-center gap-1.5";
+                }
+            }
+            updateChecklistProgress();
+        }
+
+        function updateChecklistProgress() {
+            const isDaily = (activeChecklistTab === 'daily');
+            const targetList = isDaily ? checklistDaily : checklistBefore;
+            const total = targetList.length;
+            const checkedCount = targetList.filter(item => item.checked).length;
+            const percent = total > 0 ? Math.round((checkedCount / total) * 100) : 0;
+
+            const progressBar = document.getElementById("cl-progress-bar");
+            const progressStatus = document.getElementById("cl-progress-status");
+            const progressTitle = document.getElementById("cl-progress-title");
+            const badgeDaily = document.getElementById("cl-badge-daily");
+            const badgeBefore = document.getElementById("cl-badge-before");
+
+            // 更新按鈕徽章
+            const dailyChecked = checklistDaily.filter(i => i.checked).length;
+            const beforeChecked = checklistBefore.filter(i => i.checked).length;
+            if (badgeDaily) badgeDaily.textContent = `${dailyChecked}/${checklistDaily.length}`;
+            if (badgeBefore) badgeBefore.textContent = `${beforeChecked}/${checklistBefore.length}`;
+
+            if (progressTitle) {
+                progressTitle.textContent = isDaily ? "🚶 每天隨身必帶進度" : "✈️ 行李箱出發前進度";
+            }
+            if (progressBar) {
+                progressBar.style.width = `${percent}%`;
+                if (percent === 100) {
+                    progressBar.className = "bg-emerald-500 h-full rounded-full transition-all duration-300";
+                } else {
+                    progressBar.className = "bg-brand-600 h-full rounded-full transition-all duration-300";
+                }
+            }
+            if (progressStatus) {
+                if (percent === 100) {
+                    progressStatus.innerHTML = `<span class="text-emerald-700">🎉 已全數準備完成！</span>`;
+                } else {
+                    progressStatus.textContent = `已準備 ${checkedCount} / ${total} 項 (${percent}%)`;
+                }
+            }
+        }
+
         function initChecklist() {
             const savedDaily = localStorage.getItem("tokyo2026_daily");
             const savedBefore = localStorage.getItem("tokyo2026_before");
             checklistDaily = savedDaily ? JSON.parse(savedDaily) : defaultDailyList;
             checklistBefore = savedBefore ? JSON.parse(savedBefore) : defaultBeforeList;
             renderChecklists();
+            switchChecklistTab("daily");
         }
 
         function renderChecklists() {
@@ -2216,21 +2335,27 @@
             if (!dailyContainer || !beforeContainer) return;
 
             dailyContainer.innerHTML = checklistDaily.map((item, idx) => `
-                <label class="flex items-center gap-3 p-3.5 rounded-xl border-2 cursor-pointer ${item.checked ? 'bg-brand-50/50 border-brand-600 text-brand-700' : 'bg-white border-gray-200'}">
-                    <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleDaily(${idx})" class="w-6 h-6 rounded text-brand-600 shrink-0">
-                    <span class="text-base font-black ${item.checked ? 'line-through opacity-60' : ''}">${item.text}</span>
-                </label>
+                <div onclick="toggleDaily(${idx})" class="flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl border-2 cursor-pointer transition-all active:scale-98 ${item.checked ? 'bg-emerald-50/70 border-emerald-500 text-emerald-950' : 'bg-white border-gray-200 text-gray-900'}">
+                    <div class="w-7 h-7 rounded-full flex items-center justify-center border-2 shrink-0 ${item.checked ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-gray-300 bg-gray-50'}">
+                        ${item.checked ? '<span class="text-sm font-black">✓</span>' : ''}
+                    </div>
+                    <span class="text-sm sm:text-base font-black leading-snug select-none flex-1 ${item.checked ? 'line-through opacity-60' : ''}">${escapeHTML(item.text)}</span>
+                </div>
             `).join('');
 
             beforeContainer.innerHTML = checklistBefore.map((item, idx) => `
-                <div class="flex items-center justify-between gap-2 p-3.5 rounded-xl border-2 ${item.checked ? 'bg-brand-50/50 border-brand-600 text-brand-700' : 'bg-white border-gray-200'}">
-                    <label class="flex items-center gap-3 cursor-pointer flex-1">
-                        <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleBefore(${idx})" class="w-6 h-6 rounded text-brand-600 shrink-0">
-                        <span class="text-base font-black ${item.checked ? 'line-through opacity-60' : ''}">${item.text}</span>
-                    </label>
-                    <button onclick="removeBeforeItem(${idx})" class="text-red-500 hover:text-red-700 font-black px-2 py-1 text-sm">🗑️</button>
+                <div class="flex items-center justify-between gap-2 p-3 sm:p-3.5 rounded-2xl border-2 transition-all ${item.checked ? 'bg-emerald-50/70 border-emerald-500 text-emerald-950' : 'bg-white border-gray-200 text-gray-900'}">
+                    <div onclick="toggleBefore(${idx})" class="flex items-center gap-3 cursor-pointer flex-1 select-none">
+                        <div class="w-7 h-7 rounded-full flex items-center justify-center border-2 shrink-0 ${item.checked ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-gray-300 bg-gray-50'}">
+                            ${item.checked ? '<span class="text-sm font-black">✓</span>' : ''}
+                        </div>
+                        <span class="text-sm sm:text-base font-black leading-snug flex-1 ${item.checked ? 'line-through opacity-60' : ''}">${escapeHTML(item.text)}</span>
+                    </div>
+                    <button onclick="removeBeforeItem(${idx})" class="text-gray-400 hover:text-red-600 p-2 rounded-xl text-sm shrink-0 active:scale-90" title="刪除項目">🗑️</button>
                 </div>
             `).join('');
+
+            updateChecklistProgress();
         }
 
         function toggleDaily(idx) {
@@ -2255,6 +2380,15 @@
             renderChecklists();
         }
 
+        function quickAddChecklistItem(text) {
+            if (!text) return;
+            const exists = checklistBefore.some(item => item.text.includes(text.replace(/[^\u4e00-\u9fa5]/g, '')));
+            if (exists) return;
+            checklistBefore.push({ text, checked: false });
+            localStorage.setItem("tokyo2026_before", JSON.stringify(checklistBefore));
+            renderChecklists();
+        }
+
         function removeBeforeItem(idx) {
             checklistBefore.splice(idx, 1);
             localStorage.setItem("tokyo2026_before", JSON.stringify(checklistBefore));
@@ -2274,16 +2408,54 @@
         // ==========================================
         // 🧮 臺銀匯率即時更新與隨身計算機模組
         // ==========================================
+        function quickAddCurrentCalcToShopping() {
+            const jpyInput = document.getElementById("quick-calc-jpy");
+            const qtyInput = document.getElementById("quick-calc-qty");
+            const price = parseFloat(jpyInput ? jpyInput.value : 0) || 0;
+            const qty = parseInt(qtyInput ? qtyInput.value : 1) || 1;
+
+            if (price <= 0) {
+                const shopInputCard = document.getElementById("shopping-input-card");
+                if (shopInputCard) shopInputCard.scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+
+            const total = price * qty;
+            const shopPriceInput = document.getElementById("shop-item-price");
+            const shopQtyInput = document.getElementById("shop-item-qty");
+            const shopNameInput = document.getElementById("shop-item-name");
+
+            if (shopPriceInput) shopPriceInput.value = total;
+            if (shopQtyInput) shopQtyInput.value = qty;
+            if (shopNameInput && !shopNameInput.value) {
+                shopNameInput.focus();
+            }
+
+            const shopInputCard = document.getElementById("shopping-input-card");
+            if (shopInputCard) {
+                shopInputCard.scrollIntoView({ behavior: 'smooth' });
+                shopInputCard.classList.add("ring-4", "ring-emerald-400");
+                setTimeout(() => {
+                    shopInputCard.classList.remove("ring-4", "ring-emerald-400");
+                }, 1500);
+            }
+        }
+
+        function setShopNameQuick(name) {
+            const input = document.getElementById("shop-item-name");
+            if (input) {
+                input.value = name;
+                input.focus();
+            }
+        }
+
         function fetchTaiwanBankRate() {
-            // 優先嘗試取得即時匯率 API（若無網路或離線則維持預設）
             fetch("https://open.er-api.com/v6/latest/JPY")
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.rates && data.rates.TWD) {
-                        // 國際中間匯價加上台銀現金賣出約 0.003~0.005 價差，或直接採用精準計算
                         const liveRate = parseFloat((data.rates.TWD).toFixed(4));
                         if (liveRate > 0.15 && liveRate < 0.35) {
-                            // 若使用者未手動設定過匯率，則套用即時匯率
                             const savedCustom = localStorage.getItem("tokyo2026_user_custom_rate");
                             if (!savedCustom) {
                                 shoppingRate = liveRate;
@@ -2304,31 +2476,31 @@
 
         function calculateQuickTwd() {
             const jpyInput = document.getElementById("quick-calc-jpy");
+            const qtyInput = document.getElementById("quick-calc-qty");
             const resultEl = document.getElementById("quick-calc-result");
             const formulaEl = document.getElementById("quick-calc-formula");
             if (!jpyInput || !resultEl) return;
 
             const jpy = parseFloat(jpyInput.value) || 0;
-            const twd = Math.round(jpy * shoppingRate);
+            const qty = Math.max(1, parseInt(qtyInput ? qtyInput.value : 1) || 1);
+            const totalJpy = jpy * qty;
+            const twd = Math.round(totalJpy * shoppingRate);
 
             resultEl.textContent = twd.toLocaleString();
             if (formulaEl) {
-                formulaEl.textContent = `計算公式：¥ ${jpy.toLocaleString()} × ${shoppingRate} = NT$ ${twd.toLocaleString()}`;
+                if (qty > 1) {
+                    formulaEl.textContent = `計算公式：¥ ${jpy.toLocaleString()} × ${qty}個 (¥ ${totalJpy.toLocaleString()}) × ${shoppingRate} = NT$ ${twd.toLocaleString()}`;
+                } else {
+                    formulaEl.textContent = `計算公式：¥ ${jpy.toLocaleString()} × 1個 × ${shoppingRate} = NT$ ${twd.toLocaleString()}`;
+                }
             }
-        }
-
-        function addQuickCalcAmount(amt) {
-            const jpyInput = document.getElementById("quick-calc-jpy");
-            if (!jpyInput) return;
-            const current = parseFloat(jpyInput.value) || 0;
-            jpyInput.value = current + amt;
-            calculateQuickTwd();
         }
 
         function clearQuickCalc() {
             const jpyInput = document.getElementById("quick-calc-jpy");
-            if (!jpyInput) return;
-            jpyInput.value = "";
+            const qtyInput = document.getElementById("quick-calc-qty");
+            if (jpyInput) jpyInput.value = "";
+            if (qtyInput) qtyInput.value = "1";
             calculateQuickTwd();
         }
 
@@ -2399,52 +2571,60 @@
         }
 
         function renderShoppingTable() {
-            const tbody = document.getElementById("shopping-table-body");
-            const tfoot = document.getElementById("shopping-table-foot");
-            if (!tbody || !tfoot) return;
+            const container = document.getElementById("shopping-cards-container");
+            const badgeCount = document.getElementById("shop-count-badge");
+            if (!container) return;
 
-            tbody.innerHTML = "";
+            container.innerHTML = "";
             let totalJpy = 0;
             let totalQty = 0;
 
+            if (badgeCount) badgeCount.textContent = `${shoppingList.length} 項`;
+
             if (shoppingList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-gray-500 font-bold">目前尚未新增任何購物項目</td></tr>`;
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500 font-bold bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                        <span class="text-3xl block mb-1">🛒</span>
+                        <span>目前尚未記錄任何購買物品</span>
+                    </div>
+                `;
             } else {
                 shoppingList.forEach(item => {
                     const twd = Math.round(item.totalPrice * shoppingRate);
                     totalJpy += item.totalPrice;
                     totalQty += item.qty;
 
-                    const tr = document.createElement("tr");
-                    tr.className = "hover:bg-brand-50/50";
-                    tr.innerHTML = `
-                        <td class="p-3 font-black text-gray-900">${escapeHTML(item.name)}</td>
-                        <td class="p-3 text-center">${item.qty}</td>
-                        <td class="p-3 text-right text-gray-700">¥ ${Math.round(item.totalPrice / item.qty).toLocaleString()}</td>
-                        <td class="p-3 text-right text-brand-700 font-black">¥ ${item.totalPrice.toLocaleString()}</td>
-                        <td class="p-3 text-right text-blue-700 font-black">NT$ ${twd.toLocaleString()}</td>
-                        <td class="p-3 text-center">
-                            <button onclick="removeShoppingItem(${item.id})" class="text-red-500 hover:text-red-700 text-sm">🗑️</button>
-                        </td>
+                    const card = document.createElement("div");
+                    card.className = "bg-gray-50/80 hover:bg-brand-50/50 p-3 sm:p-3.5 rounded-2xl border border-gray-200 flex flex-col gap-2 transition-all";
+                    card.innerHTML = `
+                        <div class="flex items-start justify-between gap-2 border-b border-gray-200/70 pb-2">
+                            <div class="flex items-center gap-2 flex-1 min-w-0">
+                                <span class="bg-brand-600 text-white text-xs font-black px-2 py-0.5 rounded-lg shrink-0">x${item.qty}</span>
+                                <span class="font-black text-sm sm:text-base text-gray-900 truncate">${escapeHTML(item.name)}</span>
+                            </div>
+                            <button onclick="removeShoppingItem(${item.id})" class="text-gray-400 hover:text-red-600 p-1.5 rounded-lg text-sm shrink-0 active:scale-90" title="刪除此筆">
+                                🗑️
+                            </button>
+                        </div>
+                        <div class="flex items-center justify-between text-xs sm:text-sm pt-0.5">
+                            <div class="text-gray-500 font-bold">
+                                <span>單價 ¥${Math.round(item.totalPrice / item.qty).toLocaleString()}</span>
+                            </div>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-brand-800 font-black text-sm sm:text-base">¥ ${item.totalPrice.toLocaleString()}</span>
+                                <span class="text-blue-700 font-black text-sm sm:text-base bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">NT$ ${twd.toLocaleString()}</span>
+                            </div>
+                        </div>
                     `;
-                    tbody.appendChild(tr);
+                    container.appendChild(card);
                 });
             }
 
             const totalTwd = Math.round(totalJpy * shoppingRate);
-            document.getElementById("shop-total-jpy").textContent = `¥ ${totalJpy.toLocaleString()}`;
-            document.getElementById("shop-total-twd").textContent = `NT$ ${totalTwd.toLocaleString()}`;
-
-            tfoot.innerHTML = `
-                <tr>
-                    <td class="p-3 font-black">合計 (${shoppingList.length} 項)</td>
-                    <td class="p-3 text-center font-black">${totalQty}</td>
-                    <td class="p-3 text-right">-</td>
-                    <td class="p-3 text-right text-brand-700 font-black">¥ ${totalJpy.toLocaleString()}</td>
-                    <td class="p-3 text-right text-blue-700 font-black">NT$ ${totalTwd.toLocaleString()}</td>
-                    <td class="p-3 text-center">-</td>
-                </tr>
-            `;
+            const totalJpyEl = document.getElementById("shop-total-jpy");
+            const totalTwdEl = document.getElementById("shop-total-twd");
+            if (totalJpyEl) totalJpyEl.textContent = `¥ ${totalJpy.toLocaleString()}`;
+            if (totalTwdEl) totalTwdEl.textContent = `NT$ ${totalTwd.toLocaleString()}`;
         }
 
         function openCustomConfirm(title, msg, onConfirm) {
