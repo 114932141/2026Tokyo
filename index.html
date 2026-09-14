@@ -486,13 +486,6 @@
                         <span class="text-2xl sm:text-3xl">🧮</span>
                         <h3 class="text-xl sm:text-2xl font-black tracking-tight">隨身換算</h3>
                     </div>
-                    
-                    <!-- 臺銀即時牌告標籤與重新整理 -->
-                    <div class="flex items-center gap-1 bg-black/25 px-2.5 py-1 rounded-xl border border-white/20 text-xs shrink-0">
-                        <span id="rate-source-badge">🏦 臺銀賣出：</span>
-                        <span id="rate-display-val" class="font-black text-amber-300">0.215</span>
-                        <a href="https://rate.bot.com.tw/xrt?Lang=zh-TW" target="_blank" class="ml-1 underline text-sky-200 hover:text-white font-bold" title="開啟臺灣銀行官方牌告匯率">官網 ↗</a>
-                    </div>
                 </div>
 
                 <!-- 計算核心區 -->
@@ -532,14 +525,22 @@
                     </div>
                 </div>
 
-                <!-- 匯率自訂與提示底列 -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs text-emerald-100 pt-1 border-t border-white/10">
-                    <div class="flex items-center gap-2">
-                        <span class="font-bold">自訂匯率基準：1 JPY =</span>
-                        <input type="number" id="quick-rate-input" value="0.215" step="0.001" onchange="updateCustomRate(this.value)" class="w-20 px-2 py-1 rounded-lg font-black text-emerald-950 bg-white text-center">
-                        <span>TWD</span>
+                <!-- 匯率自訂與提示底列（含即時牌告匯率資訊） -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-emerald-100 pt-1.5 border-t border-white/10">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-bold">自訂匯率基準：1 JPY =</span>
+                            <input type="number" id="quick-rate-input" value="0.215" step="0.001" onchange="updateCustomRate(this.value)" class="w-20 px-2 py-1 rounded-lg font-black text-emerald-950 bg-white text-center">
+                            <span>TWD</span>
+                        </div>
+                        <!-- 臺銀即時牌告標籤與連結 -->
+                        <div class="flex items-center gap-1 bg-black/25 px-2.5 py-1 rounded-xl border border-white/20 text-xs shrink-0">
+                            <span id="rate-source-badge">🏦 臺銀賣出：</span>
+                            <span id="rate-display-val" class="font-black text-amber-300">0.215</span>
+                            <a href="https://rate.bot.com.tw/xrt?Lang=zh-TW" target="_blank" class="ml-1 underline text-sky-200 hover:text-white font-bold" title="開啟臺灣銀行官方牌告匯率">官網 ↗</a>
+                        </div>
                     </div>
-                    <span class="text-[11px] text-emerald-200">💡 修改上方匯率，下方購物記帳表將自動同步換算</span>
+                    <span class="text-[11px] text-emerald-200">💡 修改匯率，下方購物記帳表將自動同步換算</span>
                 </div>
             </div>
 
