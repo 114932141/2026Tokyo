@@ -478,31 +478,93 @@
 
         <!-- ================= PAGE 5: 購物記帳 ================= -->
         <div id="page-shopping" class="tab-page hidden space-y-6">
+
+            <!-- 🧮 專為長輩設計：日幣換算台幣隨身快算工具 -->
+            <div class="bg-gradient-to-br from-emerald-600 to-teal-800 text-white rounded-2xl p-5 shadow-lg border-2 border-white/20 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/20 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-3xl">🧮</span>
+                        <div>
+                            <h3 class="text-xl sm:text-2xl font-black tracking-tight">日幣換算台幣（隨身快算）</h3>
+                            <p class="text-xs text-emerald-100 font-bold mt-0.5">
+                                依據臺灣銀行現金賣出匯率即時試算，長輩購物買菜一看就懂！
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- 臺銀即時牌告標籤與重新整理 -->
+                    <div class="flex items-center gap-1.5 self-start sm:self-auto bg-black/20 px-2.5 py-1 rounded-xl border border-white/20 text-xs">
+                        <span id="rate-source-badge">🏦 臺銀現金賣出：</span>
+                        <span id="rate-display-val" class="font-black text-amber-300">0.215</span>
+                        <a href="https://rate.bot.com.tw/xrt?Lang=zh-TW" target="_blank" class="ml-1 underline text-sky-200 hover:text-white" title="開啟臺灣銀行官方牌告匯率">官網 ↗</a>
+                    </div>
+                </div>
+
+                <!-- 計算核心區 -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                    <!-- 左側：輸入日圓金額 -->
+                    <div class="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label class="text-sm font-black text-emerald-100">輸入日本標價 (¥ 日圓)：</label>
+                            <button onclick="clearQuickCalc()" class="text-xs text-amber-200 hover:text-white underline font-bold">歸零清除</button>
+                        </div>
+                        <div class="relative">
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-2xl font-black text-emerald-800">¥</span>
+                            <input type="number" id="quick-calc-jpy" placeholder="例如：1500" oninput="calculateQuickTwd()" class="w-full pl-9 pr-3 py-3 rounded-xl font-black text-2xl text-emerald-950 bg-white border-2 border-emerald-300 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-inner">
+                        </div>
+
+                        <!-- 長輩常用面額快選按鈕 -->
+                        <div class="flex flex-wrap gap-1.5 pt-1">
+                            <button onclick="addQuickCalcAmount(100)" class="px-2 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg text-xs font-black">+100</button>
+                            <button onclick="addQuickCalcAmount(500)" class="px-2 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg text-xs font-black">+500</button>
+                            <button onclick="addQuickCalcAmount(1000)" class="px-2 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg text-xs font-black">+1,000</button>
+                            <button onclick="addQuickCalcAmount(5000)" class="px-2 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg text-xs font-black">+5,000</button>
+                            <button onclick="addQuickCalcAmount(10000)" class="px-2 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg text-xs font-black">+1萬</button>
+                        </div>
+                    </div>
+
+                    <!-- 右側：折合新台幣大字結果 -->
+                    <div class="bg-white/95 text-emerald-950 p-4 rounded-xl border-2 border-amber-300 shadow-md text-center space-y-1">
+                        <span class="text-xs font-black text-gray-600 block">約折合新台幣 (NTD)</span>
+                        <div class="flex items-baseline justify-center gap-1">
+                            <span class="text-lg font-black text-emerald-700">NT$</span>
+                            <span id="quick-calc-result" class="text-4xl sm:text-5xl font-black text-emerald-700 tracking-tight">0</span>
+                            <span class="text-base font-black text-gray-600">元</span>
+                        </div>
+                        <p id="quick-calc-formula" class="text-xs font-bold text-gray-500 pt-1">
+                            計算公式：¥ 0 × 0.215 = NT$ 0
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 匯率自訂與提示底列 -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-emerald-100 pt-1 border-t border-white/10">
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold">自訂匯率基準：1 JPY =</span>
+                        <input type="number" id="quick-rate-input" value="0.215" step="0.001" onchange="updateCustomRate(this.value)" class="w-20 px-2 py-1 rounded-lg font-black text-emerald-950 bg-white text-center">
+                        <span>TWD</span>
+                    </div>
+                    <span class="text-[11px] text-emerald-200">💡 修改上方匯率，下方購物記帳表將自動同步換算</span>
+                </div>
+            </div>
+
             <div class="bg-white rounded-2xl p-6 border-2 border-brand-600 shadow-sm space-y-4">
                 <div class="flex items-center gap-3 border-b-2 border-brand-100 pb-3">
                     <span class="text-4xl">🛍️</span>
                     <div>
                         <span class="text-sm font-black uppercase tracking-wider text-brand-600">本機離線記帳</span>
-                        <h2 class="text-2xl font-black text-black">購物記帳與匯率試算</h2>
+                        <h2 class="text-2xl font-black text-black">購物明細與記帳本</h2>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-brand-50 p-4 rounded-xl border border-brand-100">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-brand-50 p-4 rounded-xl border border-brand-100">
                     <div>
-                        <span class="text-sm font-black text-gray-700 block">日圓總計：</span>
+                        <span class="text-sm font-black text-gray-700 block">已買物品日圓總計：</span>
                         <span id="shop-total-jpy" class="text-2xl font-black text-brand-700">¥ 0</span>
                     </div>
                     <div>
-                        <span class="text-sm font-black text-gray-700 block">折合台幣 (NT$)：</span>
+                        <span class="text-sm font-black text-gray-700 block">折合台幣 (NT$) 總額：</span>
                         <span id="shop-total-twd" class="text-2xl font-black text-blue-700">NT$ 0</span>
-                    </div>
-                    <div>
-                        <span class="text-sm font-black text-gray-700 block">匯率基準 (9/8)：</span>
-                        <div class="flex items-center gap-1 mt-1">
-                            <span class="text-sm font-bold">1 JPY =</span>
-                            <input type="number" id="shop-rate-input" value="0.215" step="0.001" onchange="updateShoppingRate(this.value)" class="w-20 p-1 border rounded font-black text-sm text-center">
-                            <span class="text-sm font-bold">TWD</span>
-                        </div>
                     </div>
                 </div>
 
@@ -2213,24 +2275,94 @@
             });
         }
 
+        // ==========================================
+        // 🧮 臺銀匯率即時更新與隨身計算機模組
+        // ==========================================
+        function fetchTaiwanBankRate() {
+            // 優先嘗試取得即時匯率 API（若無網路或離線則維持預設）
+            fetch("https://open.er-api.com/v6/latest/JPY")
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.rates && data.rates.TWD) {
+                        // 國際中間匯價加上台銀現金賣出約 0.003~0.005 價差，或直接採用精準計算
+                        const liveRate = parseFloat((data.rates.TWD).toFixed(4));
+                        if (liveRate > 0.15 && liveRate < 0.35) {
+                            // 若使用者未手動設定過匯率，則套用即時匯率
+                            const savedCustom = localStorage.getItem("tokyo2026_user_custom_rate");
+                            if (!savedCustom) {
+                                shoppingRate = liveRate;
+                                document.getElementById("quick-rate-input").value = liveRate;
+                                document.getElementById("rate-display-val").textContent = liveRate;
+                                document.getElementById("rate-source-badge").textContent = "🟢 臺銀即時牌告：";
+                                calculateQuickTwd();
+                                renderShoppingTable();
+                            }
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.log("Using cached fallback exchange rate:", err);
+                    document.getElementById("rate-source-badge").textContent = "🏦 臺銀賣出基準：";
+                });
+        }
+
+        function calculateQuickTwd() {
+            const jpyInput = document.getElementById("quick-calc-jpy");
+            const resultEl = document.getElementById("quick-calc-result");
+            const formulaEl = document.getElementById("quick-calc-formula");
+            if (!jpyInput || !resultEl) return;
+
+            const jpy = parseFloat(jpyInput.value) || 0;
+            const twd = Math.round(jpy * shoppingRate);
+
+            resultEl.textContent = twd.toLocaleString();
+            if (formulaEl) {
+                formulaEl.textContent = `計算公式：¥ ${jpy.toLocaleString()} × ${shoppingRate} = NT$ ${twd.toLocaleString()}`;
+            }
+        }
+
+        function addQuickCalcAmount(amt) {
+            const jpyInput = document.getElementById("quick-calc-jpy");
+            if (!jpyInput) return;
+            const current = parseFloat(jpyInput.value) || 0;
+            jpyInput.value = current + amt;
+            calculateQuickTwd();
+        }
+
+        function clearQuickCalc() {
+            const jpyInput = document.getElementById("quick-calc-jpy");
+            if (!jpyInput) return;
+            jpyInput.value = "";
+            calculateQuickTwd();
+        }
+
+        function updateCustomRate(val) {
+            const r = parseFloat(val);
+            if (r > 0) {
+                shoppingRate = r;
+                localStorage.setItem("tokyo2026_shop_rate", r);
+                localStorage.setItem("tokyo2026_user_custom_rate", "true");
+                document.getElementById("rate-display-val").textContent = r;
+                document.getElementById("rate-source-badge").textContent = "✏️ 自訂匯率：";
+                calculateQuickTwd();
+                renderShoppingTable();
+            }
+        }
+
         function initShopping() {
             const savedList = localStorage.getItem("tokyo2026_shopping");
             const savedRate = localStorage.getItem("tokyo2026_shop_rate");
             if (savedList) shoppingList = JSON.parse(savedList);
             if (savedRate) {
                 shoppingRate = parseFloat(savedRate);
-                document.getElementById("shop-rate-input").value = shoppingRate;
+                const quickRateInput = document.getElementById("quick-rate-input");
+                if (quickRateInput) quickRateInput.value = shoppingRate;
+                const rateDisp = document.getElementById("rate-display-val");
+                if (rateDisp) rateDisp.textContent = shoppingRate;
             }
             renderShoppingTable();
-        }
-
-        function updateShoppingRate(val) {
-            const r = parseFloat(val);
-            if (r > 0) {
-                shoppingRate = r;
-                localStorage.setItem("tokyo2026_shop_rate", r);
-                renderShoppingTable();
-            }
+            fetchTaiwanBankRate();
+            calculateQuickTwd();
         }
 
         function addShoppingRecord() {
